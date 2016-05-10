@@ -9,7 +9,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class BenchmarkSelect1Row extends BenchmarkInit {
-    private String request = "SELECT * FROM PerfReadQuery where charValue = 'abc0'";
+    private int counter = 0;
+
+    private String getRequest() {
+        int counterMod = counter++ % 1000;
+        return "SELECT * FROM PerfReadQuery where charValue = 'abc" + counterMod + "' or id = " + counterMod;
+    }
 
     @Benchmark
     public String mysql(MyState state) throws Throwable {
@@ -28,7 +33,7 @@ public class BenchmarkSelect1Row extends BenchmarkInit {
 
     private String select1Row(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
-            try (ResultSet rs = statement.executeQuery(request)) {
+            try (ResultSet rs = statement.executeQuery(getRequest())) {
                 rs.next();
                 return rs.getString(1);
             }

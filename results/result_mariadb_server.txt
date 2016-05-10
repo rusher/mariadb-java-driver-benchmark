@@ -1203,7 +1203,7 @@ Result "mysql":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertWithPrepare.mariadb
+# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertPrepare.mariadb
 
 # Run progress: 5.41% complete, ETA 05:40:00
 # Fork: 1 of 10
@@ -1801,7 +1801,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertWithPrepare.mysql
+# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertPrepare.mysql
 
 # Run progress: 8.11% complete, ETA 05:32:29
 # Fork: 1 of 10
@@ -2399,7 +2399,7 @@ Result "mysql":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertWithoutPrepare.drizzle
+# Benchmark: org.perf.jdbc.BenchmarkBatch1000Insert.drizzle
 
 # Run progress: 10.81% complete, ETA 05:24:40
 # Fork: 1 of 10
@@ -2997,7 +2997,7 @@ Result "drizzle":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertWithoutPrepare.mariadb
+# Benchmark: org.perf.jdbc.BenchmarkBatch1000Insert.mariadb
 
 # Run progress: 13.51% complete, ETA 05:16:57
 # Fork: 1 of 10
@@ -3595,7 +3595,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertWithoutPrepare.mysql
+# Benchmark: org.perf.jdbc.BenchmarkBatch1000Insert.mysql
 
 # Run progress: 16.22% complete, ETA 05:07:32
 # Fork: 1 of 10
@@ -10771,7 +10771,7 @@ Result "mysql":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkPrepareStatementOneInsert.mariadb
+# Benchmark: org.perf.jdbc.BenchmarkOneInsertPrepareHit.mariadb
 
 # Run progress: 48.65% complete, ETA 03:05:52
 # Fork: 1 of 10
@@ -11369,7 +11369,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkPrepareStatementOneInsert.mysql
+# Benchmark: org.perf.jdbc.BenchmarkOneInsertPrepareHit.mysql
 
 # Run progress: 51.35% complete, ETA 02:55:59
 # Fork: 1 of 10
@@ -19741,7 +19741,7 @@ Result "mysql":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkSelect1RowPreparedNoCache.mariadb
+# Benchmark: org.perf.jdbc.BenchmarkSelect1RowPrepareMiss.mariadb
 
 # Run progress: 89.19% complete, ETA 00:39:03
 # Fork: 1 of 10
@@ -20339,7 +20339,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkSelect1RowPreparedNoCache.mysql
+# Benchmark: org.perf.jdbc.BenchmarkSelect1RowPrepareMiss.mysql
 
 # Run progress: 91.89% complete, ETA 00:29:17
 # Fork: 1 of 10
@@ -20937,7 +20937,7 @@ Result "mysql":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkSelect1RowPreparedWithCache.mariadb
+# Benchmark: org.perf.jdbc.BenchmarkSelect1RowPrepareHit.mariadb
 
 # Run progress: 94.59% complete, ETA 00:19:31
 # Fork: 1 of 10
@@ -21535,7 +21535,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkSelect1RowPreparedWithCache.mysql
+# Benchmark: org.perf.jdbc.BenchmarkSelect1RowPrepareHit.mysql
 
 # Run progress: 97.30% complete, ETA 00:09:45
 # Fork: 1 of 10

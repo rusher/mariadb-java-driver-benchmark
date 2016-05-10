@@ -10,7 +10,7 @@ import java.sql.Statement;
 import java.util.concurrent.TimeUnit;
 
 public class BenchmarkOneInsert extends BenchmarkInit {
-    private String request = "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')";
+    private String request = "INSERT INTO PerfTextQuery (charValue, val) values ('abcdefghij0123456', 1)";
 
     @Benchmark
     public boolean mysql(MyState state) throws SQLException {

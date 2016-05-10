@@ -5,9 +5,10 @@ import org.perf.jdbc.common.BenchmarkInit;
 
 import java.sql.*;
 
-public class BenchmarkSelect1RowPreparedWithCache extends BenchmarkInit {
-    private String request = "SELECT * FROM PerfReadQuery where charValue = ?";
-    private String var0 = "abc0";
+public class BenchmarkSelect1RowPrepareHit extends BenchmarkInit {
+    private String request = "SELECT * FROM PerfReadQuery where charValue = ? or id = ?";
+    private String var = "abc";
+    private int counter = 0;
 
     @Benchmark
     public String mysql(MyState state) throws Throwable {
@@ -21,7 +22,9 @@ public class BenchmarkSelect1RowPreparedWithCache extends BenchmarkInit {
 
     private String select1RowPrepare(Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
-            preparedStatement.setString(1, var0);
+            preparedStatement.setString(1, var + counter % 1000);
+            preparedStatement.setInt(2, counter % 1000);
+            counter++;
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 rs.next();
                 return rs.getString(1);

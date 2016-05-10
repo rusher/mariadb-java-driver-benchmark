@@ -20,13 +20,11 @@ public class BenchmarkInit {
 
         public Connection mysqlConnectionRewrite;
         public Connection mysqlConnection;
-        public Connection mysqlConnectionNoCache;
         public Connection mysqlConnectionText;
         public Connection mysqlFailoverConnection;
 
         public Connection mariadbConnectionRewrite;
         public Connection mariadbConnection;
-        public Connection mariadbConnectionNoCache;
         public Connection mariadbConnectionText;
         public Connection mariadbFailoverConnection;
 
@@ -58,13 +56,7 @@ public class BenchmarkInit {
             prepareProperties.setProperty("useServerPrepStmts", "true");
             prepareProperties.setProperty("cachePrepStmts", "true");
             prepareProperties.setProperty("useSSL", "false");
-
-            Properties prepareNoCacheProperties = new Properties();
-            prepareNoCacheProperties.setProperty("user", "perf");
-            prepareNoCacheProperties.setProperty("password", "!Password0");
-            prepareNoCacheProperties.setProperty("useServerPrepStmts", "true");
-            prepareNoCacheProperties.setProperty("cachePrepStmts", "false");
-            prepareNoCacheProperties.setProperty("useSSL", "false");
+            prepareProperties.setProperty("prepStmtCacheSize", "1000000"); //not normal, but permit to have the miss
 
             Properties textProperties = new Properties();
             textProperties.setProperty("user", "perf");
@@ -84,9 +76,6 @@ public class BenchmarkInit {
             mysqlConnection = createConnection(mysqlDriverClass, baseUrl, prepareProperties);
             mariadbConnection = createConnection(mariaDriverClass, baseUrl, prepareProperties);
 
-            mysqlConnectionNoCache = createConnection(mysqlDriverClass, baseUrl, prepareNoCacheProperties);
-            mariadbConnectionNoCache = createConnection(mariaDriverClass, baseUrl, prepareNoCacheProperties);
-
             mysqlConnectionText =  createConnection(mysqlDriverClass, baseUrl, textProperties);
             mariadbConnectionText =  createConnection(mariaDriverClass, baseUrl, textProperties);
             drizzleConnectionText = createConnection(drizzleDriverClass, baseDrizzle, textPropertiesDrizzle);
@@ -105,7 +94,7 @@ public class BenchmarkInit {
                 } catch (Exception e) {
                 }
 
-                statement.execute("CREATE TABLE IF NOT EXISTS PerfTextQuery(charValue VARCHAR(100) NOT NULL) ENGINE = BLACKHOLE");
+                statement.execute("CREATE TABLE IF NOT EXISTS PerfTextQuery(charValue VARCHAR(100) NOT NULL, val int) ENGINE = BLACKHOLE");
                 statement.execute("CREATE TABLE IF NOT EXISTS PerfTextQueryBlob(blobValue LONGBLOB NOT NULL) ENGINE = BLACKHOLE");
                 statement.execute("CREATE TABLE IF NOT EXISTS PerfReadQuery(id int NOT NULL, charValue VARCHAR(100) NOT NULL, PRIMARY KEY (`id`), INDEX `CHAR_INDEX` (`charValue`))");
                 statement.execute("CREATE TABLE IF NOT EXISTS PerfReadQueryBig(charValue VARCHAR(5000), charValue2 VARCHAR(5000) NOT NULL)");
@@ -177,13 +166,11 @@ public class BenchmarkInit {
         public void doTearDown() throws SQLException {
 
             mysqlConnection.close();
-            mysqlConnectionNoCache.close();
             mysqlConnectionRewrite.close();
             mysqlConnectionText.close();
             mysqlFailoverConnection.close();
 
             mariadbConnection.close();
-            mariadbConnectionNoCache.close();
             mariadbConnectionRewrite.close();
             mariadbConnectionText.close();
             mariadbFailoverConnection.close();

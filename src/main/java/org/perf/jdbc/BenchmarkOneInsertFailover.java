@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class BenchmarkOneInsertFailover extends BenchmarkInit {
-    private String request = "INSERT INTO PerfTextQuery (charValue) values ('53Hi5~c3h!t?m=&3')";
+    private String request = "INSERT INTO PerfTextQuery (charValue, val) values ('abcdefghij0123456', 1)";
 
     @Benchmark
     public boolean mysql(MyState state) throws SQLException {

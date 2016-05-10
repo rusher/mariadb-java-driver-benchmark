@@ -36,7 +36,7 @@ public class BenchmarkPrepareStatementOneInsert extends BenchmarkInit {
 
 The test will execute the prepareStatement "INSERT INTO PerfTextQuery (charValue) values (?)" using a connection issued from MySQL or MariaDB driver.
 
-Tests are launched multiple times using 10 forks , 15 warmup iterations of one second followed by 50 measurement iterations of one second.
+Tests are launched multiple times using 10 forks , 15 warmup iterations of one second followed by 50 measurement iterations of one second. (one test duration is approximately 45 minutes)
 
 
 List of tests and their signification :
@@ -167,6 +167,7 @@ BenchmarkOneInsert.mysql                            avgt  400     77.789 ±   1.
 BenchmarkOneInsert = execute query "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')"
 Using mariadb driver, the average time to insert one data is 60.899 microsecond, and 99.9% of queries executes time are comprised between 60.578 (60.899 - 0.321) and 61.22 microseconds (60.899 + 0.321).
 Using MySQL java driver, average execution time is 77.789 millisecond.   
-(remember that INSERT queries are executed on BLACKHOLE engine, those number just reflect the execution time of the driver + exchanges with database + query parsing without any write in system files).
+
+(remember that INSERT queries are executed on BLACKHOLE engine, those number just reflect the execution time of the driver + exchanges with database + query parsing  = without any write in system files).
 
 
