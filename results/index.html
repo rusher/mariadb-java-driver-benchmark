@@ -1,0 +1,719 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="./highlight/styles/github.css">
+    <script src="./highlight/highlight.pack.js"></script>
+    <script>
+
+        google.charts.load('current', {'packages': ['corechart', 'bar']});
+        function defaultMariaData() {
+
+            var defaultData = new google.visualization.DataTable();
+            defaultData.addColumn('string', 'Select one row');
+            defaultData.addColumn('number', 'MariaDB-1.4.4');
+            defaultData.addColumn({role: 'annotation', type: 'string'});
+            defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
+            defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
+            return defaultData;
+
+        };
+
+        var defaultMariaDBOptions = {
+            chartArea: {left: 280, top: 50, width: '50%', height: '55%'},
+            hAxis: {
+                title: 'microseconds',
+                minValue: 0
+            },
+            series: {
+                0: {color: '#3366CC'},
+            },
+            bars: 'horizontal',
+            intervals: {
+                barWidth: 0.7,
+                shortBarWidth: 5,
+                lineWidth: 2,
+                style: 'boxes',
+            },
+            interval: {
+                max: {
+                    fillOpacity: 0.7,
+                    color: '#444'
+                },
+                min: {
+                    fillOpacity: 0.7,
+                    color: '#444'
+                }
+            }
+        };
+
+        var defaultOptions = {
+            chartArea: {width: '50%'},
+            title: 'Time for select 1 row',
+            height: 300,
+            hAxis: {
+                title: 'microseconds',
+                minValue: 0
+            },
+            series: {
+                0: {color: '#DB4437'},
+                1: {color: '#4285F4'}
+            },
+            lineWidth: 0,
+            //series: [{'color': '#D3362D'}],
+            intervals: {
+                barWidth: 0.7,
+                shortBarWidth: 5,
+                lineWidth: 2,
+                style: 'boxes',
+            },
+            interval: {
+                max: {
+                    fillOpacity: 0.7,
+                    color: '#444'
+                },
+                min: {
+                    fillOpacity: 0.7,
+                    color: '#444'
+                }
+            }
+        };
+
+        function defaultData() {
+
+            var defaultData = new google.visualization.DataTable();
+            defaultData.addColumn('string', 'x');
+            defaultData.addColumn('number', 'MySQL-5.1.38');
+            defaultData.addColumn({role: 'annotation', type: 'string'});
+            defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
+            defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
+            defaultData.addColumn('number', 'MariaDB-1.4.4');
+            defaultData.addColumn({role: 'annotation', type: 'string'});
+            defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
+            defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
+            defaultData.addColumn('number', 'Drizzle-1.2');
+            defaultData.addColumn({role: 'annotation', type: 'string'});
+            defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
+            defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
+            return defaultData;
+        }
+        ;
+
+        function defaultDataWithoutDrizzle() {
+
+            var defaultData = new google.visualization.DataTable();
+            defaultData.addColumn('string', 'x');
+            defaultData.addColumn('number', 'MySQL-5.1.38');
+            defaultData.addColumn({role: 'annotation', type: 'string'});
+            defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
+            defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
+            defaultData.addColumn('number', 'MariaDB-1.4.4');
+            defaultData.addColumn({role: 'annotation', type: 'string'});
+            defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
+            defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
+            return defaultData;
+        }
+        ;
+
+        function defaultDataMaria15() {
+            var defaultData = new google.visualization.DataTable();
+            defaultData.addColumn('string', 'x');
+            defaultData.addColumn('number', 'MySQL-5.1.38');
+            defaultData.addColumn({role: 'annotation', type: 'string'});
+            defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
+            defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
+            defaultData.addColumn('number', 'MariaDB-1.5.0-SNAPSHOT');
+            defaultData.addColumn({role: 'annotation', type: 'string'});
+            defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
+            defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
+            return defaultData;
+        }
+        ;
+
+
+        function getBoxPlotValues(array, showpercent) {
+
+            var base = array[0][1];
+            for (var i = 0; i < array.length; i++) {
+                var length = array[i].length
+                var reconstructArray = [array[i][0]];
+                for (var j = 1; j < length; j = j + 2) {
+                    reconstructArray.push(array[i][j]);
+                    if (array[i][j] == 0 || !showpercent) {
+                        reconstructArray.push('');
+                    } else {
+                        reconstructArray.push((Math.round(1000 * (array[i][j]) / base) / 10) + '% ');
+                    }
+
+                    reconstructArray.push(array[i][j] - array[i][j + 1]);
+                    reconstructArray.push(array[i][j] + array[i][j + 1]);
+
+                }
+
+                array[i] = reconstructArray;
+            }
+            return array;
+        }
+        ;
+
+        function getOneBoxPlotValues(array, showpercent) {
+            var base = array[0][1];
+            for (var i = 0; i < array.length; i++) {
+                var length = array[i].length
+                var reconstructArray = [array[i][0]];
+                reconstructArray.push(array[i][1]);
+                reconstructArray.push(showpercent ? (Math.round(1000 * (array[i][1]) / base) / 10) + '% ' : '');
+                reconstructArray.push(array[i][1] - array[i][2]);
+                reconstructArray.push(array[i][1] + array[i][2]);
+                array[i] = reconstructArray;
+            }
+            return array;
+        }
+        ;
+    </script>
+
+    <style>
+        pre {
+            overflow: auto;
+            font-size: 85%;
+            line-height: 1.45;
+            border-radius: 3px;
+            background: #f7f7f7;
+            margin: 8px -7px;
+            padding: 8px 7px;
+        }
+        code {
+            padding: 0 0.2em;
+            padding-top: 0.2em;
+            padding-bottom: 0.2em;
+            margin: 0.2em 0;
+            font-size: 85%;
+            background-color: rgba(0,0,0,0.04);
+            border-radius: 3px;
+            font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+
+        }
+        .container {
+            width: 980px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-size: 16px;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+        h1, h2, h3, h4 {
+            padding-bottom: 0.3em;
+            line-height: 1.225;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>MariaDB java connector performance </h1>
+
+    <p>We always talk about performance, but the thing is always "Measure, don't guess!".</p>
+    <p>A lot of performance improvement has been done lately on the MariaDB java connector. So, what the current driver
+        perf ?</p>
+    <p>Here is benchmark result of 3 jdbc drivers permitting access to a MySQL/MariaDB database : <a
+            href="https://github.com/krummas/DrizzleJDBC" target="_blank">DrizzleJDBC</a>, <a
+            href="https://github.com/mysql/mysql-connector-j" target="_blank">MySQL connector/J</a> and <a
+            href="https://github.com/MariaDB/mariadb-connector-j" target="_blank">MariaDB java connector</a>.</p>
+
+    Drivers version are the lastest GA available version at the time of writing this blog :
+    <ul>
+        <li>Mariadb 1.4.4</li>
+        <li>Mysql5.1.38</li>
+        <li>Drizzle 1.2</li>
+    </ul>
+
+    <br/>
+    <h1>The benchmark</h1>
+    <p>
+        <a href="http://openjdk.java.net/projects/code-tools/jmh/">JMH</a> is an oracle microbenchmarking framework took developed by oracle, delivered as openJDK tools.
+        Its distinctive advantage over other frameworks is that it is developed by the same guys in Oracle who implement
+        the JIT, in particular I want to mention <a href="http://shipilev.net/">Aleksey Shipilev</a>.
+        JMH is likely to be in sync with the latest Oracle JRE changes, which makes its results very reliable, and
+        permit to avoid most of microbenchmark <pitfalls class=""></pitfalls>
+    </p>
+
+    <p> benchmark source : <a href="https://github.com/rusher/mariadb-java-driver-benchmark">https://github.com/rusher/mariadb-java-driver-benchmark</a>.
+    </p>
+
+    Tests are pretty straightforward.<br/>
+    Example :
+	<pre><code class="java">
+        public class BenchmarkSelect1RowPrepareText extends BenchmarkSelect1RowPrepareAbstract {
+
+            @Benchmark
+                public String mysql(MyState state) throws Throwable {
+                return select1RowPrepare(state.mysqlConnectionText);
+            }
+
+            @Benchmark
+                public String mariadb(MyState state) throws Throwable {
+                return select1RowPrepare(state.mariadbConnectionText);
+            }
+
+            @Benchmark
+                public String drizzle(MyState state) throws Throwable {
+                return select1RowPrepare(state.drizzleConnectionText);
+            }
+
+        }
+
+        public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
+            private String request = "SELECT * FROM PerfReadQuery where charValue = ?";
+            private String var = "abc0";
+
+            public String select1RowPrepare(Connection connection) throws SQLException {
+                try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
+                    preparedStatement.setString(1, var);
+                    try (ResultSet rs = preparedStatement.executeQuery()) {
+                        rs.next();
+                        return rs.getString(1);
+                    }
+                }
+            }
+        }
+    </code></pre>
+
+    Results sample :
+	
+<pre class="java">
+Benchmark                                           Mode  Cnt      Score     Error  Units
+BenchmarkSelect1RowPrepareText.drizzle              avgt  400    611.575 &#177;   7.240  us/op
+BenchmarkSelect1RowPrepareText.mariadb              avgt  400    589.039 &#177;   8.861  us/op
+BenchmarkSelect1RowPrepareText.mysql                avgt  400    597.861 &#177;   3.279  us/op
+</pre>
+
+    <p>
+        This mean that query <code>SELECT * FROM PerfReadQuery where charValue = ?</code> will take an average time of 589.039
+        microseconds using mariadb driver with a variation of &#177; 8.861 microseconds for 99.9% of queries.</p>
+    <p>
+        Same query with drizzle driver 611.575 microseconds, and 597.861 using mysql connector.
+    </p>
+    <p>INSERT's queries are send to a <a href="https://mariadb.com/kb/en/mariadb/blackhole/">BLACKHOLE</a> engine (data are not stored).
+        This permit to have more stable results (most of queries have 1% difference, without this execution time vary with 10% difference).
+    </p>
+
+    <br/>
+    <h1>Results</h1>
+    Execution client and server on a single server droplet on digitalocean.com using this parameters:
+    <ul>
+        <li>Java(TM) SE Runtime Environment (build 1.8.0_77-b03) 64bits</li>
+        <li>CentOS 7.2 64bits</li>
+        <li>1GB memory</li>
+        <li>1 CPU</li>
+        <li>database 10.1.13-MariaDB MariaDB Server and 5.7.12 MySQL Community Server (GPL) with default configuration
+            files
+        </li>
+    </ul>
+    raw data results :
+    <ol>
+        <li><a href="./result_mariadb_server.txt">with a MariaDB 10.1.13 database</a></li>
+        <li><a href="./result_mysqlserver.txt">with a MySQL Community Server 5.7.12 database</a></li>
+    </ol>
+    <br/>
+    <h2>To use or not to use server prepare</h2>
+    <p>When using MySQL/MariaDB prepared statement, there will be 3 exchanges with server :
+        <ol>
+            <li>PREPARE - Prepares statement for execution.</li>
+            <li>EXECUTE - Executes a prepared statement preparing by a PREPARE statement.</li>
+            <li>DEALLOCATE PREPARE - Releases a prepared statement.</li>
+        </ol>
+        See <a href="https://mariadb.com/kb/en/mariadb/prepare-statement/">Server prepare documentation</a> for more information.
+
+        PREPARE and DEALLOCATE PREPARE are 2 additional client-server round-trip. So query execution may be faster, especially when executes multiple times, but that is not always the case.
+    </p>
+<br/>
+    <h3>Single SELECT / INSERT query</h3>
+    <pre class="java">
+    BenchmarkSelect1RowPrepareHit.mariadb               avgt  400    562.189 &#177;   3.057  us/op
+    BenchmarkSelect1RowPrepareMiss.mariadb              avgt  400    660.784 &#177;   6.356  us/op
+    BenchmarkSelect1RowPrepareText.mariadb              avgt  400    589.039 &#177;   8.861  us/op
+    ...
+    BenchmarkOneInsertPrepareHit.mariadb                avgt  400     55.084 &#177;   0.681  us/op
+    BenchmarkOneInsertPrepareMiss.mariadb               avgt  400    125.902 &#177;   1.411  us/op
+    BenchmarkOneInsertPrepareText.mariadb               avgt  400     68.515 &#177;   0.647  us/op</pre>
+
+    <div id="box_selectOne"></div>
+    <script>
+        google.charts.setOnLoadCallback(function () {
+            var data = defaultMariaData();
+            var array = [
+                ['Without PREPARE', 589.039, 8.861],
+                ['With PREPARE no cache', 660.784, 6.356],
+                ['With PREPARE with cache', 562.189, 3.057]
+            ];
+            data.addRows(getOneBoxPlotValues(array, true));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_selectOne'));
+            var select1RowsOption = defaultMariaDBOptions;
+            select1RowsOption.title = "Time for a SELECT query of 1 rows";
+            select1RowsOption.height = 220;
+            chart.draw(data, select1RowsOption);
+        });
+    </script>
+
+    <div id="box_insertOneMaria"></div>
+
+    <script>
+        google.charts.setOnLoadCallback(function () {
+            var data = defaultMariaData();
+            var array = [
+                ['Without PREPARE', 68.515, 0.647],
+                ['With PREPARE no cache', 125.902, 1.411],
+                ['With PREPARE with cache', 55.084, 0.681]
+            ];
+            data.addRows(getOneBoxPlotValues(array, false));
+
+            var select1RowsOption = defaultMariaDBOptions;
+            select1RowsOption.title = "Execution time for one INSERT";
+            select1RowsOption.height = 220;
+            var chart = new google.visualization.BarChart(document.getElementById('box_insertOneMaria'));
+            chart.draw(data, select1RowsOption);
+        });
+    </script>
+
+    <p>When PREPARE for this exact query is already in cache (cache hit), query will be faster (4,6%) than without prepare.
+        Due to the additional request PREPARE and DEALLOCATE exchanges, cache miss is 12.2% slower.</p>
+
+    <p>Default MariaDB cache size is 250 prepareQuery. Enable/disable PREPARE (with option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#user-content-useServerPrepStmts">useServerPrepStmts</a>)
+        will depend of the proportion of the 250 queries compare to other queries.
+    </p>
+    <br/>
+
+    <h3>1000 INSERT query</h3>
+    <pre class="java">
+BenchmarkBatch1000InsertPrepare.mariadb             avgt  400     50.434 &#177;   0.308  ms/op
+BenchmarkBatch1000InsertText.mariadb                avgt  400     66.559 &#177;   0.795  ms/op
+</pre>
+    <div id="box_select1000Maria"></div>
+
+    <script>
+        google.charts.setOnLoadCallback(drawSelectOnePlot);
+        function drawSelectOnePlot() {
+            var data = defaultMariaData();
+            var array = [
+                ['Without PREPARE', 66.559, 0.795],
+                ['With PREPARE', 50.434, 0.308]
+            ];
+            data.addRows(getOneBoxPlotValues(array, false));
+
+            var select1RowsOption = defaultMariaDBOptions;
+            select1RowsOption.title = "Time for inserting 1000 rows";
+            select1RowsOption.hAxis.title= 'milliseconds';
+            select1RowsOption.height = 190;
+            var chart = new google.visualization.BarChart(document.getElementById('box_select1000Maria'));
+            chart.draw(data, select1RowsOption);
+        }
+
+    </script>
+    <p>
+        Using server PREPARE to insert 1000 rows take 16ms less than without.
+        This is where PREPARE has the more signification.
+    </p>
+
+    <br/><br/>
+    <h1>Comparaison with other drivers</h1>
+    <h2>SELECT query with one row result</h2>
+<pre class="java">
+BenchmarkSelect1RowPrepareHit.mariadb               avgt  400    562.189 &#177;   3.057  us/op
+BenchmarkSelect1RowPrepareHit.mysql                 avgt  400    575.179 &#177;   1.877  us/op
+BenchmarkSelect1RowPrepareMiss.mariadb              avgt  400    660.784 &#177;   6.356  us/op
+BenchmarkSelect1RowPrepareMiss.mysql                avgt  400    703.589 &#177;   8.806  us/op
+BenchmarkSelect1RowPrepareText.drizzle              avgt  400    611.575 &#177;   7.240  us/op
+BenchmarkSelect1RowPrepareText.mariadb              avgt  400    589.039 &#177;   8.861  us/op
+BenchmarkSelect1RowPrepareText.mysql                avgt  400    597.861 &#177;   3.279  us/op
+BenchmarkSelect1RowPrepareTextHA.mariadb            avgt  400    589.476 &#177;   3.102  us/op
+BenchmarkSelect1RowPrepareTextHA.mysql              avgt  400    647.161 &#177;   5.075  us/op
+</pre>
+    <div id="box_select"></div>
+
+    <script>
+
+        google.charts.setOnLoadCallback(drawSelectPlot);
+        function drawSelectPlot() {
+            var data = defaultData();
+            var array = [
+                ['Without PREPARE', 597.861, 3.279, 589.039, 8.861, 611.575, 7.240],
+                ['Without PREPARE HA', 647.161, 5.075, 589.476, 3.102, 0.0, 0.0],
+                ['With PREPARE no cache', 703.589, 8.806, 660.784, 6.356, 0.0, 0.0],
+                ['With PREPARE with cache', 575.179, 1.877, 562.189, 3.057, 0.0, 0.0]
+            ];
+            data.addRows(getBoxPlotValues(array, true));
+
+            var select1RowsOption = defaultOptions;
+            select1RowsOption.title = "Time for selecting 1 rows";
+            select1RowsOption.height = 700;
+            var chart = new google.visualization.BarChart(document.getElementById('box_select'));
+            chart.draw(data, select1RowsOption);
+        }
+
+    </script>
+<p>
+   HA is High Availability using Master-Slave configuration (connection string is "jdbc:mysql:<strong>replication:</strong>//localhost:3306,localhost:3306/testj").
+    (Drizzle has no PREPARE, neitherHA functionality)</p>
+
+    <h2>"Select 1000 rows"</h2>
+<pre class="java">
+BenchmarkSelect1000BigRows.drizzle                  avgt  400  46430.412 &#177; 401.072  us/op
+BenchmarkSelect1000BigRows.mariadb                  avgt  400  40421.603 &#177; 180.436  us/op
+BenchmarkSelect1000BigRows.mysql                    avgt  400  51809.219 &#177; 221.505  us/op
+BenchmarkSelect1000Rows.drizzle                     avgt  400   1371.126 &#177;   7.977  us/op
+BenchmarkSelect1000Rows.mariadb                     avgt  400   1119.807 &#177;   4.169  us/op
+BenchmarkSelect1000Rows.mysql                       avgt  400   1152.424 &#177;   6.811  us/op
+</pre>
+    <p>
+        the "normal" execution correspond to sxecute a query "SELECT * FROM PerfReadQuery", table contain 1000 rows,
+        each rows contain < 10 bytes.
+        the "big" execution correspond to sxecute a query "SELECT * FROM PerfReadQuery", table contain 1000 rows, each
+        rows contain < 10k bytes.
+    </p>
+
+    <div id="box_select1000"></div>
+    <script>
+
+        google.charts.setOnLoadCallback(drawSelectPlot);
+        function drawSelectPlot() {
+            var data = defaultData();
+            var array = [
+                ['Select 1000 rows', 1152.424, 6.811, 1119.807, 4.169, 1371.126, 7.977]
+            ];
+            data.addRows(getBoxPlotValues(array, true));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_select1000'));
+            var select1000RowsOption = defaultOptions;
+            select1000RowsOption.title = "Time to select 1000 rows (10 bytes of data for each rows)";
+            select1000RowsOption.height = 230;
+            chart.draw(data, select1000RowsOption);
+        }
+
+    </script>
+
+    <div id="box_select1000Bigs"></div>
+    <script>
+
+        google.charts.setOnLoadCallback(drawSelectPlot);
+        function drawSelectPlot() {
+            var data = defaultData();
+            var array = [
+                ['Select 1000 big rows', 51809.219, 221.505, 40421.603, 0.436, 46430.412, 401.072]
+            ];
+
+            data.addRows(getBoxPlotValues(array, true));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_select1000Bigs'));
+            var select1000BigRowsOption = defaultOptions;
+            select1000BigRowsOption.title = "Time to select 1000 big rows (10kb of data for each rows)";
+            select1000BigRowsOption.height = 230;
+            chart.draw(data, select1000BigRowsOption);
+        }
+
+    </script>
+    <br/>
+    <h2>Insert queries</h2>
+    <h3>"insert 1 rows"</h3>
+<pre class="java">
+BenchmarkOneInsertPrepareHit.mariadb                avgt  400     55.084 &#177;   0.681  us/op
+BenchmarkOneInsertPrepareHit.mysql                  avgt  400     61.821 &#177;   0.541  us/op
+BenchmarkOneInsertPrepareMiss.mariadb               avgt  400    125.902 &#177;   1.411  us/op
+BenchmarkOneInsertPrepareMiss.mysql                 avgt  400    159.094 &#177;   2.600  us/op
+BenchmarkOneInsertPrepareText.drizzle               avgt  400     85.936 &#177;   0.655  us/op
+BenchmarkOneInsertPrepareText.mariadb               avgt  400     68.515 &#177;   0.647  us/op
+BenchmarkOneInsertPrepareText.mysql                 avgt  400     91.485 &#177;   1.221  us/op
+BenchmarkOneInsertPrepareTextHA.mariadb             avgt  400     74.725 &#177;   1.667  us/op
+BenchmarkOneInsertPrepareTextHA.mysql               avgt  400    133.963 &#177;   1.521  us/op
+</pre>
+    <p>
+        time to execute a query like "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')";
+    </p>
+    <div id="box_insertOne"></div>
+    <script>
+
+        google.charts.setOnLoadCallback(drawSelectPlot);
+        function drawSelectPlot() {
+            var array = [
+                ['Without PREPARE', 91.485, 1.221, 68.515, 0.647, 85.936, 0.655],
+                ['Without PREPARE HA', 133.963, 1.521, 74.725, 1.667, 0.0, 0.0],
+                ['With PREPARE no cache', 159.094, 2.600, 125.902, 1.411, 0.0, 0.0],
+                ['With PREPARE with cache', 61.821, 0.541, 55.084, 0.681, 0.0, 0.0]
+            ];
+
+            var data = defaultData();
+            data.addRows(getBoxPlotValues(array, false));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_insertOne'));
+            var insertOneRowOption = defaultOptions;
+            insertOneRowOption.title = "Insert one row";
+            insertOneRowOption.height = 600;
+            chart.draw(data, insertOneRowOption);
+        }
+
+    </script>
+
+<pre class="java">
+BenchmarkBatch1000InsertPrepare.mariadb             avgt  400     50.434 &#177;   0.308  ms/op
+BenchmarkBatch1000InsertPrepare.mysql               avgt  400     59.998 &#177;   0.986  ms/op
+BenchmarkBatch1000InsertRewrite.mariadb             avgt  400      2.000 &#177;   0.008  ms/op
+BenchmarkBatch1000InsertRewrite.mysql               avgt  400      1.698 &#177;   0.019  ms/op
+BenchmarkBatch1000InsertText.drizzle                avgt  400     84.516 &#177;   1.085  ms/op
+BenchmarkBatch1000InsertText.mariadb                avgt  400     66.559 &#177;   0.795  ms/op
+BenchmarkBatch1000InsertText.mysql                  avgt  400     77.262 &#177;   1.822  ms/op
+</pre>
+    <div id="box_insert1000"></div>
+
+    <script>
+
+        google.charts.setOnLoadCallback(function () {
+            var array = [
+                ['Without PREPARE', 77.262, 1.822, 66.559, 0.795, 84.516, 1.085],
+                ['With PREPARE', 59.998, 0.986, 50.434, 0.308, 0, 0]
+            ];
+
+            var data = defaultData();
+            data.addRows(getBoxPlotValues(array, false));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_insert1000'));
+            var select1000RowsOption = defaultOptions;
+            select1000RowsOption.title = "Insert 1000 rows";
+            select1000RowsOption.height = 400;
+            select1000RowsOption.hAxis.title= 'milliseconds';
+            chart.draw(data, select1000RowsOption);
+        });
+
+    </script>
+
+    <div id="box_insert1000Rewrite"></div>
+
+    <script>
+
+        google.charts.setOnLoadCallback(function () {
+            var array = [
+                ['With rewrite', 1.698, 0.019, 2.000, 0.008]
+            ];
+
+            var data = defaultDataWithoutDrizzle();
+            data.addRows(getBoxPlotValues(array, false));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_insert1000Rewrite'));
+            var select1000RowsOption = defaultOptions;
+            select1000RowsOption.title = "Insert 1000 rows using rewrite ";
+            select1000RowsOption.height = 180;
+            select1000RowsOption.hAxis.title= 'milliseconds';
+            chart.draw(data, select1000RowsOption);
+        });
+
+    </script>
+
+    <p>
+        Ouch, this time mysql driver behave better than Mariadb driver 1.4.4.
+        After analysing the time spend in driver, every write of parameters to the byte array buffer was checking that
+        buffer size was big enought.
+        An improvement will be released in version 1.5.0.
+        Running the test for this specific test "BenchmarkBatch1000InsertRewrite" :
+        java -Xmx64m -Xms64m -Duser.country=US -Duser.language=en -jar target/benchmarks.jar
+        ".BenchmarkBatch1000InsertRewrite"> result.txt &
+        with the 1.5.0-SNAPSHOT version giver better results (<a href="./result_mariadb_server_rewrite_1.5.0-SNAPSHOT.txt">results</a>) :
+    </p>
+<pre class="java">
+Benchmark                                Mode  Cnt  Score   Error  Units
+BenchmarkBatch1000InsertRewrite.mariadb  avgt  400  1.652 &#177; 0.008  ms/op
+BenchmarkBatch1000InsertRewrite.mysql    avgt  400  1.693 &#177; 0.016  ms/op
+</pre>
+    <div id="box_insert1000Rewrite2"></div>
+    <script>
+
+        google.charts.setOnLoadCallback(function () {
+            var array = [
+                ['With rewrite', 1.693, 0.016, 1.652, 0.008]
+            ];
+
+            var data = defaultDataMaria15();
+            data.addRows(getBoxPlotValues(array, false));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_insert1000Rewrite2'));
+            var select1000RowsOption = defaultOptions;
+            select1000RowsOption.title = "Insert 1000 rows using rewrite with mariadb 1.5.0-SNAPSHOT version";
+            select1000RowsOption.height = 180;
+            select1000RowsOption.series[1].color= '#109618';
+            select1000RowsOption.hAxis.title= 'milliseconds';
+            chart.draw(data, select1000RowsOption);
+        });
+
+    </script>
+
+
+
+    <br/>
+    <h2>Store procedures</h2>
+    <h3>Function call</h3>
+
+    <pre class="java">
+    BenchmarkCallableStatementFunction.mariadb          avgt  400    105.753 &#177;   1.323  us/op
+    BenchmarkCallableStatementFunction.mysql            avgt  400   1737.296 &#177;  55.898  us/op</pre>
+
+    <div id="box_function"></div>
+    <script>
+        google.charts.setOnLoadCallback(function () {
+            var data = defaultDataWithoutDrizzle();
+            var array = [
+                ['Calling function', 1737.296,  55.898, 105.753,  1.323]
+            ];
+            data.addRows(getBoxPlotValues(array, true));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_function'));
+            var select1RowsOption = defaultOptions;
+            select1RowsOption.title = "Execution time for a function call";
+            select1RowsOption.hAxis.title= 'microseconds';
+            select1RowsOption.height = 220;
+            select1RowsOption.series[1].color= '#4285F4';
+            chart.draw(data, select1RowsOption);
+        });
+    </script>
+    <p>There is a big difference, because the implementation completely differ.</p>
+    <p>MariaDB driver parse query and when format correspond to a function call <br/>
+        {?= call &lt;procedure-name&gt;[(&lt;arg1&gt;,&lt;arg2&gt;, ...)]} <br/>
+        will transform this to a standard query : SELECT &lt;procedure-name&gt;[(&lt;arg1&gt;,&lt;arg2&gt;, ...)]<br/>
+    </p>
+    <br/>
+    <h3>Procedure call</h3>
+
+    <pre class="java">
+    BenchmarkCallableStatementWithOutParameter.mariadb  avgt  400     67.870 &#177;   0.730  us/op
+    BenchmarkCallableStatementWithOutParameter.mysql    avgt  400   1713.014 &#177;  56.929  us/op</pre>
+
+    <div id="box_procedure"></div>
+    <script>
+        google.charts.setOnLoadCallback(function () {
+            var data = defaultDataWithoutDrizzle();
+            var array = [
+                ['Calling function', 1713.014, 56.929 , 67.870,  0.730]
+            ];
+            data.addRows(getBoxPlotValues(array, true));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_procedure'));
+            var select1RowsOption = defaultOptions;
+            select1RowsOption.title = "Execution time for a procedure call";
+            select1RowsOption.hAxis.title= 'microseconds';
+            select1RowsOption.height = 220;
+            chart.draw(data, select1RowsOption);
+        });
+    </script>
+    <p>Like function, implementation completely differ.</p>
+    <p>Mysql will use many hidden query to obtain output result.<br/>
+    <p>MariadDB implementation is straightForward using a capability to have OUT parameter in server response without any additional queries.<br/>
+        (That's the main reason why MariaDB 1.4 driver now require MariaDB/MySQL version 5.5.3 minimum).<br/>
+    </p>
+    <br/>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+</div>
+</body>
+</html>
