@@ -9,9 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-public class BenchmarkOneInsertPrepareHit extends BenchmarkInit {
-    private String request = "INSERT INTO PerfTextQuery (charValue, val) values (?, ?)";
-    private int counter = 0;
+public class BenchmarkOneInsertPrepareHit extends BenchmarkOneInsertPrepareAbstract {
 
     @Benchmark
     public boolean mysql(MyState state) throws Throwable {
@@ -23,11 +21,4 @@ public class BenchmarkOneInsertPrepareHit extends BenchmarkInit {
         return executeOneInsertPrepare(state.mariadbConnection, state.insertData);
     }
 
-    private boolean executeOneInsertPrepare(Connection connection, String[] datas) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
-            preparedStatement.setString(1, datas[counter % 1000]);
-            preparedStatement.setInt(2, counter++);
-            return preparedStatement.execute();
-        }
-    }
 }

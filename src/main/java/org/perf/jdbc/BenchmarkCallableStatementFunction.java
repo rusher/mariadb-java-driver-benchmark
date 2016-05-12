@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
 
 public class BenchmarkCallableStatementFunction extends BenchmarkInit {
     private String request = "{? = CALL testFunctionCall(?,?,?)}";
+    private int var1 = 2;
+    private int var2 = 1;
+    private int var3 = 1;
 
     @Benchmark
     public boolean mysql(MyState state) throws Throwable {
@@ -23,9 +26,9 @@ public class BenchmarkCallableStatementFunction extends BenchmarkInit {
     private boolean callableStatementFunction(Connection connection) throws SQLException {
         try (CallableStatement callableStatement = connection.prepareCall(request)) {
             callableStatement.registerOutParameter(1, Types.INTEGER);
-            callableStatement.setFloat(2, 2);
-            callableStatement.setInt(3, 1);
-            callableStatement.setInt(4, 1);
+            callableStatement.setFloat(2, var1);
+            callableStatement.setInt(3, var2);
+            callableStatement.setInt(4, var3);
             return callableStatement.execute();
         }
     }

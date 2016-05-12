@@ -10,9 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-public class BenchmarkBatch1000Insert extends BenchmarkInit {
-    private String request = "INSERT INTO PerfTextQuery (charValue, val) values (?, ?)";
+public class BenchmarkBatch1000InsertText extends BenchmarkBatch1000InsertAbstract {
 
     @Benchmark
     public int[] mysql(MyState state) throws Throwable {
@@ -27,17 +25,6 @@ public class BenchmarkBatch1000Insert extends BenchmarkInit {
     @Benchmark
     public int[] drizzle(MyState state) throws Throwable {
         return executeBatch(state.drizzleConnectionText, state.insertData);
-    }
-
-    private int[] executeBatch(Connection connection, String[] data) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
-            for (int i = 0; i < 1000; i++) {
-                preparedStatement.setString(1, data[i]);
-                preparedStatement.setInt(2, i);
-                preparedStatement.addBatch();
-            }
-            return preparedStatement.executeBatch();
-        }
     }
 
 }

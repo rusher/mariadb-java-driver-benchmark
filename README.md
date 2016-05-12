@@ -34,7 +34,7 @@ public class BenchmarkPrepareStatementOneInsert extends BenchmarkInit {
 }
 ```
 
-The test will execute the prepareStatement "INSERT INTO PerfTextQuery (charValue) values (?)" using a connection issued from MySQL or MariaDB driver.
+The test will execute the prepareStatement "INSERT INTO PerfTextQuery (charValue) values (?)" using a connection issued from java driver MySQL 5.1.38, Drizzle 1.2 or MariaDB 1.4.4.
 
 Tests are launched multiple times using 10 forks , 15 warmup iterations of one second followed by 50 measurement iterations of one second. (one test duration is approximately 45 minutes)
 
@@ -43,31 +43,31 @@ List of tests and their signification :
 
 |Benchmark       |description |
 |-----------|:----------|
-| BenchmarkOneInsert* | execute query "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')"|
-| BenchmarkOneInsertFailover*|same as BenchmarkOneInsert but using failover configuration|
-| BenchmarkPrepareStatementOneInsert*|same as BenchmarkOneInsert but using "prepare" |
-| BenchmarkPrepareStatementOneInsertFailover*|same as BenchmarkOneInsert but using "prepare" and failover configuration |
-| BenchmarkSelect1Row|execute query "SELECT * FROM PerfReadQuery where id = 0";|
-| BenchmarkSelect1RowFailover|same than BenchmarkSelect1Row but using failover configuration|
-| BenchmarkSelect1RowPreparedNoCache|same than BenchmarkSelect1Row but using "prepare" without caching|
-| BenchmarkSelect1RowPreparedWithCache|same than BenchmarkSelect1Row but using "prepare"|
+| BenchmarkSelect1RowPrepareText | execute query "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')"|
+| BenchmarkSelect1RowPrepareTextHA|same as BenchmarkSelect1RowPrepareText but using High availability configuration|
+| BenchmarkSelect1RowPrepareHit| same as BenchmarkSelect1RowPrepareText but using server PREPARE with cache hit (eq : PREPARE already done)|
+| BenchmarkSelect1RowPrepareMiss| same as BenchmarkSelect1RowPrepareText but using server PREPARE with cache miss (eq : execute PREPARE + DEALLOCATE PREPARE)|
 | BenchmarkSelect1000Rows|execute query "SELECT * FROM PerfReadQuery" (table with 1000 rows, each rows contain < 10 bytes) )|
 | BenchmarkSelect1000BigRows|execute query "SELECT * FROM PerfReadQueryBig" (table with 1000 rows, each rows contain 10kb)|
+| BenchmarkOneInsertPrepareText*| execute query like "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')"|
+| BenchmarkOneInsertPrepareTextHA*|same as BenchmarkOneInsertPrepareText but using High availability configuration|
+| BenchmarkOneInsertPrepareHit*| same as BenchmarkOneInsertPrepareText but using server PREPARE with cache hit (eq : PREPARE already done)|
+| BenchmarkOneInsertPrepareMiss*| same as BenchmarkOneInsertPrepareText but using server PREPARE with cache miss (eq : execute PREPARE + DEALLOCATE PREPARE)|
 | BenchmarkBatch1000InsertWithPrepare*|executing 1000 inserts using prepareStatement with "prepare" on server. (option useServerPrepStmts=true)|
-| BenchmarkBatch1000InsertWithoutPrepare*|executing 1000 inserts. (option useServerPrepStmts=false)|
+| BenchmarkBatch1000InsertText*|executing 1000 inserts. (option useServerPrepStmts=false)|
 | BenchmarkBatch1000InsertRewrite*|executing 1000 inserts. (option rewriteBatchedStatements=true)|
 | BenchmarkCallableStatementFunction|execute CallableStatement with query "{? = CALL testFunctionCall(?,?,?)}". Function created by "CREATE FUNCTION IF NOT EXISTS testFunctionCall(a float, b bigint, c int) RETURNS INT NO SQL \nBEGIN \nRETURN a; \nEND"|
 | BenchmarkCallableStatementWithInParameter|execute CallableStatement with query "{call withResultSet(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS withResultSet(a int) begin select a; end"|
 | BenchmarkCallableStatementWithOutParameter|execute CallableStatement with query "{call inOutParam(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS inoutParam(INOUT p1 INT) begin set p1 = p1 + 1; end"|
 
-'* The goal is here to test the driver performance, not database, so INSERT's queries are send to a [BLACKHOLE](https://mariadb.com/kb/en/mariadb/blackhole/) engine (data are not stored). This permit to have more stable results.
+'* The goal is here to test the driver performance, not database, so INSERT's queries are send to a [BLACKHOLE](https://mariadb.com/kb/en/mariadb/blackhole/) engine (data are not stored). This permit to have more stable results (less than 1% difference, without, data vary with 10% difference).
 
 
 
 ## How run the tests
 * install a MySQL / MariaDB database with user root without password
 * create database "testj"
-    * create user perf : GRANT ALL ON testj.* TO 'perf'@'localhost' IDENTIFIED BY '!Password0';
+* create user perf : GRANT ALL ON testj.* TO 'perf'@'%' IDENTIFIED BY '!Password0';
 * install engine [BLACKHOLE](https://mariadb.com/kb/en/mariadb/blackhole/) using command "INSTALL SONAME 'ha_blackhole'" (This engine don't save data, permitting to execute INSERT queries with stable time result)
 * restart database to activate the BLACKHOLE engine
 * install a JRE
@@ -106,48 +106,46 @@ Extract of mariadb server results :
 
 ```
 
-# Run complete. Total time: 06:00:58
+# Run complete. Total time: 06:01:31
 
 Benchmark                                           Mode  Cnt      Score     Error  Units
-BenchmarkBatch1000InsertRewrite.mariadb             avgt  400      1.654 ±   0.008  ms/op
-BenchmarkBatch1000InsertRewrite.mysql               avgt  400      1.715 ±   0.031  ms/op
-BenchmarkBatch1000InsertWithPrepare.mariadb         avgt  400     50.514 ±   0.749  ms/op
-BenchmarkBatch1000InsertWithPrepare.mysql           avgt  400     61.369 ±   1.469  ms/op
-BenchmarkBatch1000InsertWithoutPrepare.drizzle      avgt  400     87.059 ±   1.405  ms/op
-BenchmarkBatch1000InsertWithoutPrepare.mariadb      avgt  400     64.271 ±   0.686  ms/op
-BenchmarkBatch1000InsertWithoutPrepare.mysql        avgt  400     71.667 ±   0.809  ms/op
-BenchmarkCallableStatementFunction.mariadb          avgt  400    110.489 ±   1.543  us/op
-BenchmarkCallableStatementFunction.mysql            avgt  400   1693.671 ±  53.801  us/op
-BenchmarkCallableStatementWithInParameter.mariadb   avgt  400     81.140 ±   0.915  us/op
-BenchmarkCallableStatementWithInParameter.mysql     avgt  400   1519.251 ±  46.081  us/op
-BenchmarkCallableStatementWithOutParameter.mariadb  avgt  400     72.206 ±   1.171  us/op
-BenchmarkCallableStatementWithOutParameter.mysql    avgt  400   1747.846 ±  62.787  us/op
-BenchmarkOneInsert.drizzle                          avgt  400     81.181 ±   0.514  us/op
-BenchmarkOneInsert.mariadb                          avgt  400     60.899 ±   0.321  us/op
-BenchmarkOneInsert.mysql                            avgt  400     77.789 ±   1.272  us/op
-BenchmarkOneInsertFailover.mariadb                  avgt  400     65.548 ±   0.613  us/op
-BenchmarkOneInsertFailover.mysql                    avgt  400    108.710 ±   1.093  us/op
-BenchmarkPrepareStatementOneInsert.mariadb          avgt  400     55.049 ±   0.786  us/op
-BenchmarkPrepareStatementOneInsert.mysql            avgt  400     61.460 ±   0.723  us/op
-BenchmarkPrepareStatementOneInsertFailover.mariadb  avgt  400     57.271 ±   0.317  us/op
-BenchmarkPrepareStatementOneInsertFailover.mysql    avgt  400     78.605 ±   0.600  us/op
-BenchmarkSelect1000BigRows.drizzle                  avgt  400  44563.716 ± 403.623  us/op
-BenchmarkSelect1000BigRows.mariadb                  avgt  400  38829.509 ± 157.803  us/op
-BenchmarkSelect1000BigRows.mysql                    avgt  400  50259.241 ± 208.746  us/op
-BenchmarkSelect1000Rows.drizzle                     avgt  400   1367.489 ±   6.145  us/op
-BenchmarkSelect1000Rows.mariadb                     avgt  400   1125.747 ±   7.666  us/op
-BenchmarkSelect1000Rows.mysql                       avgt  400   1145.878 ±   7.388  us/op
-BenchmarkSelect1Row.drizzle                         avgt  400    600.820 ±   2.625  us/op
-BenchmarkSelect1Row.mariadb                         avgt  400    572.919 ±   3.168  us/op
-BenchmarkSelect1Row.mysql                           avgt  400    591.628 ±   3.272  us/op
-BenchmarkSelect1RowFailover.mariadb                 avgt  400    575.876 ±   2.613  us/op
-BenchmarkSelect1RowFailover.mysql                   avgt  400    621.134 ±   3.407  us/op
-BenchmarkSelect1RowPreparedNoCache.mariadb          avgt  400    650.532 ±   3.633  us/op
-BenchmarkSelect1RowPreparedNoCache.mysql            avgt  400    691.336 ±   4.895  us/op
-BenchmarkSelect1RowPreparedWithCache.mariadb        avgt  400    561.409 ±   2.875  us/op
-BenchmarkSelect1RowPreparedWithCache.mysql          avgt  400    582.768 ±   5.532  us/op
-
-
+BenchmarkBatch1000InsertPrepare.mariadb             avgt  400     50.434 ±   0.308  ms/op
+BenchmarkBatch1000InsertPrepare.mysql               avgt  400     59.998 ±   0.986  ms/op
+BenchmarkBatch1000InsertRewrite.mariadb             avgt  400      2.000 ±   0.008  ms/op
+BenchmarkBatch1000InsertRewrite.mysql               avgt  400      1.698 ±   0.019  ms/op
+BenchmarkBatch1000InsertText.drizzle                avgt  400     84.516 ±   1.085  ms/op
+BenchmarkBatch1000InsertText.mariadb                avgt  400     66.559 ±   0.795  ms/op
+BenchmarkBatch1000InsertText.mysql                  avgt  400     77.262 ±   1.822  ms/op
+BenchmarkCallableStatementFunction.mariadb          avgt  400    105.753 ±   1.323  us/op
+BenchmarkCallableStatementFunction.mysql            avgt  400   1737.296 ±  55.898  us/op
+BenchmarkCallableStatementWithInParameter.mariadb   avgt  400     81.617 ±   0.699  us/op
+BenchmarkCallableStatementWithInParameter.mysql     avgt  400   1569.970 ±  57.070  us/op
+BenchmarkCallableStatementWithOutParameter.mariadb  avgt  400     67.870 ±   0.730  us/op
+BenchmarkCallableStatementWithOutParameter.mysql    avgt  400   1713.014 ±  56.929  us/op
+BenchmarkOneInsertPrepareHit.mariadb                avgt  400     55.084 ±   0.681  us/op
+BenchmarkOneInsertPrepareHit.mysql                  avgt  400     61.821 ±   0.541  us/op
+BenchmarkOneInsertPrepareMiss.mariadb               avgt  400    125.902 ±   1.411  us/op
+BenchmarkOneInsertPrepareMiss.mysql                 avgt  400    159.094 ±   2.600  us/op
+BenchmarkOneInsertPrepareText.drizzle               avgt  400     85.936 ±   0.655  us/op
+BenchmarkOneInsertPrepareText.mariadb               avgt  400     68.515 ±   0.647  us/op
+BenchmarkOneInsertPrepareText.mysql                 avgt  400     91.485 ±   1.221  us/op
+BenchmarkOneInsertPrepareTextHA.mariadb             avgt  400     74.725 ±   1.667  us/op
+BenchmarkOneInsertPrepareTextHA.mysql               avgt  400    133.963 ±   1.521  us/op
+BenchmarkSelect1000BigRows.drizzle                  avgt  400  46430.412 ± 401.072  us/op
+BenchmarkSelect1000BigRows.mariadb                  avgt  400  40421.603 ± 180.436  us/op
+BenchmarkSelect1000BigRows.mysql                    avgt  400  51809.219 ± 221.505  us/op
+BenchmarkSelect1000Rows.drizzle                     avgt  400   1371.126 ±   7.977  us/op
+BenchmarkSelect1000Rows.mariadb                     avgt  400   1119.807 ±   4.169  us/op
+BenchmarkSelect1000Rows.mysql                       avgt  400   1152.424 ±   6.811  us/op
+BenchmarkSelect1RowPrepareHit.mariadb               avgt  400    562.189 ±   3.057  us/op
+BenchmarkSelect1RowPrepareHit.mysql                 avgt  400    575.179 ±   1.877  us/op
+BenchmarkSelect1RowPrepareMiss.mariadb              avgt  400    660.784 ±   6.356  us/op
+BenchmarkSelect1RowPrepareMiss.mysql                avgt  400    703.589 ±   8.806  us/op
+BenchmarkSelect1RowPrepareText.drizzle              avgt  400    611.575 ±   7.240  us/op
+BenchmarkSelect1RowPrepareText.mariadb              avgt  400    589.039 ±   8.861  us/op
+BenchmarkSelect1RowPrepareText.mysql                avgt  400    597.861 ±   3.279  us/op
+BenchmarkSelect1RowPrepareTextHA.mariadb            avgt  400    580.476 ±   3.102  us/op
+BenchmarkSelect1RowPrepareTextHA.mysql              avgt  400    647.161 ±   5.075  us/op
 
 ```
 
@@ -156,18 +154,18 @@ BenchmarkSelect1RowPreparedWithCache.mysql          avgt  400    582.768 ±   5.
 ms/op means millisecond per operation, us/op microsecond per operation.
 
 ```
-BenchmarkOneInsert.drizzle                          avgt  400     81.181 ±   0.514  us/op
-BenchmarkOneInsert.mariadb                          avgt  400     60.899 ±   0.321  us/op
-BenchmarkOneInsert.mysql                            avgt  400     77.789 ±   1.272  us/op
+BenchmarkOneInsertPrepareText.drizzle               avgt  400     85.936 ±   0.655  us/op
+BenchmarkOneInsertPrepareText.mariadb               avgt  400     68.515 ±   0.647  us/op
+BenchmarkOneInsertPrepareText.mysql                 avgt  400     91.485 ±   1.221  us/op
 ```
 
 
 <div style="text-align:center"><img src ="results/insert_one_data.png" /></div>
 
 BenchmarkOneInsert = execute query "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')"
-Using mariadb driver, the average time to insert one data is 60.899 microsecond, and 99.9% of queries executes time are comprised between 60.578 (60.899 - 0.321) and 61.22 microseconds (60.899 + 0.321).
-Using MySQL java driver, average execution time is 77.789 millisecond.   
+Using mariadb driver, the average time to insert one data is 68.515 microsecond, and 99.9% of queries executes time are comprised between 67.868 (68.515 - 0.647) and 67.868 microseconds (68.515 + 0.647).
+Using MySQL java driver, average execution time is 91.485 millisecond, using Drizzle driver 85.936 milliseconds   
 
-(remember that INSERT queries are executed on BLACKHOLE engine, those number just reflect the execution time of the driver + exchanges with database + query parsing  = without any write in system files).
+(remember that INSERT queries are executed on BLACKHOLE engine : The BLACKHOLE storage engine accepts data but does not store it and always returns an empty result).
 
 

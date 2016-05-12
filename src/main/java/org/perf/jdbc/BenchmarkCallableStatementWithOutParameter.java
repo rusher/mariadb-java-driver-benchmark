@@ -8,6 +8,7 @@ import java.sql.*;
 
 public class BenchmarkCallableStatementWithOutParameter extends BenchmarkInit {
     private String request = "{call inOutParam(?)}";
+    private int var1 = 1;
 
     @Benchmark
     public String mysql(MyState state) throws Throwable {
@@ -21,7 +22,7 @@ public class BenchmarkCallableStatementWithOutParameter extends BenchmarkInit {
 
     private String callableStatementWithOutParameter(Connection connection) throws SQLException {
         try (CallableStatement storedProc = connection.prepareCall(request)) {
-            storedProc.setInt(1, 1);
+            storedProc.setInt(1, var1);
             storedProc.registerOutParameter(1, Types.INTEGER);
             storedProc.execute();
             return storedProc.getString(1);

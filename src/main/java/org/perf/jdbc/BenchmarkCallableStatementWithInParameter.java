@@ -8,6 +8,7 @@ import java.sql.*;
 
 public class BenchmarkCallableStatementWithInParameter extends BenchmarkInit {
     private String request = "{call withResultSet(?)}";
+    private int var1 = 1;
 
     @Benchmark
     public boolean mysql(MyState state) throws Throwable {
@@ -21,7 +22,7 @@ public class BenchmarkCallableStatementWithInParameter extends BenchmarkInit {
 
     private boolean callableStatementWithInParameter(Connection connection) throws SQLException {
         try (CallableStatement stmt = connection.prepareCall(request)) {
-            stmt.setInt(1, 1);
+            stmt.setInt(1, var1);
             return stmt.execute();
         }
     }
