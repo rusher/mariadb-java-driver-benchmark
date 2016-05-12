@@ -10,25 +10,38 @@ developed by the same guys in Oracle who implement the JIT, and is delivered as 
 ## The tests
 Class BenchmarkInit initialize connections using MySQL and MariaDB drivers before tests.
 
-test example org.perf.jdbc.BenchmarkPrepareStatementOneInsert : 
+test example org.perf.jdbc.BenchmarkSelect1RowPrepareText : 
 ```java
-public class BenchmarkPrepareStatementOneInsert extends BenchmarkInit {
-    private String request = "INSERT INTO PerfTextQuery (charValue) values (?)";
+public class BenchmarkSelect1RowPrepareText extends BenchmarkSelect1RowPrepareAbstract {
 
     @Benchmark
-    public boolean mysql(MyState state) throws Throwable {
-        return executeOneInsertPrepare(state.mysqlConnection, state.insertData);
+    public String mysql(MyState state) throws Throwable {
+        return select1RowPrepare(state.mysqlConnectionText);
     }
 
     @Benchmark
-    public boolean mariadb(MyState state) throws Throwable {
-        return executeOneInsertPrepare(state.mariadbConnection, state.insertData);
+    public String mariadb(MyState state) throws Throwable {
+        return select1RowPrepare(state.mariadbConnectionText);
     }
 
-    private boolean executeOneInsertPrepare(Connection connection, String[] datas) throws SQLException {
+    @Benchmark
+    public String drizzle(MyState state) throws Throwable {
+        return select1RowPrepare(state.drizzleConnectionText);
+    }
+
+}
+
+public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
+    private String request = "SELECT * FROM PerfReadQuery where charValue = ?";
+    private String var = "abc0";
+
+    public String select1RowPrepare(Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
-            preparedStatement.setString(1, datas[0]);
-            return preparedStatement.execute();
+            preparedStatement.setString(1, var);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                rs.next();
+                return rs.getString(1);
+            }
         }
     }
 }
@@ -41,24 +54,24 @@ Tests are launched multiple times using 10 forks , 15 warmup iterations of one s
 
 List of tests and their signification :
 
-|Benchmark       |description |
+|Benchmark       | Description |
 |-----------|:----------|
 | BenchmarkSelect1RowPrepareText | execute query "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')"|
-| BenchmarkSelect1RowPrepareTextHA|same as BenchmarkSelect1RowPrepareText but using High availability configuration|
-| BenchmarkSelect1RowPrepareHit| same as BenchmarkSelect1RowPrepareText but using server PREPARE with cache hit (eq : PREPARE already done)|
-| BenchmarkSelect1RowPrepareMiss| same as BenchmarkSelect1RowPrepareText but using server PREPARE with cache miss (eq : execute PREPARE + DEALLOCATE PREPARE)|
-| BenchmarkSelect1000Rows|execute query "SELECT * FROM PerfReadQuery" (table with 1000 rows, each rows contain < 10 bytes) )|
-| BenchmarkSelect1000BigRows|execute query "SELECT * FROM PerfReadQueryBig" (table with 1000 rows, each rows contain 10kb)|
-| BenchmarkOneInsertPrepareText*| execute query like "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')"|
-| BenchmarkOneInsertPrepareTextHA*|same as BenchmarkOneInsertPrepareText but using High availability configuration|
-| BenchmarkOneInsertPrepareHit*| same as BenchmarkOneInsertPrepareText but using server PREPARE with cache hit (eq : PREPARE already done)|
-| BenchmarkOneInsertPrepareMiss*| same as BenchmarkOneInsertPrepareText but using server PREPARE with cache miss (eq : execute PREPARE + DEALLOCATE PREPARE)|
-| BenchmarkBatch1000InsertWithPrepare*|executing 1000 inserts using prepareStatement with "prepare" on server. (option useServerPrepStmts=true)|
-| BenchmarkBatch1000InsertText*|executing 1000 inserts. (option useServerPrepStmts=false)|
-| BenchmarkBatch1000InsertRewrite*|executing 1000 inserts. (option rewriteBatchedStatements=true)|
-| BenchmarkCallableStatementFunction|execute CallableStatement with query "{? = CALL testFunctionCall(?,?,?)}". Function created by "CREATE FUNCTION IF NOT EXISTS testFunctionCall(a float, b bigint, c int) RETURNS INT NO SQL \nBEGIN \nRETURN a; \nEND"|
-| BenchmarkCallableStatementWithInParameter|execute CallableStatement with query "{call withResultSet(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS withResultSet(a int) begin select a; end"|
-| BenchmarkCallableStatementWithOutParameter|execute CallableStatement with query "{call inOutParam(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS inoutParam(INOUT p1 INT) begin set p1 = p1 + 1; end"|
+| BenchmarkSelect1RowPrepareTextHA |same as BenchmarkSelect1RowPrepareText but using High availability configuration|
+| BenchmarkSelect1RowPrepareHit | same as BenchmarkSelect1RowPrepareText but using server PREPARE with cache hit (eq : PREPARE already done)|
+| BenchmarkSelect1RowPrepareMiss | same as BenchmarkSelect1RowPrepareText but using server PREPARE with cache miss (eq : execute PREPARE + DEALLOCATE PREPARE)|
+| BenchmarkSelect1000Rows |execute query "SELECT * FROM PerfReadQuery" (table with 1000 rows, each rows contain < 10 bytes) )|
+| BenchmarkSelect1000BigRows |execute query "SELECT * FROM PerfReadQueryBig" (table with 1000 rows, each rows contain 10kb)|
+| BenchmarkOneInsertPrepareText* | execute query like "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')"|
+| BenchmarkOneInsertPrepareTextHA* |same as BenchmarkOneInsertPrepareText but using High availability configuration|
+| BenchmarkOneInsertPrepareHit* | same as BenchmarkOneInsertPrepareText but using server PREPARE with cache hit (eq : PREPARE already done)|
+| BenchmarkOneInsertPrepareMiss* | same as BenchmarkOneInsertPrepareText but using server PREPARE with cache miss (eq : execute PREPARE + DEALLOCATE PREPARE)|
+| BenchmarkBatch1000InsertWithPrepare* |executing 1000 inserts using prepareStatement with "prepare" on server. (option useServerPrepStmts=true)|
+| BenchmarkBatch1000InsertText* |executing 1000 inserts. (option useServerPrepStmts=false)|
+| BenchmarkBatch1000InsertRewrite* |executing 1000 inserts. (option rewriteBatchedStatements=true)|
+| BenchmarkCallableStatementFunction |execute CallableStatement with query "{? = CALL testFunctionCall(?,?,?)}". Function created by "CREATE FUNCTION IF NOT EXISTS testFunctionCall(a float, b bigint, c int) RETURNS INT NO SQL \nBEGIN \nRETURN a; \nEND"|
+| BenchmarkCallableStatementWithInParameter |execute CallableStatement with query "{call withResultSet(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS withResultSet(a int) begin select a; end"|
+| BenchmarkCallableStatementWithOutParameter |execute CallableStatement with query "{call inOutParam(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS inoutParam(INOUT p1 INT) begin set p1 = p1 + 1; end"|
 
 '* The goal is here to test the driver performance, not database, so INSERT's queries are send to a [BLACKHOLE](https://mariadb.com/kb/en/mariadb/blackhole/) engine (data are not stored). This permit to have more stable results (less than 1% difference, without, data vary with 10% difference).
 
