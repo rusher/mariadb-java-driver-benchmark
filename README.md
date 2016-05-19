@@ -47,7 +47,7 @@ public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
 }
 ```
 
-The test will execute the prepareStatement "INSERT INTO PerfTextQuery (charValue) values (?)" using a connection issued from java driver MySQL 5.1.38, Drizzle 1.2 or MariaDB 1.4.4.
+The test will execute the prepareStatement "INSERT INTO PerfTextQuery (charValue) values (?)" using a connection issued from java driver MySQL 5.1.39, Drizzle 1.2 or MariaDB 1.4.5.
 
 Tests are launched multiple times using 10 forks , 15 warmup iterations of one second followed by 50 measurement iterations of one second. (one test duration is approximately 45 minutes)
 
@@ -56,19 +56,19 @@ List of tests and their signification :
 
 |Benchmark       | Description |
 |-----------|:----------|
-| BenchmarkSelect1RowPrepareText | execute query "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')"|
+| BenchmarkSelect1RowPrepareText | execute query "SELECT ?"|
 | BenchmarkSelect1RowPrepareTextHA |same as BenchmarkSelect1RowPrepareText but using High availability configuration|
 | BenchmarkSelect1RowPrepareHit | same as BenchmarkSelect1RowPrepareText but using server PREPARE with cache hit (eq : PREPARE already done)|
 | BenchmarkSelect1RowPrepareMiss | same as BenchmarkSelect1RowPrepareText but using server PREPARE with cache miss (eq : execute PREPARE + DEALLOCATE PREPARE)|
-| BenchmarkSelect1000Rows |execute query "SELECT * FROM PerfReadQuery" (table with 1000 rows, each rows contain < 10 bytes) )|
-| BenchmarkSelect1000BigRows |execute query "SELECT * FROM PerfReadQueryBig" (table with 1000 rows, each rows contain 10kb)|
-| BenchmarkOneInsertPrepareText* | execute query like "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')"|
+| BenchmarkSelect1000Rows |execute query "select * from seq_1_to_1000" : a resultset of 1000 rows, returning integer from 1 to 1000|
+| BenchmarkSelect1000BigRows |execute query "select repeat('a', 10000) from seq_1_to_1000" a resultset of 1000 rows, each rows contain 10kb data)|
+| BenchmarkOneInsertPrepareText* | execute query "INSERT INTO blackholeTable (charValue) values (?)"|
 | BenchmarkOneInsertPrepareTextHA* |same as BenchmarkOneInsertPrepareText but using High availability configuration|
 | BenchmarkOneInsertPrepareHit* | same as BenchmarkOneInsertPrepareText but using server PREPARE with cache hit (eq : PREPARE already done)|
 | BenchmarkOneInsertPrepareMiss* | same as BenchmarkOneInsertPrepareText but using server PREPARE with cache miss (eq : execute PREPARE + DEALLOCATE PREPARE)|
-| BenchmarkBatch1000InsertWithPrepare* |executing 1000 inserts using prepareStatement with "prepare" on server. (option useServerPrepStmts=true)|
-| BenchmarkBatch1000InsertText* |executing 1000 inserts. (option useServerPrepStmts=false)|
-| BenchmarkBatch1000InsertRewrite* |executing 1000 inserts. (option rewriteBatchedStatements=true)|
+| BenchmarkBatch1000InsertText* |executing 1000 inserts with random 20bytes data "INSERT INTO blackholeTable (charValue) values (?)" (option useServerPrepStmts=false)|
+| BenchmarkBatch1000InsertWithPrepare* |same as BenchmarkBatch1000InsertText, using server "prepare" already in cache. (option useServerPrepStmts=true)|
+| BenchmarkBatch1000InsertRewrite* |same as BenchmarkBatch1000InsertText, using option rewriteBatchedStatements=true|
 | BenchmarkCallableStatementFunction |execute CallableStatement with query "{? = CALL testFunctionCall(?,?,?)}". Function created by "CREATE FUNCTION IF NOT EXISTS testFunctionCall(a float, b bigint, c int) RETURNS INT NO SQL \nBEGIN \nRETURN a; \nEND"|
 | BenchmarkCallableStatementWithInParameter |execute CallableStatement with query "{call withResultSet(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS withResultSet(a int) begin select a; end"|
 | BenchmarkCallableStatementWithOutParameter |execute CallableStatement with query "{call inOutParam(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS inoutParam(INOUT p1 INT) begin set p1 = p1 + 1; end"|

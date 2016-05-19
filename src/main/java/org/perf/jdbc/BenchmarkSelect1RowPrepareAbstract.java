@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
-    private String request = "SELECT * FROM PerfReadQuery where charValue = ?";
+    private String request = "SELECT ?";
     private String var = "abc0";
 
     public String select1RowPrepare(Connection connection) throws SQLException {

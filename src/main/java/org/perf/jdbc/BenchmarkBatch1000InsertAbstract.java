@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class BenchmarkBatch1000InsertAbstract extends BenchmarkInit {
-    private String request = "INSERT INTO PerfTextQuery (charValue) values (?)";
+    private String request = "INSERT INTO blackholeTable (charValue) values (?)";
 
     public int[] executeBatch(Connection connection, String[] data) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {

@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public abstract class BenchmarkOneInsertPrepareAbstract extends BenchmarkInit {
-    private String request = "INSERT INTO PerfTextQuery (charValue) values (?)";
+    private String request = "INSERT INTO blackholeTable (charValue) values (?)";
 
     public boolean executeOneInsertPrepare(Connection connection, String[] datas) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {

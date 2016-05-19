@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
 @Warmup(iterations = 15, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 40, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 50, timeUnit = TimeUnit.MILLISECONDS)
 @Fork(10)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
@@ -58,6 +58,7 @@ public class BenchmarkInit {
             prepareProperties.setProperty("useServerPrepStmts", "true");
             prepareProperties.setProperty("cachePrepStmts", "true");
             prepareProperties.setProperty("useSSL", "false");
+            prepareProperties.setProperty("useMultiStatement", "false");
 
             Properties prepareNoCacheProperties = new Properties();
             prepareNoCacheProperties.setProperty("user", "perf");
@@ -65,6 +66,7 @@ public class BenchmarkInit {
             prepareNoCacheProperties.setProperty("useServerPrepStmts", "true");
             prepareNoCacheProperties.setProperty("cachePrepStmts", "false");
             prepareNoCacheProperties.setProperty("useSSL", "false");
+            prepareNoCacheProperties.setProperty("useMultiStatement", "false");
 
             Properties textProperties = new Properties();
             textProperties.setProperty("user", "perf");
@@ -97,7 +99,7 @@ public class BenchmarkInit {
             mysqlFailoverConnection = createConnection(mysqlDriverClass, urlFailover);
             mariadbFailoverConnection = createConnection(mariaDriverClass, urlFailover);
 
-            try (Statement statement = mysqlConnection.createStatement()) {
+            try (Statement statement = mariadbConnection.createStatement()) {
                 //use black hole engine. so test are not stored and to avoid server disk access permitting more stable result
                 //if "java.sql.SQLSyntaxErrorException: Unknown storage engine 'BLACKHOLE'". restart database
                 try {
@@ -105,10 +107,7 @@ public class BenchmarkInit {
                 } catch (Exception e) {
                 }
 
-                statement.execute("CREATE TABLE IF NOT EXISTS PerfTextQuery(charValue VARCHAR(100) NOT NULL) ENGINE = BLACKHOLE");
-                statement.execute("CREATE TABLE IF NOT EXISTS PerfTextQueryBlob(blobValue LONGBLOB NOT NULL) ENGINE = BLACKHOLE");
-                statement.execute("CREATE TABLE IF NOT EXISTS PerfReadQuery(id int NOT NULL, charValue VARCHAR(100) NOT NULL, PRIMARY KEY (`id`), INDEX `CHAR_INDEX` (`charValue`))");
-                statement.execute("CREATE TABLE IF NOT EXISTS PerfReadQueryBig(charValue VARCHAR(5000), charValue2 VARCHAR(5000) NOT NULL)");
+                statement.execute("CREATE TABLE IF NOT EXISTS blackholeTable(charValue VARCHAR(100) NOT NULL) ENGINE = BLACKHOLE");
                 statement.execute("DROP PROCEDURE IF EXISTS withResultSet");
                 statement.execute("DROP PROCEDURE IF EXISTS inoutParam");
                 statement.execute("DROP FUNCTION IF EXISTS testFunctionCall");
@@ -118,34 +117,6 @@ public class BenchmarkInit {
                         + "BEGIN \n"
                         + "RETURN a; \n"
                         + "END");
-                statement.execute("TRUNCATE PerfTextQuery");
-                statement.execute("TRUNCATE PerfTextQueryBlob");
-                statement.execute("TRUNCATE PerfReadQuery");
-                statement.execute("TRUNCATE PerfReadQueryBig");
-            }
-
-            //Insert DATA to permit test read perf
-            try (PreparedStatement preparedStatement = mysqlConnectionRewrite.prepareStatement("INSERT INTO PerfReadQuery (id, charValue) values (?, ?)")) {
-                for (int i = 0; i < 1000; i++) {
-                    preparedStatement.setInt(1, i);
-                    preparedStatement.setString(2, "abc" + i);
-                    preparedStatement.addBatch();
-                }
-                preparedStatement.executeBatch();
-            }
-
-            byte[] arr = new byte[5000];
-            for (int i = 0; i < 5000; i++) {
-                arr[i] = (byte)(i % 128);
-            }
-            String data = new String(arr);
-            try (PreparedStatement preparedStatement2 = mysqlConnectionRewrite.prepareStatement("INSERT INTO PerfReadQueryBig (charValue, charValue2) values (?, ?)")) {
-                for (int i = 0; i < 1000; i++) {
-                    preparedStatement2.setString(1, data);
-                    preparedStatement2.setString(2, data);
-                    preparedStatement2.addBatch();
-                }
-                preparedStatement2.executeBatch();
             }
 
             //populate data

@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class BenchmarkSelect1000Rows extends BenchmarkInit {
-    private String request = "SELECT * FROM PerfReadQuery";
+    private String request = "select * from seq_1_to_1000";
 
     @Benchmark
     public ResultSet mysql(MyState state) throws Throwable {
@@ -31,7 +31,6 @@ public class BenchmarkSelect1000Rows extends BenchmarkInit {
             try (ResultSet rs = statement.executeQuery(request)) {
                 while (rs.next()) {
                     rs.getString(1);
-                    rs.getString(2);
                 }
                 return rs;
             }
