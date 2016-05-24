@@ -24,4 +24,8 @@ public class BenchmarkOneInsertPrepareMiss extends BenchmarkOneInsertPrepareAbst
         return executeOneInsertPrepare(state.mariadbConnectionNoCache, state.insertData);
     }
 
+    @Benchmark
+    public boolean mariadbMulti(MyState state) throws Throwable {
+        return executeOneInsertPrepare(state.mariadbConnectionNoCacheMulti, state.insertData);
+    }
 }

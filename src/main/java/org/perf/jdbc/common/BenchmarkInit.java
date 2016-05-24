@@ -26,6 +26,7 @@ public class BenchmarkInit {
 
         public Connection mariadbConnectionRewrite;
         public Connection mariadbConnection;
+        public Connection mariadbConnectionNoCacheMulti;
         public Connection mariadbConnectionNoCache;
         public Connection mariadbConnectionText;
         public Connection mariadbFailoverConnection;
@@ -34,6 +35,8 @@ public class BenchmarkInit {
 
         public String[] insertData = new String[1000];
         private static final Random rand = new Random();
+
+        public PreparedStatement preparedStatement = null;
 
         private Connection createConnection(String className, String url, Properties props) throws Exception {
             return ((Driver) Class.forName(className).newInstance()).connect(url, props);
@@ -68,6 +71,14 @@ public class BenchmarkInit {
             prepareNoCacheProperties.setProperty("useSSL", "false");
             prepareNoCacheProperties.setProperty("useMultiStatement", "false");
 
+            Properties prepareNoCachePropertiesMulti = new Properties();
+            prepareNoCachePropertiesMulti.setProperty("user", "perf");
+            prepareNoCachePropertiesMulti.setProperty("password", "!Password0");
+            prepareNoCachePropertiesMulti.setProperty("useServerPrepStmts", "true");
+            prepareNoCachePropertiesMulti.setProperty("cachePrepStmts", "false");
+            prepareNoCachePropertiesMulti.setProperty("useSSL", "false");
+            prepareNoCachePropertiesMulti.setProperty("useMultiStatement", "true");
+
             Properties textProperties = new Properties();
             textProperties.setProperty("user", "perf");
             textProperties.setProperty("password", "!Password0");
@@ -85,6 +96,7 @@ public class BenchmarkInit {
             //create different kind of connection
             mysqlConnection = createConnection(mysqlDriverClass, baseUrl, prepareProperties);
             mariadbConnection = createConnection(mariaDriverClass, baseUrl, prepareProperties);
+            mariadbConnectionNoCacheMulti = createConnection(mariaDriverClass, baseUrl, prepareNoCachePropertiesMulti);
 
             mysqlConnectionNoCache = createConnection(mysqlDriverClass, baseUrl, prepareNoCacheProperties);
             mariadbConnectionNoCache = createConnection(mariaDriverClass, baseUrl, prepareNoCacheProperties);
@@ -144,6 +156,13 @@ public class BenchmarkInit {
             return new String(buf);
         }
 
+        @TearDown(Level.Invocation)
+        public void doTearDownpreparedStatement() throws SQLException {
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+        }
+
         @TearDown(Level.Trial)
         public void doTearDown() throws SQLException {
 
@@ -158,7 +177,7 @@ public class BenchmarkInit {
             mariadbConnectionRewrite.close();
             mariadbConnectionText.close();
             mariadbFailoverConnection.close();
-
+            mariadbConnectionNoCacheMulti.close();
             drizzleConnectionText.close();
         }
     }
