@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
 @Warmup(iterations = 15, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 50, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 30, timeUnit = TimeUnit.MILLISECONDS)
 @Fork(10)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
@@ -19,12 +19,14 @@ public class BenchmarkInit {
     public static class MyState {
         private String server = System.getProperty("host", "localhost");
         public Connection mysqlConnectionRewrite;
+        public Connection mysqlConnectionAllowMultiQueries;
         public Connection mysqlConnection;
         public Connection mysqlConnectionNoCache;
         public Connection mysqlConnectionText;
         public Connection mysqlFailoverConnection;
 
         public Connection mariadbConnectionRewrite;
+        public Connection mariadbConnectionAllowMultiQueries;
         public Connection mariadbConnection;
         public Connection mariadbConnectionNoCache;
         public Connection mariadbConnectionText;
@@ -58,7 +60,7 @@ public class BenchmarkInit {
             prepareProperties.setProperty("useServerPrepStmts", "true");
             prepareProperties.setProperty("cachePrepStmts", "true");
             prepareProperties.setProperty("useSSL", "false");
-            prepareProperties.setProperty("useMultiStatement", "false");
+            //prepareProperties.setProperty("useMultiStatement", "false");
 
             Properties prepareNoCacheProperties = new Properties();
             prepareNoCacheProperties.setProperty("user", "perf");
@@ -79,8 +81,10 @@ public class BenchmarkInit {
             textPropertiesDrizzle.setProperty("password", "!Password0");
 
             String urlRewrite = "jdbc:mysql://" + server + ":3306/testj?user=perf&rewriteBatchedStatements=true&useSSL=false&password=!Password0";
+            String urlAllowMultiQueries = "jdbc:mysql://" + server + ":3306/testj?user=perf&allowMultiQueries=true&useSSL=false&password=!Password0";
             String urlFailover = "jdbc:mysql:replication://" + server + ":3306," + server + ":3306/testj?"
                     + "user=perf&useServerPrepStmts=false&validConnectionTimeout=0&useSSL=false&password=!Password0";
+
 
             //create different kind of connection
             mysqlConnection = createConnection(mysqlDriverClass, baseUrl, prepareProperties);
@@ -95,6 +99,9 @@ public class BenchmarkInit {
 
             mysqlConnectionRewrite = createConnection(mysqlDriverClass, urlRewrite);
             mariadbConnectionRewrite = createConnection(mariaDriverClass, urlRewrite);
+
+            mysqlConnectionAllowMultiQueries = createConnection(mysqlDriverClass, urlAllowMultiQueries);
+            mariadbConnectionAllowMultiQueries = createConnection(mariaDriverClass, urlAllowMultiQueries);
 
             mysqlFailoverConnection = createConnection(mysqlDriverClass, urlFailover);
             mariadbFailoverConnection = createConnection(mariaDriverClass, urlFailover);
@@ -148,12 +155,14 @@ public class BenchmarkInit {
         public void doTearDown() throws SQLException {
 
             mysqlConnection.close();
+            mysqlConnectionAllowMultiQueries.close();
             mysqlConnectionNoCache.close();
             mysqlConnectionRewrite.close();
             mysqlConnectionText.close();
             mysqlFailoverConnection.close();
 
             mariadbConnection.close();
+            mariadbConnectionAllowMultiQueries.close();
             mariadbConnectionNoCache.close();
             mariadbConnectionRewrite.close();
             mariadbConnectionText.close();
