@@ -21,6 +21,7 @@ public class BenchmarkInit {
     @State(Scope.Thread)
     public static class MyState {
         private String server = System.getProperty("host", "localhost");
+        private String port = System.getProperty("port", "3306");
         public Connection mysqlConnectionRewrite;
         public Connection mysqlConnectionAllowMultiQueries;
         public Connection mysqlConnection;
@@ -68,8 +69,8 @@ public class BenchmarkInit {
             String mariaDriverClass = "org.mariadb.jdbc.Driver";
             String drizzleDriverClass = "org.drizzle.jdbc.DrizzleDriver";
 
-            String baseUrl = "jdbc:mysql://" + server + ":3306/testj";
-            String baseDrizzle = "jdbc:drizzle://" + server + ":3306/testj";
+            String baseUrl = "jdbc:mysql://" + server + ":" + port + "/testj";
+            String baseDrizzle = "jdbc:drizzle://" + server + ":" + port + "/testj";
 
             Properties prepareProperties = new Properties();
             prepareProperties.setProperty("user", "perf");
@@ -77,7 +78,7 @@ public class BenchmarkInit {
             prepareProperties.setProperty("useServerPrepStmts", "true");
             prepareProperties.setProperty("cachePrepStmts", "true");
             prepareProperties.setProperty("useSSL", "false");
-            //prepareProperties.setProperty("useMultiStatement", "false");
+            prepareProperties.setProperty("useComMulti", "false");
 
 
             Properties prepareComMultiNoCacheProperties = new Properties();
@@ -86,7 +87,7 @@ public class BenchmarkInit {
             prepareComMultiNoCacheProperties.setProperty("useServerPrepStmts", "true");
             prepareComMultiNoCacheProperties.setProperty("cachePrepStmts", "false");
             prepareComMultiNoCacheProperties.setProperty("useSSL", "false");
-            prepareComMultiNoCacheProperties.setProperty("useMultiStatement", "true");
+            prepareComMultiNoCacheProperties.setProperty("useComMulti", "true");
 
             Properties prepareNoCacheProperties = new Properties();
             prepareNoCacheProperties.setProperty("user", "perf");
@@ -94,7 +95,7 @@ public class BenchmarkInit {
             prepareNoCacheProperties.setProperty("useServerPrepStmts", "true");
             prepareNoCacheProperties.setProperty("cachePrepStmts", "false");
             prepareNoCacheProperties.setProperty("useSSL", "false");
-            prepareNoCacheProperties.setProperty("useMultiStatement", "false");
+            prepareNoCacheProperties.setProperty("useComMulti", "false");
 
             Properties textProperties = new Properties();
             textProperties.setProperty("user", "perf");
@@ -106,9 +107,9 @@ public class BenchmarkInit {
             textPropertiesDrizzle.setProperty("user", "perf");
             textPropertiesDrizzle.setProperty("password", "!Password0");
 
-            String urlRewrite = "jdbc:mysql://" + server + ":3306/testj?user=perf&rewriteBatchedStatements=true&useSSL=false&password=!Password0";
-            String urlAllowMultiQueries = "jdbc:mysql://" + server + ":3306/testj?user=perf&allowMultiQueries=true&useSSL=false&password=!Password0";
-            String urlFailover = "jdbc:mysql:replication://" + server + ":3306," + server + ":3306/testj?"
+            String urlRewrite = "jdbc:mysql://" + server + ":" + port + "/testj?user=perf&rewriteBatchedStatements=true&useSSL=false&password=!Password0";
+            String urlAllowMultiQueries = "jdbc:mysql://" + server + ":" + port + "/testj?user=perf&allowMultiQueries=true&useSSL=false&password=!Password0";
+            String urlFailover = "jdbc:mysql:replication://" + server + ":" + port + "," + server + ":" + port + "/testj?"
                     + "user=perf&useServerPrepStmts=false&validConnectionTimeout=0&useSSL=false&password=!Password0";
 
 
