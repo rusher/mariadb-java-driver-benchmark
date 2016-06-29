@@ -4,7 +4,9 @@ package org.perf.jdbc;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.perf.jdbc.common.BenchmarkInit;
 
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class BenchmarkCallableStatementWithInParameter extends BenchmarkInit {
     private String request = "{call withResultSet(?)}";

@@ -2,15 +2,18 @@ package org.perf.jdbc.common;
 
 import org.openjdk.jmh.annotations.*;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
-@Warmup(iterations = 15, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 30, timeUnit = TimeUnit.MILLISECONDS)
-@Fork(10)
+@Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 15, timeUnit = TimeUnit.MILLISECONDS)
+@Fork(value = 10)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class BenchmarkInit {
@@ -27,6 +30,7 @@ public class BenchmarkInit {
 
         public Connection mariadbConnectionRewrite;
         public Connection mariadbConnectionAllowMultiQueries;
+        public Connection mariadbConnectionComMultiNoCache;
         public Connection mariadbConnection;
         public Connection mariadbConnectionNoCache;
         public Connection mariadbConnectionText;
@@ -34,8 +38,16 @@ public class BenchmarkInit {
 
         public Connection drizzleConnectionText;
 
-        public String[] insertData = new String[1000];
+        //populate data
         private static final Random rand = new Random();
+        public static String[] insertData = new String[100000];
+        static {
+            for (int i = 0; i < 100000; i++) {
+                insertData[i] = randomAscii(100);
+            }
+        }
+
+        public int counter = 0;
 
         private Connection createConnection(String className, String url, Properties props) throws Exception {
             return ((Driver) Class.forName(className).newInstance()).connect(url, props);
@@ -43,6 +55,11 @@ public class BenchmarkInit {
 
         private Connection createConnection(String className, String url) throws Exception {
             return ((Driver) Class.forName(className).newInstance()).connect(url, new Properties());
+        }
+
+        @Setup(Level.Invocation)
+        public void doSetupInvocation() throws Exception {
+            counter = 0;
         }
 
         @Setup(Level.Trial)
@@ -61,6 +78,15 @@ public class BenchmarkInit {
             prepareProperties.setProperty("cachePrepStmts", "true");
             prepareProperties.setProperty("useSSL", "false");
             //prepareProperties.setProperty("useMultiStatement", "false");
+
+
+            Properties prepareComMultiNoCacheProperties = new Properties();
+            prepareComMultiNoCacheProperties.setProperty("user", "perf");
+            prepareComMultiNoCacheProperties.setProperty("password", "!Password0");
+            prepareComMultiNoCacheProperties.setProperty("useServerPrepStmts", "true");
+            prepareComMultiNoCacheProperties.setProperty("cachePrepStmts", "false");
+            prepareComMultiNoCacheProperties.setProperty("useSSL", "false");
+            prepareComMultiNoCacheProperties.setProperty("useMultiStatement", "true");
 
             Properties prepareNoCacheProperties = new Properties();
             prepareNoCacheProperties.setProperty("user", "perf");
@@ -89,6 +115,8 @@ public class BenchmarkInit {
             //create different kind of connection
             mysqlConnection = createConnection(mysqlDriverClass, baseUrl, prepareProperties);
             mariadbConnection = createConnection(mariaDriverClass, baseUrl, prepareProperties);
+
+            mariadbConnectionComMultiNoCache = createConnection(mariaDriverClass, baseUrl, prepareComMultiNoCacheProperties);
 
             mysqlConnectionNoCache = createConnection(mysqlDriverClass, baseUrl, prepareNoCacheProperties);
             mariadbConnectionNoCache = createConnection(mariaDriverClass, baseUrl, prepareNoCacheProperties);
@@ -126,10 +154,7 @@ public class BenchmarkInit {
                         + "END");
             }
 
-            //populate data
-            for (int i = 0; i < 1000; i++) {
-                insertData[i] = randomAscii(20);
-            }
+
 
         }
 
@@ -167,6 +192,7 @@ public class BenchmarkInit {
             mariadbConnectionRewrite.close();
             mariadbConnectionText.close();
             mariadbFailoverConnection.close();
+            mariadbConnectionComMultiNoCache.close();
 
             drizzleConnectionText.close();
         }

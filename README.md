@@ -47,9 +47,9 @@ public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
 }
 ```
 
-The test will execute the prepareStatement "INSERT INTO PerfTextQuery (charValue) values (?)" using a connection issued from java driver MySQL 5.1.39, Drizzle 1.2 or MariaDB 1.4.5.
+The test will execute the prepareStatement "INSERT INTO PerfTextQuery (charValue) values (?)" using a connection issued from java driver MySQL 5.1.39, Drizzle 1.2 or MariaDB 1.5.0.
 
-Tests are launched multiple times using 10 forks , 15 warmup iterations of one second followed by 50 measurement iterations of one second. (one test duration is approximately 45 minutes)
+Tests are launched multiple times using 10 forks , 10 warmup iterations of one second followed by 15 measurement iterations of one second. (one test duration is approximately 45 minutes)
 
 
 List of tests and their signification :
@@ -78,28 +78,29 @@ List of tests and their signification :
 
 
 ## How run the tests
-* install a MySQL / MariaDB database with user root without password
-* create database "testj"
-* create user perf : GRANT ALL ON testj.* TO 'perf'@'%' IDENTIFIED BY '!Password0';
+* install a MySQL / MariaDB database
+* create database "testj" : create database testj;
+* create user perf : GRANT ALL ON *.* TO 'perf'@'localhost' IDENTIFIED BY '!Password0';
+* grant super access : GRANT SUPER ON *.* TO 'perf'@'%';
 * install engine [BLACKHOLE](https://mariadb.com/kb/en/mariadb/blackhole/) using command "INSTALL SONAME 'ha_blackhole'" (This engine don't save data, permitting to execute INSERT queries with stable time result)
 * restart database to activate the BLACKHOLE engine
 * install a JRE
-* install maven
-* install git
+(* install maven)
+(* install git)
 
 ```script
 git clone https://github.com/rusher/mariadb-mysql-driver.git
 mvn clean install
-java -Xmx64m -Xms64m -Duser.country=US -Duser.language=en -jar target/benchmarks.jar > result.txt &
+java -Xmx128m -Xms128m -Duser.country=US -Duser.language=en -jar target/benchmarks.jar > result.txt &
 ```
 -Duser.country=US -Duser.language=en permit to avoid confusion with comma used as decimal separator / thousand separator according to countries
 -Xmx64m -Xms64m is to permit to have quick garbage and have more stable results. 
 
 JMH has a lot of options, 2 interesting ones : add a regex to launch only one specific benchmark, and add a garbage profiler to see consume time in GC.
 ```script
-java -Xmx64m -Xms64m -Duser.country=US -Duser.language=en -jar target/benchmarks.jar  ".BenchmarkSelect1000Rows*" -prof gc > result.txt &
+java -Xmx128m -Xms128m -Duser.country=US -Duser.language=en -jar target/benchmarks.jar  ".BenchmarkSelect1000Rows*" -prof gc > result.txt &
 ```
-
+·gc.alloc.rate.norm
 
 
 ## Read results 

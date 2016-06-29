@@ -6,12 +6,12 @@ public class BenchmarkSelect1RowPrepareMultiQueries extends BenchmarkSelect1RowP
 
     @Benchmark
     public String mysql(MyState state) throws Throwable {
-        return select1RowPrepare(state.mysqlConnectionAllowMultiQueries);
+        return select1RowPrepare(state.mysqlConnectionAllowMultiQueries, state);
     }
 
     @Benchmark
     public String mariadb(MyState state) throws Throwable {
-        return select1RowPrepare(state.mariadbConnectionAllowMultiQueries);
+        return select1RowPrepare(state.mariadbConnectionAllowMultiQueries, state);
     }
 
 }

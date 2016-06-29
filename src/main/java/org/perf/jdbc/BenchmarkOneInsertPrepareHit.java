@@ -1,13 +1,7 @@
 
 package org.perf.jdbc;
 
-import org.openjdk.jmh.annotations.*;
-import org.perf.jdbc.common.BenchmarkInit;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
+import org.openjdk.jmh.annotations.Benchmark;
 
 public class BenchmarkOneInsertPrepareHit extends BenchmarkOneInsertPrepareAbstract {
 

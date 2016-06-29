@@ -1,7 +1,6 @@
 
 package org.perf.jdbc;
 
-import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.perf.jdbc.common.BenchmarkInit;
 

@@ -6,12 +6,12 @@ public class BenchmarkSelect1RowPrepareRewrite extends BenchmarkSelect1RowPrepar
 
     @Benchmark
     public String mysql(MyState state) throws Throwable {
-        return select1RowPrepare(state.mysqlConnectionRewrite);
+        return select1RowPrepare(state.mysqlConnectionRewrite, state);
     }
 
     @Benchmark
     public String mariadb(MyState state) throws Throwable {
-        return select1RowPrepare(state.mariadbConnectionRewrite);
+        return select1RowPrepare(state.mariadbConnectionRewrite, state);
     }
 
 }
