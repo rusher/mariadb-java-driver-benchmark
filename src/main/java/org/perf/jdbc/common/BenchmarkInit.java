@@ -2,6 +2,11 @@ package org.perf.jdbc.common;
 
 import org.openjdk.jmh.annotations.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
@@ -11,7 +16,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
-@Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
+@Warmup(iterations = 5, timeUnit = TimeUnit.MILLISECONDS)
 @Measurement(iterations = 15, timeUnit = TimeUnit.MILLISECONDS)
 @Fork(value = 10)
 @BenchmarkMode(Mode.AverageTime)
@@ -79,6 +84,7 @@ public class BenchmarkInit {
             prepareProperties.setProperty("cachePrepStmts", "true");
             prepareProperties.setProperty("useSSL", "false");
             prepareProperties.setProperty("useComMulti", "false");
+            prepareProperties.setProperty("characterEncoding", "UTF-8");
 
 
             Properties prepareComMultiNoCacheProperties = new Properties();
@@ -88,6 +94,7 @@ public class BenchmarkInit {
             prepareComMultiNoCacheProperties.setProperty("cachePrepStmts", "false");
             prepareComMultiNoCacheProperties.setProperty("useSSL", "false");
             prepareComMultiNoCacheProperties.setProperty("useComMulti", "true");
+            prepareComMultiNoCacheProperties.setProperty("characterEncoding", "UTF-8");
 
             Properties prepareNoCacheProperties = new Properties();
             prepareNoCacheProperties.setProperty("user", "perf");
@@ -96,21 +103,26 @@ public class BenchmarkInit {
             prepareNoCacheProperties.setProperty("cachePrepStmts", "false");
             prepareNoCacheProperties.setProperty("useSSL", "false");
             prepareNoCacheProperties.setProperty("useComMulti", "false");
+            prepareNoCacheProperties.setProperty("characterEncoding", "UTF-8");
 
             Properties textProperties = new Properties();
             textProperties.setProperty("user", "perf");
             textProperties.setProperty("password", "!Password0");
             textProperties.setProperty("useServerPrepStmts", "false");
             textProperties.setProperty("useSSL", "false");
+            textProperties.setProperty("useComMulti", "false");
+            textProperties.setProperty("characterEncoding", "UTF-8");
 
             Properties textPropertiesDrizzle = new Properties();
             textPropertiesDrizzle.setProperty("user", "perf");
             textPropertiesDrizzle.setProperty("password", "!Password0");
 
-            String urlRewrite = "jdbc:mysql://" + server + ":" + port + "/testj?user=perf&rewriteBatchedStatements=true&useSSL=false&password=!Password0";
-            String urlAllowMultiQueries = "jdbc:mysql://" + server + ":" + port + "/testj?user=perf&allowMultiQueries=true&useSSL=false&password=!Password0";
+            String urlRewrite = "jdbc:mysql://" + server + ":" + port + "/testj?user=perf&rewriteBatchedStatements=true&useSSL=false"
+                    + "&password=!Password0&useComMulti=false&characterEncoding=UTF-8";
+            String urlAllowMultiQueries = "jdbc:mysql://" + server + ":" + port + "/testj?user=perf&allowMultiQueries=true"
+                    + "&useSSL=false&password=!Password0&useComMulti=false&characterEncoding=UTF-8";
             String urlFailover = "jdbc:mysql:replication://" + server + ":" + port + "," + server + ":" + port + "/testj?"
-                    + "user=perf&useServerPrepStmts=false&validConnectionTimeout=0&useSSL=false&password=!Password0";
+                    + "user=perf&useServerPrepStmts=false&validConnectionTimeout=0&useSSL=false&password=!Password0&useComMulti=false&characterEncoding=UTF-8";
 
 
             //create different kind of connection
@@ -144,6 +156,7 @@ public class BenchmarkInit {
                 }
 
                 statement.execute("CREATE TABLE IF NOT EXISTS blackholeTable(charValue VARCHAR(100) NOT NULL) ENGINE = BLACKHOLE");
+                statement.execute("CREATE TABLE IF NOT EXISTS blackholeTable3(tt varchar(10), charValue text NOT NULL)  ENGINE = BLACKHOLE");
                 statement.execute("DROP PROCEDURE IF EXISTS withResultSet");
                 statement.execute("DROP PROCEDURE IF EXISTS inoutParam");
                 statement.execute("DROP FUNCTION IF EXISTS testFunctionCall");

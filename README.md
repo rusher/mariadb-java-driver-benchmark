@@ -79,6 +79,12 @@ List of tests and their signification :
 
 ## How run the tests
 * install a MySQL / MariaDB database
+trying 
+```
+max_allowed_packet      = 40M //exchange packet can be up to 40mb
+character-set-server    = utf8
+collation-server        = utf8_unicode_ci
+```
 * create database "testj" : create database testj;
 * create user perf : GRANT ALL ON *.* TO 'perf'@'localhost' IDENTIFIED BY '!Password0';
 * grant super access : GRANT SUPER ON *.* TO 'perf'@'%';

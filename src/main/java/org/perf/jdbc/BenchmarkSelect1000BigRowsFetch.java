@@ -12,26 +12,27 @@ import java.sql.Statement;
 import java.util.concurrent.TimeUnit;
 
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-public class BenchmarkSelect1000BigRows extends BenchmarkInit {
-    private String request = "select repeat('a', 10000) from seq_1_to_1000";
+public class BenchmarkSelect1000BigRowsFetch extends BenchmarkInit {
+    private String request = "select repeat('a', 100000) from seq_1_to_1000";
 
     @Benchmark
     public ResultSet mysql(MyState state) throws Throwable {
-        return select1000Row(state.mysqlConnectionText);
+        return select1000Row(state.mysqlConnectionText, 10);
     }
 
     @Benchmark
     public ResultSet mariadb(MyState state) throws Throwable {
-        return select1000Row(state.mariadbConnectionText);
+        return select1000Row(state.mariadbConnectionText, 10);
     }
 
     @Benchmark
     public ResultSet drizzle(MyState state) throws Throwable {
-        return select1000Row(state.drizzleConnectionText);
+        return select1000Row(state.drizzleConnectionText, 10);
     }
 
-    private ResultSet select1000Row(Connection connection) throws SQLException {
-        try (Statement statement = connection.createStatement()) {
+    private ResultSet select1000Row(Connection connection, int fetchSize) throws SQLException {
+        try (Statement statement = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY)) {
+            statement.setFetchSize(fetchSize);
             try (ResultSet rs = statement.executeQuery(request)) {
                 while (rs.next()) {
                     rs.getString(1);
