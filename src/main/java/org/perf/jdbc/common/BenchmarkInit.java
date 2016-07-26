@@ -2,11 +2,6 @@ package org.perf.jdbc.common;
 
 import org.openjdk.jmh.annotations.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
@@ -16,7 +11,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
-@Warmup(iterations = 5, timeUnit = TimeUnit.MILLISECONDS)
+@Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
 @Measurement(iterations = 15, timeUnit = TimeUnit.MILLISECONDS)
 @Fork(value = 10)
 @BenchmarkMode(Mode.AverageTime)
@@ -36,7 +31,8 @@ public class BenchmarkInit {
 
         public Connection mariadbConnectionRewrite;
         public Connection mariadbConnectionAllowMultiQueries;
-        public Connection mariadbConnectionComMultiNoCache;
+        public Connection mariadbConnectionBulkNoCache;
+        public Connection mariadbConnectionBulkCache;
         public Connection mariadbConnection;
         public Connection mariadbConnectionNoCache;
         public Connection mariadbConnectionText;
@@ -46,9 +42,9 @@ public class BenchmarkInit {
 
         //populate data
         private static final Random rand = new Random();
-        public static String[] insertData = new String[100000];
+        public static String[] insertData = new String[1000];
         static {
-            for (int i = 0; i < 100000; i++) {
+            for (int i = 0; i < 1000; i++) {
                 insertData[i] = randomAscii(100);
             }
         }
@@ -83,18 +79,30 @@ public class BenchmarkInit {
             prepareProperties.setProperty("useServerPrepStmts", "true");
             prepareProperties.setProperty("cachePrepStmts", "true");
             prepareProperties.setProperty("useSSL", "false");
-            prepareProperties.setProperty("useComMulti", "false");
+            prepareProperties.setProperty("useBatchMultiSend", "false");
             prepareProperties.setProperty("characterEncoding", "UTF-8");
 
 
-            Properties prepareComMultiNoCacheProperties = new Properties();
-            prepareComMultiNoCacheProperties.setProperty("user", "perf");
-            prepareComMultiNoCacheProperties.setProperty("password", "!Password0");
-            prepareComMultiNoCacheProperties.setProperty("useServerPrepStmts", "true");
-            prepareComMultiNoCacheProperties.setProperty("cachePrepStmts", "false");
-            prepareComMultiNoCacheProperties.setProperty("useSSL", "false");
-            prepareComMultiNoCacheProperties.setProperty("useComMulti", "true");
-            prepareComMultiNoCacheProperties.setProperty("characterEncoding", "UTF-8");
+            Properties prepareBulkCacheProperties = new Properties();
+            prepareBulkCacheProperties.setProperty("user", "perf");
+            prepareBulkCacheProperties.setProperty("password", "!Password0");
+            prepareBulkCacheProperties.setProperty("useServerPrepStmts", "true");
+            prepareBulkCacheProperties.setProperty("cachePrepStmts", "true");
+            prepareBulkCacheProperties.setProperty("useSSL", "false");
+            prepareBulkCacheProperties.setProperty("useBatchMultiSend", "true");
+            prepareBulkCacheProperties.setProperty("characterEncoding", "UTF-8");
+
+
+            Properties prepareBulkNoCacheProperties = new Properties();
+            prepareBulkNoCacheProperties.setProperty("user", "perf");
+            prepareBulkNoCacheProperties.setProperty("password", "!Password0");
+            prepareBulkNoCacheProperties.setProperty("useServerPrepStmts", "true");
+            prepareBulkNoCacheProperties.setProperty("cachePrepStmts", "false");
+            prepareBulkNoCacheProperties.setProperty("useSSL", "false");
+            prepareBulkNoCacheProperties.setProperty("useBatchMultiSend", "true");
+            prepareBulkNoCacheProperties.setProperty("characterEncoding", "UTF-8");
+
+
 
             Properties prepareNoCacheProperties = new Properties();
             prepareNoCacheProperties.setProperty("user", "perf");
@@ -102,7 +110,7 @@ public class BenchmarkInit {
             prepareNoCacheProperties.setProperty("useServerPrepStmts", "true");
             prepareNoCacheProperties.setProperty("cachePrepStmts", "false");
             prepareNoCacheProperties.setProperty("useSSL", "false");
-            prepareNoCacheProperties.setProperty("useComMulti", "false");
+            prepareNoCacheProperties.setProperty("useBatchMultiSend", "false");
             prepareNoCacheProperties.setProperty("characterEncoding", "UTF-8");
 
             Properties textProperties = new Properties();
@@ -110,7 +118,7 @@ public class BenchmarkInit {
             textProperties.setProperty("password", "!Password0");
             textProperties.setProperty("useServerPrepStmts", "false");
             textProperties.setProperty("useSSL", "false");
-            textProperties.setProperty("useComMulti", "false");
+            textProperties.setProperty("useBatchMultiSend", "false");
             textProperties.setProperty("characterEncoding", "UTF-8");
 
             Properties textPropertiesDrizzle = new Properties();
@@ -118,18 +126,19 @@ public class BenchmarkInit {
             textPropertiesDrizzle.setProperty("password", "!Password0");
 
             String urlRewrite = "jdbc:mysql://" + server + ":" + port + "/testj?user=perf&rewriteBatchedStatements=true&useSSL=false"
-                    + "&password=!Password0&useComMulti=false&characterEncoding=UTF-8";
+                    + "&password=!Password0&useBatchMultiSend=false&characterEncoding=UTF-8";
             String urlAllowMultiQueries = "jdbc:mysql://" + server + ":" + port + "/testj?user=perf&allowMultiQueries=true"
-                    + "&useSSL=false&password=!Password0&useComMulti=false&characterEncoding=UTF-8";
+                    + "&useSSL=false&password=!Password0&useBatchMultiSend=false&characterEncoding=UTF-8";
             String urlFailover = "jdbc:mysql:replication://" + server + ":" + port + "," + server + ":" + port + "/testj?"
-                    + "user=perf&useServerPrepStmts=false&validConnectionTimeout=0&useSSL=false&password=!Password0&useComMulti=false&characterEncoding=UTF-8";
+                    + "user=perf&useServerPrepStmts=false&validConnectionTimeout=0&useSSL=false&password=!Password0&useBatchMultiSend=false&characterEncoding=UTF-8";
 
 
             //create different kind of connection
             mysqlConnection = createConnection(mysqlDriverClass, baseUrl, prepareProperties);
             mariadbConnection = createConnection(mariaDriverClass, baseUrl, prepareProperties);
 
-            mariadbConnectionComMultiNoCache = createConnection(mariaDriverClass, baseUrl, prepareComMultiNoCacheProperties);
+            mariadbConnectionBulkNoCache = createConnection(mariaDriverClass, baseUrl, prepareBulkNoCacheProperties);
+            mariadbConnectionBulkCache = createConnection(mariaDriverClass, baseUrl, prepareBulkCacheProperties);
 
             mysqlConnectionNoCache = createConnection(mysqlDriverClass, baseUrl, prepareNoCacheProperties);
             mariadbConnectionNoCache = createConnection(mariaDriverClass, baseUrl, prepareNoCacheProperties);
@@ -154,9 +163,9 @@ public class BenchmarkInit {
                     statement.execute("INSTALL SONAME 'ha_blackhole'");
                 } catch (Exception e) {
                 }
+                statement.execute("DROP TABLE IF EXISTS blackholeTable");
 
                 statement.execute("CREATE TABLE IF NOT EXISTS blackholeTable(charValue VARCHAR(100) NOT NULL) ENGINE = BLACKHOLE");
-                statement.execute("CREATE TABLE IF NOT EXISTS blackholeTable3(tt varchar(10), charValue text NOT NULL)  ENGINE = BLACKHOLE");
                 statement.execute("DROP PROCEDURE IF EXISTS withResultSet");
                 statement.execute("DROP PROCEDURE IF EXISTS inoutParam");
                 statement.execute("DROP FUNCTION IF EXISTS testFunctionCall");
@@ -206,8 +215,8 @@ public class BenchmarkInit {
             mariadbConnectionRewrite.close();
             mariadbConnectionText.close();
             mariadbFailoverConnection.close();
-            mariadbConnectionComMultiNoCache.close();
-
+            mariadbConnectionBulkNoCache.close();
+            mariadbConnectionBulkCache.close();
             drizzleConnectionText.close();
         }
     }

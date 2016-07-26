@@ -85,11 +85,11 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
 
             var defaultData = new google.visualization.DataTable();
             defaultData.addColumn('string', 'x');
-            defaultData.addColumn('number', 'MySQL-5.1.38');
+            defaultData.addColumn('number', 'MySQL-5.1.39');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
-            defaultData.addColumn('number', 'MariaDB-1.4.4');
+            defaultData.addColumn('number', 'MariaDB-1.5.0');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -105,11 +105,11 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
 
             var defaultData = new google.visualization.DataTable();
             defaultData.addColumn('string', 'x');
-            defaultData.addColumn('number', 'MySQL-5.1.38');
+            defaultData.addColumn('number', 'MySQL-5.1.39');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
-            defaultData.addColumn('number', 'MariaDB-1.4.4');
+            defaultData.addColumn('number', 'MariaDB-1.5.0');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -120,7 +120,7 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
         function defaultDataMaria15() {
             var defaultData = new google.visualization.DataTable();
             defaultData.addColumn('string', 'x');
-            defaultData.addColumn('number', 'MySQL-5.1.38');
+            defaultData.addColumn('number', 'MySQL-5.1.39');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -305,23 +305,47 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
 
 <pre class="java">
 Benchmark                                           Mode  Cnt      Score     Error  Units
-BenchmarkSelect1RowPrepareText.drizzle              avgt  500      71.834&#177;   0.750  us/op
-BenchmarkSelect1RowPrepareText.mariadb              avgt  500      51.771&#177;   0.813  us/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  500      69.498&#177;   0.853  us/op
+BenchmarkOneInsertPrepareText.drizzle               avgt   15    105.133 &#177;    6.507  us/op
+BenchmarkOneInsertPrepareText.mariadb               avgt   15     78.776 &#177;    3.088  us/op
+BenchmarkOneInsertPrepareText.mysql                 avgt   15    121.301 &#177;    9.743  us/op
+
+
+BenchmarkSelect1RowPrepareText.drizzle              avgt  150    81.795 ±  2.952  us/op
+BenchmarkSelect1RowPrepareText.mariadb              avgt  150    51.106 ±  2.729  us/op
+BenchmarkSelect1RowPrepareText.mysql                avgt  150    77.286 ±  2.437  us/op
 
 </pre>
+
+    <div id="box_select1Text"></div>
+    <script>
+        google.charts.setOnLoadCallback(function () {
+            var data = defaultData();
+            var array = [
+                ['Using text protocol', 77.286, 2.437, 51.106,  2.729, 81.795,  2.952]
+            ];
+            data.addRows(getBoxPlotValues(array, true));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_select1Text'));
+            var select1RowsOption = defaultOptions;
+            select1RowsOption.title = "Time for a query \"SELECT ?\"";
+            select1RowsOption.height = 220;
+            chart.draw(data, select1RowsOption);
+        });
+    </script>
+
+
     <div id="box_selectOneText"></div>
     <script>
         google.charts.setOnLoadCallback(function () {
             var data = defaultData();
             var array = [
-                ['Without PREPARE', 69.498, 0.853, 51.771,   0.813, 71.834,   0.750]
+                ['Without PREPARE', 121.301, 9.743, 78.776,   3.088, 105.133,   6.507]
             ];
             data.addRows(getBoxPlotValues(array, true));
 
             var chart = new google.visualization.BarChart(document.getElementById('box_selectOneText'));
             var select1RowsOption = defaultOptions;
-            select1RowsOption.title = "Time for a SELECT query of 1 rows without prepare";
+            select1RowsOption.title = "Time for a INSERT query of 1 rows without prepare";
             select1RowsOption.height = 220;
             chart.draw(data, select1RowsOption);
         });

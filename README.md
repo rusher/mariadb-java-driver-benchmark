@@ -31,17 +31,13 @@ public class BenchmarkSelect1RowPrepareText extends BenchmarkSelect1RowPrepareAb
 
 }
 
-public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
-    private String request = "SELECT * FROM PerfReadQuery where charValue = ?";
-    private String var = "abc0";
+public abstract class BenchmarkOneInsertPrepareAbstract extends BenchmarkInit {
+    private String request = "INSERT INTO blackholeTable (charValue) values (?)";
 
-    public String select1RowPrepare(Connection connection) throws SQLException {
+    public boolean executeOneInsertPrepare(Connection connection, String[] datas) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
-            preparedStatement.setString(1, var);
-            try (ResultSet rs = preparedStatement.executeQuery()) {
-                rs.next();
-                return rs.getString(1);
-            }
+            preparedStatement.setString(1, datas[0]);
+            return preparedStatement.execute();
         }
     }
 }
@@ -49,33 +45,45 @@ public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
 
 The test will execute the prepareStatement "INSERT INTO PerfTextQuery (charValue) values (?)" using a connection issued from java driver MySQL 5.1.39, Drizzle 1.2 or MariaDB 1.5.0.
 
-Tests are launched multiple times using 10 forks , 10 warmup iterations of one second followed by 15 measurement iterations of one second. (one test duration is approximately 45 minutes)
+Tests are launched multiple times using 10 forks , 10 warmup iterations of one second followed by 15 measurement iterations of one second. (one test duration is approximately 4h)
 
 
 List of tests and their signification :
 
 |Benchmark       | Description |
 |-----------|:----------|
-| BenchmarkSelect1RowPrepareText | execute query "SELECT ?"|
-| BenchmarkSelect1RowPrepareTextHA |same as BenchmarkSelect1RowPrepareText but using High availability configuration|
-| BenchmarkSelect1RowPrepareHit | same as BenchmarkSelect1RowPrepareText but using server PREPARE with cache hit (eq : PREPARE already done)|
-| BenchmarkSelect1RowPrepareMiss | same as BenchmarkSelect1RowPrepareText but using server PREPARE with cache miss (eq : execute PREPARE + DEALLOCATE PREPARE)|
-| BenchmarkSelect1000Rows |execute query "select * from seq_1_to_1000" : a resultset of 1000 rows, returning integer from 1 to 1000|
-| BenchmarkSelect1000BigRows |execute query "select repeat('a', 10000) from seq_1_to_1000" a resultset of 1000 rows, each rows contain 10kb data)|
-| BenchmarkOneInsertPrepareText* | execute query "INSERT INTO blackholeTable (charValue) values (?)"|
-| BenchmarkOneInsertPrepareTextHA* |same as BenchmarkOneInsertPrepareText but using High availability configuration|
-| BenchmarkOneInsertPrepareHit* | same as BenchmarkOneInsertPrepareText but using server PREPARE with cache hit (eq : PREPARE already done)|
-| BenchmarkOneInsertPrepareMiss* | same as BenchmarkOneInsertPrepareText but using server PREPARE with cache miss (eq : execute PREPARE + DEALLOCATE PREPARE)|
-| BenchmarkBatch1000InsertText* |executing 1000 inserts with random 20bytes data "INSERT INTO blackholeTable (charValue) values (?)" (option useServerPrepStmts=false)|
-| BenchmarkBatch1000InsertWithPrepare* |same as BenchmarkBatch1000InsertText, using server "prepare" already in cache. (option useServerPrepStmts=true)|
-| BenchmarkBatch1000InsertRewrite* |same as BenchmarkBatch1000InsertText, using option rewriteBatchedStatements=true|
+| BenchmarkBatch1000Insert* | executing 1000 inserts with random 100 bytes data into a blackHole table (no real insert) = "INSERT INTO blackholeTable (charValue) values (?)"|
+|       BenchmarkBatch1000InsertText* | using text protocol (option useServerPrepStmts=false)|
+|       BenchmarkBatch1000InsertBatchMulti* | using multi-send (option useBatchMultiSend=true)|
+|       BenchmarkBatch1000InsertWithPrepare* | using binary protocol (option useServerPrepStmts=true)|
+|       BenchmarkBatch1000InsertRewrite* | using rewrite text protocol (option rewriteBatchedStatements=true|
+|       BenchmarkBatch1000InsertMultiQueries* | using text protocol with multi-query (option allowMultiQueries=true)|
 | BenchmarkCallableStatementFunction |execute CallableStatement with query "{? = CALL testFunctionCall(?,?,?)}". Function created by "CREATE FUNCTION IF NOT EXISTS testFunctionCall(a float, b bigint, c int) RETURNS INT NO SQL \nBEGIN \nRETURN a; \nEND"|
 | BenchmarkCallableStatementWithInParameter |execute CallableStatement with query "{call withResultSet(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS withResultSet(a int) begin select a; end"|
 | BenchmarkCallableStatementWithOutParameter |execute CallableStatement with query "{call inOutParam(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS inoutParam(INOUT p1 INT) begin set p1 = p1 + 1; end"|
+| BenchmarkOneInsertPrepare* | executing one insert with random 100 bytes data into blackhole table (no real insert) = "INSERT INTO blackholeTable (charValue) values (?)"|
+|       BenchmarkOneInsertPrepareText | using text protocol (option useServerPrepStmts=false)|
+|       BenchmarkOneInsertPrepareTextHA | using text protocol (option useServerPrepStmts=false) and High availability configuration|
+|       BenchmarkOneInsertPrepareHit| using binary protocol with server PREPARE with cache hit (eq : with PREPARE already done)|
+|       BenchmarkOneInsertPrepareMiss | using binary protocol with server PREPARE with cache miss (eq : execute PREPARE + EXECUTE + DEALLOCATE PREPARE)|
+|       BenchmarkOneInsertPrepareMultiQueries | using text protocol with multi-query (option allowMultiQueries=true)| 
+|       BenchmarkOneInsertPrepareRewrite | using rewrite text protocol (option rewriteBatchedStatements=true)|
+|       BenchmarkOneInsertPrepareBatchMultiHit | using multi-send (option useBatchMultiSend=true) with server PREPARE with cache hit (eq : with PREPARE already done)|
+|       BenchmarkOneInsertPrepareBatchMultiMiss | using multi-send (option useBatchMultiSend=true) with server PREPARE with cache miss (eq : execute PREPARE + EXECUTE + DEALLOCATE PREPARE)|
+| BenchmarkSelect1RowPrepare* | execute query "SELECT ?"|
+|       BenchmarkSelect1RowPrepareText | using text protocol (option useServerPrepStmts=false)|
+|       BenchmarkSelect1RowPrepareTextHA | using text protocol (option useServerPrepStmts=false) and High availability configuration|
+|       BenchmarkSelect1RowPrepareHit| using binary protocol with server PREPARE with cache hit (eq : with PREPARE already done)|
+|       BenchmarkSelect1RowPrepareMiss| using binary protocol with server PREPARE with cache miss (eq : execute PREPARE + EXECUTE + DEALLOCATE PREPARE)|
+|       BenchmarkSelect1RowPrepareMultiQueries | using text protocol with multi-query (option allowMultiQueries=true)|
+|       BenchmarkSelect1RowPrepareRewrite| using rewrite text protocol (option rewriteBatchedStatements=true)|
+|       BenchmarkSelect1RowPrepareBatchMultiHit| using multi-send (option useBatchMultiSend=true) with server PREPARE with cache hit (eq : with PREPARE already done)|
+|       BenchmarkSelect1RowPrepareBatchMultiMiss| using multi-send (option useBatchMultiSend=true) with server PREPARE with cache miss (eq : execute PREPARE + EXECUTE + DEALLOCATE PREPARE)|
+| BenchmarkSelect1000Rows | execute query "select * from seq_1_to_1000" : a resultset of 1000 rows, returning integer from 1 to 1000|
+| BenchmarkSelect1000BigRows | execute query "select repeat('a', 10000) from seq_1_to_1000" a resultset of 1000 rows, each rows contain 10kb data|
+| BenchmarkSelect1000BigRowsFetch | execute query "select repeat('a', 100000) from seq_1_to_1000" a resultset of 1000 rows, each rows contain 100kb data, using setFetchSize(10) to retrieve data by 10 rows||
 
 '* The goal is here to test the driver performance, not database, so INSERT's queries are send to a [BLACKHOLE](https://mariadb.com/kb/en/mariadb/blackhole/) engine (data are not stored). This permit to have more stable results (less than 1% difference, without, data vary with 10% difference).
-
-
 
 ## How run the tests
 * install a MySQL / MariaDB database
@@ -86,9 +94,10 @@ character-set-server    = utf8
 collation-server        = utf8_unicode_ci
 ```
 * create database "testj" : create database testj;
-* create user perf : GRANT ALL ON *.* TO 'perf'@'localhost' IDENTIFIED BY '!Password0';
+* create user : CREATE USER 'perf'@'%' IDENTIFIED BY '!Password0';
+* create user perf : GRANT ALL ON *.* TO 'perf'@'%' IDENTIFIED BY '!Password0';
 * grant super access : GRANT SUPER ON *.* TO 'perf'@'%';
-* install engine [BLACKHOLE](https://mariadb.com/kb/en/mariadb/blackhole/) using command "INSTALL SONAME 'ha_blackhole'" (This engine don't save data, permitting to execute INSERT queries with stable time result)
+* install engine [BLACKHOLE](https://mariadb.com/kb/en/mariadb/blackhole/) using command "INSTALL SONAME 'ha_blackhole'" if not installed (SHOW ENGINES permit to check if installed)(This engine don't save data, permitting to execute INSERT queries with stable time result)
 * restart database to activate the BLACKHOLE engine
 * install a JRE
 (* install maven)
@@ -98,7 +107,7 @@ collation-server        = utf8_unicode_ci
 git clone https://github.com/rusher/mariadb-mysql-driver.git
 mvn clean install
 java -Xmx128m -Xms128m -Duser.country=US -Duser.language=en -jar target/benchmarks.jar > result.txt &
-```
+```mvn 
 -Duser.country=US -Duser.language=en permit to avoid confusion with comma used as decimal separator / thousand separator according to countries
 -Xmx64m -Xms64m is to permit to have quick garbage and have more stable results. 
 
@@ -115,57 +124,73 @@ Results are in file "result.txt".
 Complete results are the end of the file. 
 
 Execution on a droplet on digitalocean.com using this parameters:
-- CentOS 7.2 64bits
+- Ubuntu 16.04 64bits
 - 1GB memory
 - 1 CPU
 
-using MariaDb 10.1.13 ( with default configuration file) (<a href='results/result_mariadb_server.txt'>complete results</a>)
-using mysql 5.7.12 ( with default configuration file) (<a href='results/result_mysql_server.txt'>complete results</a>)
+using MariaDb 10.1.16 (<a href='results/result_mariadb_server.txt'>complete results</a>)
+using mysql 5.7.13 (<a href='results/result_mysql_server.txt'>complete results</a>)
 
 Extract of mariadb server results :
 
 ```
+# Run complete. Total time: 04:11:18
 
-# Run complete. Total time: 06:56:33
-
-Benchmark                                           Mode  Cnt       Score     Error  Units
-BenchmarkBatch1000InsertPrepare.mariadb             avgt  500      59.020 ±   2.375  ms/op
-BenchmarkBatch1000InsertPrepare.mysql               avgt  500      71.707 ±   3.079  ms/op
-BenchmarkBatch1000InsertRewrite.mariadb             avgt  500       2.263 ±   0.063  ms/op
-BenchmarkBatch1000InsertRewrite.mysql               avgt  500       1.897 ±   0.045  ms/op
-BenchmarkBatch1000InsertText.drizzle                avgt  500      94.771 ±   3.199  ms/op
-BenchmarkBatch1000InsertText.mariadb                avgt  500      78.093 ±   2.745  ms/op
-BenchmarkBatch1000InsertText.mysql                  avgt  500      85.060 ±   2.792  ms/op
-BenchmarkCallableStatementFunction.mariadb          avgt  500     112.662 ±   2.579  us/op
-BenchmarkCallableStatementFunction.mysql            avgt  500    1657.960 ±  46.456  us/op
-BenchmarkCallableStatementWithInParameter.mariadb   avgt  500      89.256 ±   2.252  us/op
-BenchmarkCallableStatementWithInParameter.mysql     avgt  500    1575.954 ±  60.453  us/op
-BenchmarkCallableStatementWithOutParameter.mariadb  avgt  500      71.376 ±   1.348  us/op
-BenchmarkCallableStatementWithOutParameter.mysql    avgt  500    1701.757 ±  50.215  us/op
-BenchmarkOneInsertPrepareHit.mariadb                avgt  500      62.674 ±   1.741  us/op
-BenchmarkOneInsertPrepareHit.mysql                  avgt  500      66.582 ±   1.400  us/op
-BenchmarkOneInsertPrepareMiss.mariadb               avgt  500     135.067 ±   3.274  us/op
-BenchmarkOneInsertPrepareMiss.mysql                 avgt  500     165.441 ±   3.592  us/op
-BenchmarkOneInsertPrepareText.drizzle               avgt  500      90.572 ±   1.687  us/op
-BenchmarkOneInsertPrepareText.mariadb               avgt  500      72.368 ±   1.461  us/op
-BenchmarkOneInsertPrepareText.mysql                 avgt  500      93.846 ±   1.567  us/op
-BenchmarkOneInsertPrepareTextHA.mariadb             avgt  500      76.859 ±   1.636  us/op
-BenchmarkOneInsertPrepareTextHA.mysql               avgt  500     152.755 ±   2.523  us/op
-BenchmarkSelect1000BigRows.drizzle                  avgt  500   93563.723 ± 676.147  us/op
-BenchmarkSelect1000BigRows.mariadb                  avgt  500   88298.679 ± 656.603  us/op
-BenchmarkSelect1000BigRows.mysql                    avgt  500  105989.608 ± 816.302  us/op
-BenchmarkSelect1000Rows.drizzle                     avgt  500     751.088 ±   5.571  us/op
-BenchmarkSelect1000Rows.mariadb                     avgt  500     508.405 ±   5.239  us/op
-BenchmarkSelect1000Rows.mysql                       avgt  500     558.983 ±   5.678  us/op
-BenchmarkSelect1RowPrepareHit.mariadb               avgt  500      45.160 ±   0.584  us/op
-BenchmarkSelect1RowPrepareHit.mysql                 avgt  500      63.283 ±   0.934  us/op
-BenchmarkSelect1RowPrepareMiss.mariadb              avgt  500     102.548 ±   1.216  us/op
-BenchmarkSelect1RowPrepareMiss.mysql                avgt  500     133.809 ±   1.323  us/op
-BenchmarkSelect1RowPrepareText.drizzle              avgt  500      71.834 ±   0.750  us/op
-BenchmarkSelect1RowPrepareText.mariadb              avgt  500      51.771 ±   0.813  us/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  500      69.498 ±   0.853  us/op
-BenchmarkSelect1RowPrepareTextHA.mariadb            avgt  500      53.430 ±   0.681  us/op
-BenchmarkSelect1RowPrepareTextHA.mysql              avgt  500     122.346 ±   1.135  us/op
+Benchmark                                           Mode  Cnt     Score    Error  Units
+BenchmarkBatch1000InsertBulk.mariadb                avgt  150    44.167 ±  1.473  ms/op
+BenchmarkBatch1000InsertMultiQueries.mariadb        avgt  150    14.241 ±  0.626  ms/op
+BenchmarkBatch1000InsertPrepare.mariadb             avgt  150    48.829 ±  1.871  ms/op
+BenchmarkBatch1000InsertPrepare.mysql               avgt  150    60.437 ±  2.037  ms/op
+BenchmarkBatch1000InsertRewrite.mariadb             avgt  150     3.831 ±  0.206  ms/op
+BenchmarkBatch1000InsertRewrite.mysql               avgt  150     5.757 ±  0.170  ms/op
+BenchmarkBatch1000InsertText.drizzle                avgt  150    87.510 ±  2.761  ms/op
+BenchmarkBatch1000InsertText.mariadb                avgt  150    68.106 ±  3.007  ms/op
+BenchmarkBatch1000InsertText.mysql                  avgt  150    77.409 ±  2.734  ms/op
+BenchmarkCallableStatementFunction.mariadb          avgt  150   101.627 ±  3.415  us/op
+BenchmarkCallableStatementFunction.mysql            avgt  150  1024.080 ± 52.914  us/op
+BenchmarkCallableStatementWithInParameter.mariadb   avgt  150   118.213 ±  7.053  us/op
+BenchmarkCallableStatementWithInParameter.mysql     avgt  150   727.023 ± 48.940  us/op
+BenchmarkCallableStatementWithOutParameter.mariadb  avgt  150    89.469 ±  6.836  us/op
+BenchmarkCallableStatementWithOutParameter.mysql    avgt  150   881.286 ± 52.975  us/op
+BenchmarkOneInsertPrepareBulkHit.mariadb            avgt  150    52.331 ±  1.681  us/op
+BenchmarkOneInsertPrepareBulkMiss.mariadb           avgt  150   124.031 ±  4.190  us/op
+BenchmarkOneInsertPrepareHit.mariadb                avgt  150    56.891 ±  2.121  us/op
+BenchmarkOneInsertPrepareHit.mysql                  avgt  150    63.271 ±  2.314  us/op
+BenchmarkOneInsertPrepareMiss.mariadb               avgt  150   133.206 ±  7.387  us/op
+BenchmarkOneInsertPrepareMiss.mysql                 avgt  150   158.309 ±  4.746  us/op
+BenchmarkOneInsertPrepareMultiQueries.mariadb       avgt  150    66.489 ±  2.528  us/op
+BenchmarkOneInsertPrepareMultiQueries.mysql         avgt  150    98.820 ±  3.847  us/op
+BenchmarkOneInsertPrepareRewrite.mariadb            avgt  150    67.623 ±  2.689  us/op
+BenchmarkOneInsertPrepareRewrite.mysql              avgt  150   121.382 ±  5.465  us/op
+BenchmarkOneInsertPrepareText.drizzle               avgt  150    91.166 ±  4.214  us/op
+BenchmarkOneInsertPrepareText.mariadb               avgt  150    65.736 ±  2.475  us/op
+BenchmarkOneInsertPrepareText.mysql                 avgt  150    98.259 ±  4.609  us/op
+BenchmarkOneInsertPrepareTextHA.mariadb             avgt  150    68.968 ±  2.369  us/op
+BenchmarkOneInsertPrepareTextHA.mysql               avgt  150   161.468 ±  7.785  us/op
+BenchmarkSelect1000BigRows.drizzle                  avgt  150   101.120 ±  3.897  ms/op
+BenchmarkSelect1000BigRows.mariadb                  avgt  150    93.299 ±  3.524  ms/op
+BenchmarkSelect1000BigRows.mysql                    avgt  150   102.366 ±  3.495  ms/op
+BenchmarkSelect1000BigRowsFetch.drizzle             avgt  150  1035.977 ± 34.501  ms/op
+BenchmarkSelect1000BigRowsFetch.mariadb             avgt  150   818.183 ± 34.323  ms/op
+BenchmarkSelect1000BigRowsFetch.mysql               avgt  150  1176.984 ± 29.539  ms/op
+BenchmarkSelect1000Rows.drizzle                     avgt  150   773.540 ± 28.538  us/op
+BenchmarkSelect1000Rows.mariadb                     avgt  150   481.937 ± 14.620  us/op
+BenchmarkSelect1000Rows.mysql                       avgt  150   563.007 ± 18.444  us/op
+BenchmarkSelect1RowPrepareBulkHit.mariadb           avgt  150    45.371 ±  1.677  us/op
+BenchmarkSelect1RowPrepareBulkMiss.mariadb          avgt  150    96.243 ±  3.555  us/op
+BenchmarkSelect1RowPrepareHit.mariadb               avgt  150    44.428 ±  1.813  us/op
+BenchmarkSelect1RowPrepareHit.mysql                 avgt  150    65.181 ±  2.363  us/op
+BenchmarkSelect1RowPrepareMiss.mariadb              avgt  150   102.855 ±  7.528  us/op
+BenchmarkSelect1RowPrepareMiss.mysql                avgt  150   134.960 ±  5.131  us/op
+BenchmarkSelect1RowPrepareMultiQueries.mariadb      avgt  150    53.393 ±  2.413  us/op
+BenchmarkSelect1RowPrepareMultiQueries.mysql        avgt  150    77.497 ±  2.989  us/op
+BenchmarkSelect1RowPrepareRewrite.mariadb           avgt  150    50.368 ±  1.625  us/op
+BenchmarkSelect1RowPrepareRewrite.mysql             avgt  150    80.276 ±  3.289  us/op
+BenchmarkSelect1RowPrepareText.drizzle              avgt  150    81.795 ±  2.952  us/op
+BenchmarkSelect1RowPrepareText.mariadb              avgt  150    51.106 ±  2.729  us/op
+BenchmarkSelect1RowPrepareText.mysql                avgt  150    77.286 ±  2.437  us/op
+BenchmarkSelect1RowPrepareTextHA.mariadb            avgt  150    53.130 ±  1.561  us/op
+BenchmarkSelect1RowPrepareTextHA.mysql              avgt  150   135.638 ±  6.000  us/op
 ```
 
 ##### How to read it :
@@ -173,18 +198,18 @@ BenchmarkSelect1RowPrepareTextHA.mysql              avgt  500     122.346 ±   1
 ms/op means millisecond per operation, us/op microsecond per operation.
 
 ```
-Benchmark                                           Mode  Cnt      Score     Error  Units
-BenchmarkSelect1RowPrepareText.drizzle              avgt  500      71.834&#177;   0.750  us/op
-BenchmarkSelect1RowPrepareText.mariadb              avgt  500      51.771&#177;   0.813  us/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  500      69.498&#177;   0.853  us/op
+Benchmark                                           Mode  Cnt    Score     Error  Units
+BenchmarkSelect1RowPrepareText.drizzle              avgt  150    81.795 ±  2.952  us/op
+BenchmarkSelect1RowPrepareText.mariadb              avgt  150    51.106 ±  2.729  us/op
+BenchmarkSelect1RowPrepareText.mysql                avgt  150    77.286 ±  2.437  us/op
 ```
 
 
 <div style="text-align:center"><img src ="results/select_one_data.png" /></div>
 
 BenchmarkOneInsert = execute query "SELECT ?"
-Using mariadb driver, the average time to insert one data is 51.771 microsecond, and 99.9% of queries executes time are comprised between 50.958 (51.771 - 0.813) and 52.584 microseconds (51.771 + 0.813).
-Using MySQL java driver, average execution time is 69.498 millisecond, using Drizzle driver 71.834 milliseconds   
+Using mariadb driver, the average time to insert one data is 51.106 microsecond, and 99.9% of queries executes time are comprised between 48.377 (51.106 - 2.729) and 53.835 microseconds (51.106 + 2.729).
+Using MySQL java driver, average execution time is 77.286 millisecond, using Drizzle driver 81.795 milliseconds   
 
 
 

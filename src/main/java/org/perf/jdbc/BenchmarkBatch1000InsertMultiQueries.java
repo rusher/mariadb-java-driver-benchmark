@@ -3,7 +3,7 @@ package org.perf.jdbc;
 
 import org.openjdk.jmh.annotations.Benchmark;
 
-public class BenchmarkBatch100InsertMultiQueries extends BenchmarkBatch100InsertAbstract {
+public class BenchmarkBatch1000InsertMultiQueries extends BenchmarkBatch1000InsertAbstract {
 
     @Benchmark
     public int[] mariadb(MyState state) throws Throwable {

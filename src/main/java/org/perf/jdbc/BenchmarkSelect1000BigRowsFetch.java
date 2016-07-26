@@ -3,6 +3,7 @@ package org.perf.jdbc;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.infra.Blackhole;
 import org.perf.jdbc.common.BenchmarkInit;
 
 import java.sql.Connection;
