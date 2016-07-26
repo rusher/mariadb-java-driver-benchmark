@@ -16,28 +16,31 @@ public class BenchmarkSelect1RowPrepareText extends BenchmarkSelect1RowPrepareAb
 
     @Benchmark
     public String mysql(MyState state) throws Throwable {
-        return select1RowPrepare(state.mysqlConnectionText);
+        return select1RowPrepare(state.mysqlConnectionText, state);
     }
 
     @Benchmark
     public String mariadb(MyState state) throws Throwable {
-        return select1RowPrepare(state.mariadbConnectionText);
+        return select1RowPrepare(state.mariadbConnectionText, state);
     }
 
     @Benchmark
     public String drizzle(MyState state) throws Throwable {
-        return select1RowPrepare(state.drizzleConnectionText);
+        return select1RowPrepare(state.drizzleConnectionText, state);
     }
 
 }
 
-public abstract class BenchmarkOneInsertPrepareAbstract extends BenchmarkInit {
-    private String request = "INSERT INTO blackholeTable (charValue) values (?)";
+public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
+    private String request = "SELECT ?";
 
-    public boolean executeOneInsertPrepare(Connection connection, String[] datas) throws SQLException {
+    public String select1RowPrepare(Connection connection, MyState state) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
-            preparedStatement.setString(1, datas[0]);
-            return preparedStatement.execute();
+            preparedStatement.setString(1, state.insertData[state.counter++]);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                rs.next();
+                return rs.getString(1);
+            }
         }
     }
 }
@@ -53,11 +56,11 @@ List of tests and their signification :
 |Benchmark       | Description |
 |-----------|:----------|
 | BenchmarkBatch1000Insert* | executing 1000 inserts with random 100 bytes data into a blackHole table (no real insert) = "INSERT INTO blackholeTable (charValue) values (?)"|
-|       BenchmarkBatch1000InsertText* | using text protocol (option useServerPrepStmts=false)|
-|       BenchmarkBatch1000InsertBatchMulti* | using multi-send (option useBatchMultiSend=true)|
-|       BenchmarkBatch1000InsertWithPrepare* | using binary protocol (option useServerPrepStmts=true)|
-|       BenchmarkBatch1000InsertRewrite* | using rewrite text protocol (option rewriteBatchedStatements=true|
-|       BenchmarkBatch1000InsertMultiQueries* | using text protocol with multi-query (option allowMultiQueries=true)|
+|       BenchmarkBatch1000InsertText | using text protocol (option useServerPrepStmts=false)|
+|       BenchmarkBatch1000InsertBatchMultiHit | using multi-send (option useBatchMultiSend=true) with server PREPARE with cache hit (eq : with PREPARE already done)|
+|       BenchmarkBatch1000InsertWithPrepareHit | using binary protocol (option useServerPrepStmts=true) with server PREPARE with cache hit (eq : with PREPARE already done)|
+|       BenchmarkBatch1000InsertRewrite | using rewrite text protocol (option rewriteBatchedStatements=true|
+|       BenchmarkBatch1000InsertMultiQueries | using text protocol with multi-query (option allowMultiQueries=true)|
 | BenchmarkCallableStatementFunction |execute CallableStatement with query "{? = CALL testFunctionCall(?,?,?)}". Function created by "CREATE FUNCTION IF NOT EXISTS testFunctionCall(a float, b bigint, c int) RETURNS INT NO SQL \nBEGIN \nRETURN a; \nEND"|
 | BenchmarkCallableStatementWithInParameter |execute CallableStatement with query "{call withResultSet(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS withResultSet(a int) begin select a; end"|
 | BenchmarkCallableStatementWithOutParameter |execute CallableStatement with query "{call inOutParam(?)}". Procedure created with "CREATE PROCEDURE IF NOT EXISTS inoutParam(INOUT p1 INT) begin set p1 = p1 + 1; end"|

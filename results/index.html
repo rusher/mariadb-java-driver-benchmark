@@ -13,7 +13,7 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
 
             var defaultData = new google.visualization.DataTable();
             defaultData.addColumn('string', 'Select one row');
-            defaultData.addColumn('number', 'MariaDB-1.4.4');
+            defaultData.addColumn('number', 'MariaDB-1.5.0');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -229,7 +229,7 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
 
     Driver's versions are the latest GA available version at the time of writing this blog:
     <ul>
-        <li>Mariadb 1.4.5</li>
+        <li>Mariadb 1.5.0</li>
         <li>Mysql5.1.39</li>
         <li>Drizzle 1.2</li>
     </ul>
@@ -250,29 +250,28 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
         public class BenchmarkSelect1RowPrepareText extends BenchmarkSelect1RowPrepareAbstract {
 
             @Benchmark
-                public String mysql(MyState state) throws Throwable {
-                return select1RowPrepare(state.mysqlConnectionText);
+            public String mysql(MyState state) throws Throwable {
+                return select1RowPrepare(state.mysqlConnectionText, state);
             }
 
             @Benchmark
-                public String mariadb(MyState state) throws Throwable {
-                return select1RowPrepare(state.mariadbConnectionText);
+            public String mariadb(MyState state) throws Throwable {
+                return select1RowPrepare(state.mariadbConnectionText, state);
             }
 
             @Benchmark
-                public String drizzle(MyState state) throws Throwable {
-                return select1RowPrepare(state.drizzleConnectionText);
+            public String drizzle(MyState state) throws Throwable {
+                return select1RowPrepare(state.drizzleConnectionText, state);
             }
 
         }
 
         public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
             private String request = "SELECT ?";
-            private String var = "abc0";
 
-            public String select1RowPrepare(Connection connection) throws SQLException {
+            public String select1RowPrepare(Connection connection, MyState state) throws SQLException {
                 try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
-                    preparedStatement.setString(1, var);
+                    preparedStatement.setString(1, state.insertData[state.counter++]);
                     try (ResultSet rs = preparedStatement.executeQuery()) {
                         rs.next();
                         return rs.getString(1);
@@ -280,40 +279,37 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
                 }
             }
         }
-
     </code></pre>
 
-    <p>INSERT's queries are send to a <a href="https://mariadb.com/kb/en/mariadb/blackhole/">BLACKHOLE</a> engine (data are not stored).
+    <p>Tests using INSERT's queries are send to a <a href="https://mariadb.com/kb/en/mariadb/blackhole/">BLACKHOLE</a> engine (data are not stored).
         This permit to have more stable results.<br>
-        (99.9% of queries execution time have 1% time difference, without using the blackhole engine, these execution times would vary up to 10%).
+        (99.9% of queries execution time have 1-3% time difference, without using the blackhole engine, these execution times would vary up to 10%).
     </p>
-
 
     <br/>
     <h1>Results</h1>
     Execution (client and server ) is done on a single server droplet on digitalocean.com using this parameters:
     <ul>
-        <li>Java(TM) SE Runtime Environment (build 1.8.0_77-b03) 64bits</li>
-        <li>CentOS 7.2 64bits</li>
+        <li>Java(TM) SE Runtime Environment (build 1.8.0_101-b13) 64bits (actual last version in time of this benchmark)</li>
+        <li>Ubuntu 16.04 64bits</li>
         <li>1GB memory</li>
         <li>1 CPU</li>
-        <li>database 10.1.13-MariaDB MariaDB Server and 5.7.12 MySQL Community Server (GPL) with default configuration
-            files
+        <li>database 10.1.16-MariaDB MariaDB Server and 5.7.13 MySQL Community Server (GPL) with default configuration files + the folowing configuration :
+            <ul>
+                <li>max_allowed_packet      = 40M //exchange packet can be up to 40mb</li>
+                <li>character-set-server    = utf8 //to use UTF-8 as default </li>
+                <li>collation-server        = utf8_unicode_ci //to use UTF-8 as default </li>
+            </ul>
         </li>
     </ul>
+
     <p>Results sample explanations:</p>
 
 <pre class="java">
-Benchmark                                           Mode  Cnt      Score     Error  Units
-BenchmarkOneInsertPrepareText.drizzle               avgt   15    105.133 &#177;    6.507  us/op
-BenchmarkOneInsertPrepareText.mariadb               avgt   15     78.776 &#177;    3.088  us/op
-BenchmarkOneInsertPrepareText.mysql                 avgt   15    121.301 &#177;    9.743  us/op
-
-
-BenchmarkSelect1RowPrepareText.drizzle              avgt  150    81.795 ±  2.952  us/op
-BenchmarkSelect1RowPrepareText.mariadb              avgt  150    51.106 ±  2.729  us/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  150    77.286 ±  2.437  us/op
-
+Benchmark                                           Mode  Cnt    Score     Error  Units
+BenchmarkSelect1RowPrepareText.drizzle              avgt  150    81.795 &#177;  2.952  us/op
+BenchmarkSelect1RowPrepareText.mariadb              avgt  150    51.106 &#177;  2.729  us/op
+BenchmarkSelect1RowPrepareText.mysql                avgt  150    77.286 &#177;  2.437  us/op
 </pre>
 
     <div id="box_select1Text"></div>
@@ -333,44 +329,31 @@ BenchmarkSelect1RowPrepareText.mysql                avgt  150    77.286 ±  2.43
         });
     </script>
 
-
-    <div id="box_selectOneText"></div>
-    <script>
-        google.charts.setOnLoadCallback(function () {
-            var data = defaultData();
-            var array = [
-                ['Without PREPARE', 121.301, 9.743, 78.776,   3.088, 105.133,   6.507]
-            ];
-            data.addRows(getBoxPlotValues(array, true));
-
-            var chart = new google.visualization.BarChart(document.getElementById('box_selectOneText'));
-            var select1RowsOption = defaultOptions;
-            select1RowsOption.title = "Time for a INSERT query of 1 rows without prepare";
-            select1RowsOption.height = 220;
-            chart.draw(data, select1RowsOption);
-        });
-    </script>
-
-
     <p>
-        This mean that query <code>SELECT ?</code> will take an average time of 51.771
-        microseconds using mariadb driver with a variation of &#177; 0.813 microseconds for 99.9% of queries.
+        This mean that query <code>SELECT ?</code> will take an average time of 51.106
+        microseconds using mariadb driver with a variation of &#177; 2.729 microseconds for 99.9% of queries.
         (smaller execution time the better).
     </p>
     <p>
-        Same execution using drizzle driver will take 71.834 microseconds, and 69.498 microseconds using mysql connector.
+        Same execution using drizzle driver will take 81.795 microseconds, and 77.286 microseconds using mysql connector.
     </p>
 
 
     raw data results :
     <ol>
-        <li><a href="./result_mariadb_server.txt">with a MariaDB 10.1.13 database</a></li>
-        <li><a href="./result_mysqlserver.txt">with a MySQL Community Server 5.7.12 database</a></li>
+        <li><a href="./result_mariadb-10.1_server.txt">with a MariaDB 10.1.16 database</a></li>
+        <li><a href="./result_mariadb-10.2_server.txt">with a MariaDB 10.2.2 database</a></li>
+        <li><a href="./result_mysql-5.7_server.txt">with a MySQL Community Server 5.7.13 database (build 5.7.13-0ubuntu0.16.04.2)</a></li>
     </ol>
 
     <br/>
+
     <h2>To use or not to use server prepare</h2>
-    <p>When using MySQL/MariaDB prepared statement, there will be 3 exchanges with server :
+    This correspond to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#useServerPrepStmts">useServerPrepStmts</a>.
+    Definition : PreparedStatement queries will be prepared on the server side before executing, permitting faster execution next time. \\if allowMultiQueries or rewriteBatchedStatements is set to true, this option will be set to false.
+    If not, Prepared statements (parameter substitution) is handled by the driver, on the client side.
+
+    <p>When using MySQL/MariaDB server prepared statement, there will be 3 exchanges with server :
         <ol>
             <li>PREPARE - Prepares statement for execution.</li>
             <li>EXECUTE - Executes a prepared statement preparing by a PREPARE statement.</li>
@@ -378,7 +361,9 @@ BenchmarkSelect1RowPrepareText.mysql                avgt  150    77.286 ±  2.43
         </ol>
         See <a href="https://mariadb.com/kb/en/mariadb/prepare-statement/">Server prepare documentation</a> for more information.
 
-        PREPARE and DEALLOCATE PREPARE are 2 additional client-server round-trip. So query execution may be faster sometime, but that's far from always the case.
+        PREPARE and DEALLOCATE PREPARE will be 2 additional client-server round-trip. So query execution may be faster sometime, but that's far from always the case.
+
+        Using mariadb 10.2 server,
     </p>
 <br/>
     <h3>Single SELECT / INSERT query</h3>

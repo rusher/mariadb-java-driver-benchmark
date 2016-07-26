@@ -7,7 +7,7 @@
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertBatchMulti.mariadb
+# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertBatchMultiHit.mariadb
 
 # Run progress: 0.00% complete, ETA 02:53:20
 # Fork: 1 of 10
@@ -503,7 +503,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertPrepare.mariadb
+# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertPrepareHit.mariadb
 
 # Run progress: 3.85% complete, ETA 03:08:22
 # Fork: 1 of 10
@@ -751,7 +751,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertPrepare.mysql
+# Benchmark: org.perf.jdbc.BenchmarkBatch1000InsertPrepareHit.mysql
 
 # Run progress: 5.77% complete, ETA 03:04:38
 # Fork: 1 of 10

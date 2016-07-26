@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
 @Measurement(iterations = 15, timeUnit = TimeUnit.MILLISECONDS)
-@Fork(value = 10)
+@Fork(value = 1)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class BenchmarkInit {
