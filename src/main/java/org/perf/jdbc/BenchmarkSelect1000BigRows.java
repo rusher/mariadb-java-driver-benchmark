@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class BenchmarkSelect1000BigRows extends BenchmarkInit {
-    private String request = "select repeat('a', 10000) from seq_1_to_1000";
+    private String request = "select repeat('a', 10000) from seq_1_to_1000"; //using the <a href="https://mariadb.com/kb/en/mariadb/sequence/">sequence storage engine</a>
 
     @Benchmark
     public ResultSet mysql(MyState state) throws Throwable {

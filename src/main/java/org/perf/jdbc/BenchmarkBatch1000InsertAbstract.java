@@ -16,7 +16,7 @@ public class BenchmarkBatch1000InsertAbstract extends BenchmarkInit {
     public int[] executeBatch(Connection connection, String[] data) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
             for (int i = 0; i < 1000; i++) {
-                preparedStatement.setString(1, data[i]);
+                preparedStatement.setString(1, data[i]); //a random 100 byte data
                 preparedStatement.addBatch();
             }
             return preparedStatement.executeBatch();

@@ -11,7 +11,7 @@ public abstract class BenchmarkOneInsertPrepareAbstract extends BenchmarkInit {
 
     public boolean executeOneInsertPrepare(Connection connection, String[] datas) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
-            preparedStatement.setString(1, datas[0]);
+            preparedStatement.setString(1, datas[0]); //a random 100 byte data
             return preparedStatement.execute();
         }
     }

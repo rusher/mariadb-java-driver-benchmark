@@ -8,12 +8,13 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
     <script src="./highlight/highlight.pack.js"></script>
     <script>
 
-        google.charts.load('current', {'packages': ['corechart', 'bar']});
+        google.charts.load('current', {'packages': ['corechart', 'bar', 'timeline']});
+
         function defaultMariaData() {
 
             var defaultData = new google.visualization.DataTable();
             defaultData.addColumn('string', 'Select one row');
-            defaultData.addColumn('number', 'MariaDB-1.5.0');
+            defaultData.addColumn('number', 'MariaDB-1.5.0-RC1');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -89,7 +90,7 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
-            defaultData.addColumn('number', 'MariaDB-1.5.0');
+            defaultData.addColumn('number', 'MariaDB-1.5.0-RC1');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -109,7 +110,7 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
-            defaultData.addColumn('number', 'MariaDB-1.5.0');
+            defaultData.addColumn('number', 'MariaDB-1.5.0-RC1');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -124,7 +125,7 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
-            defaultData.addColumn('number', 'MariaDB-1.5.0-SNAPSHOT');
+            defaultData.addColumn('number', 'MariaDB-1.5.0-RC1-SNAPSHOT');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -158,6 +159,31 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
         }
         ;
 
+        function getBox2PlotValues(array, showpercent, reference) {
+
+            var base = reference;
+            for (var i = 0; i < array.length; i++) {
+                var length = array[i].length
+                var reconstructArray = [array[i][0]];
+                for (var j = 1; j < length; j = j + 2) {
+                    reconstructArray.push(array[i][j]);
+                    if (array[i][j] == 0 || !showpercent) {
+                        reconstructArray.push('');
+                    } else {
+                        reconstructArray.push((Math.round(1000 * (array[i][j]) / base) / 10) + '% ');
+                    }
+
+                    reconstructArray.push(array[i][j] - array[i][j + 1]);
+                    reconstructArray.push(array[i][j] + array[i][j + 1]);
+
+                }
+
+                array[i] = reconstructArray;
+            }
+            return array;
+        }
+        ;
+		
         function getOneBoxPlotValues(array, showpercent) {
             var base = array[0][1];
             for (var i = 0; i < array.length; i++) {
@@ -207,11 +233,14 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
             line-height: 1.6;
             word-wrap: break-word;
         }
+		h1, h2, h3 {
+            border-bottom: 1px solid #eee;
+		}
         h1, h2, h3, h4 {
             padding-bottom: 0.3em;
             line-height: 1.225;
-            border-bottom: 1px solid #eee;
         }
+		
     </style>
 </head>
 <body>
@@ -229,7 +258,7 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
 
     Driver's versions are the latest GA available version at the time of writing this blog:
     <ul>
-        <li>Mariadb 1.5.0</li>
+        <li>Mariadb 1.5.0-RC1</li>
         <li>Mysql5.1.39</li>
         <li>Drizzle 1.2</li>
     </ul>
@@ -286,15 +315,21 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
         (99.9% of queries execution time have 1-3% time difference, without using the blackhole engine, these execution times would vary up to 10%).
     </p>
 
-    <br/>
-    <h1>Results</h1>
-    Execution (client and server ) is done on a single server droplet on digitalocean.com using this parameters:
+	<p>
+	Benchmark results have been executed on MariaDB 10.1.16 and 10.2.2 and MySQL Community Server 5.7.13 databases. 
+	Results are similar (see raw results at document bottom), so the folowing document show results of MariaDB 10.2.2.
+    </p>
+	<br/>
+	
+	<h3>Environment</h3>
+    Execution (client and server ) is done on a single server droplet on digitalocean.com using the folowing parameters:
     <ul>
         <li>Java(TM) SE Runtime Environment (build 1.8.0_101-b13) 64bits (actual last version in time of this benchmark)</li>
         <li>Ubuntu 16.04 64bits</li>
         <li>1GB memory</li>
         <li>1 CPU</li>
-        <li>database 10.1.16-MariaDB MariaDB Server and 5.7.13 MySQL Community Server (GPL) with default configuration files + the folowing configuration :
+        <li>database MariaDB "10.1.16-MariaDB"/"10.2.2-MariaDB", Mysql Community Server build "5.7.13-0ubuntu0.16.04.2"<br/>
+			using default configuration files and these additional options :
             <ul>
                 <li>max_allowed_packet      = 40M //exchange packet can be up to 40mb</li>
                 <li>character-set-server    = utf8 //to use UTF-8 as default </li>
@@ -302,144 +337,270 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
             </ul>
         </li>
     </ul>
+	
+	<br/>
+	<h3>Results sample explanations</h3>
 
-    <p>Results sample explanations:</p>
-
-<pre class="java">
-Benchmark                                           Mode  Cnt    Score     Error  Units
-BenchmarkSelect1RowPrepareText.drizzle              avgt  150    81.795 &#177;  2.952  us/op
-BenchmarkSelect1RowPrepareText.mariadb              avgt  150    51.106 &#177;  2.729  us/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  150    77.286 &#177;  2.437  us/op
-</pre>
+	<pre class="java">
+	Benchmark                                           Mode  Cnt    Score     Error  Units
+BenchmarkSelect1RowPrepareText.drizzle                    avgt  150    78.311 &#177;  2.631  us/op
+BenchmarkSelect1RowPrepareText.mariadb                    avgt  150    49.554 &#177;  1.815  us/op
+BenchmarkSelect1RowPrepareText.mysql                      avgt  150    79.760 &#177;  2.848  us/op</pre>
 
     <div id="box_select1Text"></div>
     <script>
         google.charts.setOnLoadCallback(function () {
             var data = defaultData();
             var array = [
-                ['Using text protocol', 77.286, 2.437, 51.106,  2.729, 81.795,  2.952]
+                ['Using text protocol', 79.760,  2.848, 49.554, 1.815, 78.311,  2.631]
             ];
             data.addRows(getBoxPlotValues(array, true));
 
             var chart = new google.visualization.BarChart(document.getElementById('box_select1Text'));
             var select1RowsOption = defaultOptions;
-            select1RowsOption.title = "Time for a query \"SELECT ?\"";
+            select1RowsOption.title = "Time for a query \"SELECT ?\" using LOCAL database";
             select1RowsOption.height = 220;
             chart.draw(data, select1RowsOption);
         });
     </script>
 
     <p>
-        This mean that query <code>SELECT ?</code> will take an average time of 51.106
-        microseconds using mariadb driver with a variation of &#177; 2.729 microseconds for 99.9% of queries.
-        (smaller execution time the better).
+        This mean that query <code>SELECT ?</code> will take an average time of 49.554
+        microseconds using mariadb driver with a variation of &#177; 1.815 microseconds for 99.9% of queries.<br/>
+		Same execution using drizzle driver will take average time of 79.760 microseconds, and 78.311 microseconds using mysql connector.(smaller execution time the better).
     </p>
     <p>
-        Same execution using drizzle driver will take 81.795 microseconds, and 77.286 microseconds using mysql connector.
+        
+    </p>
+    <p>
+		Displayed percentage are set according to the first result as reference (100%),  permiting to compare easyly other results.
     </p>
 
 
-    raw data results :
-    <ol>
-        <li><a href="./result_mariadb-10.1_server.txt">with a MariaDB 10.1.16 database</a></li>
-        <li><a href="./result_mariadb-10.2_server.txt">with a MariaDB 10.2.2 database</a></li>
-        <li><a href="./result_mysql-5.7_server.txt">with a MySQL Community Server 5.7.13 database (build 5.7.13-0ubuntu0.16.04.2)</a></li>
-    </ol>
-
-    <br/>
-
-    <h2>To use or not to use server prepare</h2>
-    This correspond to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#useServerPrepStmts">useServerPrepStmts</a>.
-    Definition : PreparedStatement queries will be prepared on the server side before executing, permitting faster execution next time. \\if allowMultiQueries or rewriteBatchedStatements is set to true, this option will be set to false.
-    If not, Prepared statements (parameter substitution) is handled by the driver, on the client side.
-
-    <p>When using MySQL/MariaDB server prepared statement, there will be 3 exchanges with server :
+	
+    <h3>Performance comparaisons</h3>
+	
+	Benchmark will tests performances of the 3 main differents behaviour using a local database (same server), and a distant database (another identical server) on same datacenter with an average ping of 0.324ms</p>
+	
+	different behaviours:
+	<h4>Text protocol</h4>
+	This correspond to option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#useServerPrepStmts">useServerPrepStmts</a> disabled.<br/>
+	Query are send directly to server with parameters replacement done client side.<br>
+	Data are send like text : example a timestamp will be send like text "1970-01-01 00:00:00.000500" using 26 bytes
+	
+	<h4>Binary protocol</h4>
+	<p>
+	This correspond to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#useServerPrepStmts">useServerPrepStmts</a> enabled (default implementation on MariaDB driver).<br/>
+	Data are send in binary : example timestamp "1970-01-01 00:00:00.000500" will be send using 11 bytes.</p>
+    
+	<p>There is up to 3 exchanges with server for one query :
         <ol>
             <li>PREPARE - Prepares statement for execution.</li>
-            <li>EXECUTE - Executes a prepared statement preparing by a PREPARE statement.</li>
+            <li>EXECUTE - Send parameters</li>
             <li>DEALLOCATE PREPARE - Releases a prepared statement.</li>
         </ol>
         See <a href="https://mariadb.com/kb/en/mariadb/prepare-statement/">Server prepare documentation</a> for more information.
-
-        PREPARE and DEALLOCATE PREPARE will be 2 additional client-server round-trip. So query execution may be faster sometime, but that's far from always the case.
-
-        Using mariadb 10.2 server,
     </p>
-<br/>
-    <h3>Single SELECT / INSERT query</h3>
+	<p>
+		PREPARE result are stored in cache (default size 250). If Prepare is already in cache, PREPARE will not be executed, DEALLOCATE will be executed only when PREPARE is not used anymore and not in cache. 
+		That mean some query execution will have 3 round trips, but some will just have one round trip, sending a PREPARE identifier and parameters.
+	</p>
+
+	<h4>Rewrite</h4>
+	This correspond to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#rewriteBatchedStatements">rewriteBatchedStatements</a> enabled.<br/>
+	Rewrite use the text protocol and concern only batches. 
+	Driver will rewrite query for faster results. 
+	<p>
+		example:<br/>
+		Insert into ab (i) values (?) with first batch values [1] and [2] will be rewritten<br/>
+		Insert into ab (i) values (1), (2).<br/> 
+		<br/> 
+		If query cannot be rewriten in "multi-values", rewrite will use multi-queries : <br/>
+		Insert into table(col1) values (?) on duplicate key update col2=? with values [1,2] and [2,3] will be rewritten<br/>
+		Insert into table(col1) values (1) on duplicate key update col2=2;Insert into table(col1) values (3) on duplicate key update col2=4
+	</p>
+
+	<p>
+		Downsides of this options are :
+		<ul>
+			<li>Auto increment ids cannot be retrieved using Statement.html#getGeneratedKeys().</li>
+			<li>Multi-queries in one execution are enable. That's not a problem for PreparedStatement, but if application use Statement that can be a security degradation (sql injection).</li>
+		</ul>
+	</p>
+
+	
+	* MariaDB and MySQL have those 3 beheviour implemented, Drizzle only the Text protocol.
+	
+	<br/>
+    <h1 id="bencmark_results">BENCHMARK RESULTS</h1>
+    <h2>MariaDB driver results</h2>
+	<h3>Single SELECT query</h3>
+<pre><code class="java">    private String request = "SELECT ?";
+
+    public String select1RowPrepare(Connection connection, MyState state) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
+            preparedStatement.setString(1, state.insertData[state.counter++]); //a random 100 bytes String.
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                rs.next();
+                return rs.getString(1);
+            }
+        }
+    }
+</code></pre>
     <pre class="java">
-    BenchmarkSelect1RowPrepareHit.mariadb               avgt  500      45.160&#177;   0.584  us/op
-    BenchmarkSelect1RowPrepareMiss.mariadb              avgt  500     102.548&#177;   1.216  us/op
-    BenchmarkSelect1RowPrepareText.mariadb              avgt  500      51.771&#177;   0.813  us/op
+	LOCAL DATABASE:
+	BenchmarkSelect1RowPrepareHit.mariadb                     avgt  150    43.680 ±  1.860  us/op
+	BenchmarkSelect1RowPrepareMiss.mariadb                    avgt  150    97.979 ±  4.272  us/op
+	BenchmarkSelect1RowPrepareMiss.mariadbWithout102capacity  avgt  150   102.632 ±  5.701  us/op
+	BenchmarkSelect1RowPrepareText.mariadb                    avgt  150    49.554 ±  1.815  us/op</pre>
 
-    ...
-    BenchmarkOneInsertPrepareHit.mariadb                avgt  500      62.674&#177;   1.741  us/op
-    BenchmarkOneInsertPrepareMiss.mariadb               avgt  500     135.067&#177;   3.274  us/op
-    BenchmarkOneInsertPrepareText.mariadb               avgt  500      72.368&#177;   1.461  us/op</pre>
-
+    <pre class="java">
+	DISTANT DATABASE:
+	BenchmarkSelect1RowPrepareHit.mariadb                     avgt  150   338.594 &#177;  7.758  us/op
+	BenchmarkSelect1RowPrepareMiss.mariadb                    avgt  150   357.961 &#177;  9.919  us/op
+	BenchmarkSelect1RowPrepareMiss.mariadbWithout102capacity  avgt  150   702.903 &#177; 18.685  us/op
+	BenchmarkSelect1RowPrepareText.mariadb                    avgt  150   346.805 &#177;  8.812  us/op</pre>
+	
+	
     <div id="box_selectOne"></div>
     <script>
         google.charts.setOnLoadCallback(function () {
             var data = defaultMariaData();
             var array = [
-                ['Without PREPARE', 51.771, 0.813],
-                ['With PREPARE with cache miss', 102.548,   1.216],
-                ['With PREPARE with cache hit', 45.160,   0.584]
+                ['Text protocol', 49.554, 1.815],
+                ['Binary with cache miss', 102.632,  5.701],
+				['Binary with cache miss with 10.2 server', 97.979, 4.272],
+                ['Binary with cache hit', 43.680, 1.860]
             ];
             data.addRows(getOneBoxPlotValues(array, true));
 
             var chart = new google.visualization.BarChart(document.getElementById('box_selectOne'));
             var select1RowsOption = defaultMariaDBOptions;
-            select1RowsOption.title = "Time for a SELECT query of 1 rows";
+            select1RowsOption.title = "Time for a SELECT query of 1 rows with LOCAL database";
             select1RowsOption.height = 220;
             chart.draw(data, select1RowsOption);
         });
     </script>
 
-    <div id="box_insertOneMaria"></div>
-
+    <div id="box_selectOneDistant"></div>
     <script>
         google.charts.setOnLoadCallback(function () {
             var data = defaultMariaData();
             var array = [
-                ['Without PREPARE', 72.368,   1.461],
-                ['With PREPARE with cache miss', 135.067,   3.274],
-                ['With PREPARE with cache hit', 62.674,   1.741]
+                ['Text protocol', 346.805, 8.812],
+                ['Binary with cache miss', 702.903, 18.685],
+				['Binary with cache miss with 10.2 server', 357.961, 9.919],
+                ['Binary with cache hit', 338.594, 7.758]
             ];
-            data.addRows(getOneBoxPlotValues(array, false));
+            data.addRows(getOneBoxPlotValues(array, true));
+
+            var chart = new google.visualization.BarChart(document.getElementById('box_selectOneDistant'));
+            var select1RowsOption = defaultMariaDBOptions;
+            select1RowsOption.title = "Time for a SELECT query of 1 rows with DISTANT database";
+            select1RowsOption.height = 220;
+            chart.draw(data, select1RowsOption);
+        });
+    </script>
+	<p>
+		When PREPARE results for this exact query is already in cache (cache hit), query will be faster (18.7% for the SELECT) than using text protocol.
+        Due to the additional request PREPARE and DEALLOCATE exchanges, cache miss is 84.1% slower.<br/>
+		This emphasis the advantage and inconvienient of using a binary protocol. Cache HIT is important.
+	</p>
+	<p>
+		Using Mariadb 10.2.2 server, PREPARE + EXECUTE commands are send without waiting for PREPARE result, permitting client to avoid some network latency exchange. 
+		That make big difference using distant database, permitting to avoid most of the cache miss additional time. 
+	</p>
+<br/><br/>
+	
+    <h3>Single INSERT query</h3>
+<pre><code class="java">    private String request = "INSERT INTO blackholeTable (charValue) values (?)";
+
+    public boolean executeOneInsertPrepare(Connection connection, String[] datas) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
+            preparedStatement.setString(1, datas[0]); //a random 100 byte data
+            return preparedStatement.execute();
+        }
+    }
+</code></pre>
+    <pre class="java">
+	LOCAL DATABASE:
+	BenchmarkOneInsertPrepareBatchMultiMiss.mariadb     avgt  300   129.383 &#177;  3.947  us/op
+	BenchmarkOneInsertPrepareHit.mariadb                avgt  300    59.663 &#177;  2.036  us/op
+	BenchmarkOneInsertPrepareMiss.mariadb               avgt  300   144.020 &#177;  6.492  us/op
+	BenchmarkOneInsertPrepareText.mariadb               avgt  300    81.297 &#177;  2.356  us/op</pre>
+
+    <pre class="java">
+	DISTANT DATABASE:
+	BenchmarkOneInsertPrepareHit.mariadb                      avgt  150   343.926 &#177;  9.453  us/op
+	BenchmarkOneInsertPrepareMiss.mariadb                     avgt  150   433.321 &#177; 12.230  us/op
+	BenchmarkOneInsertPrepareMiss.mariadbWithout102capacity   avgt  150   736.290 &#177; 18.445  us/op
+	BenchmarkOneInsertPrepareText.mariadb                     avgt  150   353.148 &#177;  8.475  us/op</pre>	
+	
+    <div id="box_insertOneMaria"></div>
+    <script>
+        google.charts.setOnLoadCallback(function () {
+            var data = defaultMariaData();
+            var array = [
+                ['Text protocol', 81.297,  2.356],
+                ['Binary with cache miss', 144.020,  6.492],
+				['Binary with cache miss with 10.2 server', 129.383,  3.947],
+                ['Binary with cache hit', 59.663,  2.036]
+            ];
+            data.addRows(getOneBoxPlotValues(array, true));
 
             var select1RowsOption = defaultMariaDBOptions;
-            select1RowsOption.title = "Execution time for one INSERT";
+            select1RowsOption.title = "Execution time for one INSERT with LOCAL database";
             select1RowsOption.height = 220;
             var chart = new google.visualization.BarChart(document.getElementById('box_insertOneMaria'));
             chart.draw(data, select1RowsOption);
         });
     </script>
+    <div id="box_insertOneMariaD"></div>
+    <script>
+        google.charts.setOnLoadCallback(function () {
+            var data = defaultMariaData();
+            var array = [
+                ['Text protocol', 353.148, 8.475],
+                ['Binary with cache miss', 736.290, 18.445],
+				['Binary with cache miss with 10.2 server', 433.321, 12.230],
+                ['Binary with cache hit', 343.926,  9.453]
+            ];
+            data.addRows(getOneBoxPlotValues(array, true));
 
-    <p>When PREPARE for this exact query is already in cache (cache hit), query will be faster (13.8% for the SELECT) than without prepare.
-        Due to the additional request PREPARE and DEALLOCATE exchanges, cache miss is 98.1% slower.</p>
-
-    <p><a href="https://docs.oracle.com/javase/7/docs/api/java/sql/Statement.html">Statement</a> will never use PREPARE.
-        <a href="https://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html">PreparedStatement</a> will use by default PREPARE statement.
-        Enable/disable PREPARE for preparedStatement can be disable using option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#user-content-useServerPrepStmts">useServerPrepStmts</a>.
-    </p>
+            var select1RowsOption = defaultMariaDBOptions;
+            select1RowsOption.title = "Execution time for one INSERT with DISTANT database";
+            select1RowsOption.height = 220;
+            var chart = new google.visualization.BarChart(document.getElementById('box_insertOneMariaD'));
+            chart.draw(data, select1RowsOption);
+        });
+    </script>	
     <p>
-        As a developer you must implement application knowing when to use Statement and when to use PreparedStatement.<br/>
-        ORM will use almost exclusively PrepareStatement.<br/>
+		Result for INSERT are simular to SELECT queries.
     </p>
+	<br><br>
+    <h3>Batch : 1000 INSERT query</h3>
+	<pre><code class="java">    private String request = "INSERT INTO blackholeTable (charValue) values (?)";
 
-    <p>
-        Default java MariaDB cache size is 250.<br>
-        You may want to increase cache. You must know that every prepare in cache take 40bytes client side.<br/>
-        So configuration with 1000 prepared result in cache in a pool of 30 connection will use : 1000 * 30 * 40 = 1200kb.
-        Global max prepared statement on server is variable "max_prepared_stmt_count" default to 16382 will have to be set accordingly to the total number of client.
-    </p>
-    <br/>
-
-    <h3>1000 INSERT query</h3>
+    public int[] executeBatch(Connection connection, String[] data) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
+            for (int i = 0; i < 1000; i++) {
+                preparedStatement.setString(1, data[i]); //a random 100 byte data
+                preparedStatement.addBatch();
+            }
+            return preparedStatement.executeBatch();
+        }
+    }</code></pre>
     <pre class="java">
-BenchmarkBatch1000InsertPrepare.mariadb             avgt  500      59.020&#177;   2.375  ms/op
-BenchmarkBatch1000InsertText.mariadb                avgt  500      78.093&#177;   2.745  ms/op</pre>
+LOCAL DATABASE:		
+BenchmarkBatch1000InsertBatchMultiHit.mariadb       avgt  300    56.472 &#177;  1.790  ms/op
+BenchmarkBatch1000InsertRewrite.mariadb             avgt  300     4.149 &#177;  0.177  ms/op
+BenchmarkBatch1000InsertText.mariadb                avgt  300    64.951 &#177;  1.892  ms/op</pre>
+    <pre class="java">
+DISTANT DATABASE:		
+BenchmarkBatch1000InsertPrepareHit.mariadb                avgt  150    48.522 &#177;  0.800  ms/op
+BenchmarkBatch1000InsertRewrite.mariadb                   avgt  150     6.377 &#177;  0.103  ms/op
+BenchmarkBatch1000InsertText.mariadb                      avgt  150    64.269 &#177;  1.351  ms/op</pre>
+
     <div id="box_select1000Maria"></div>
 
     <script>
@@ -447,13 +608,14 @@ BenchmarkBatch1000InsertText.mariadb                avgt  500      78.093&#177; 
         function drawSelectOnePlot() {
             var data = defaultMariaData();
             var array = [
-                ['Without PREPARE', 78.093,   2.745],
-                ['With PREPARE', 59.020,   2.375]
+                ['Text protocol', 64.951,  1.892],
+                ['Binary protocol', 56.472,  1.790],
+                ['Rewrite', 4.149,  0.177]
             ];
             data.addRows(getOneBoxPlotValues(array, true));
 
             var select1RowsOption = defaultMariaDBOptions;
-            select1RowsOption.title = "Time for inserting 1000 rows";
+            select1RowsOption.title = "Time for inserting 1000 rows with LOCAL database";
             select1RowsOption.hAxis.title= 'milliseconds';
             select1RowsOption.height = 190;
             var chart = new google.visualization.BarChart(document.getElementById('box_select1000Maria'));
@@ -461,25 +623,52 @@ BenchmarkBatch1000InsertText.mariadb                avgt  500      78.093&#177; 
         }
 
     </script>
-    <p>
-        This is where PREPARE has the more signification.
-        Using server PREPARE to insert 1000 rows take 24.4% less than without (don't forget INSERT are send into BLACKHOLE engine).
-    </p>
+	<div id="box_select1000MariaDistant"></div>
 
+    <script>
+        google.charts.setOnLoadCallback(drawSelectOnePlot);
+        function drawSelectOnePlot() {
+            var data = defaultMariaData();
+            var array = [
+                ['Text protocol', 64.269,  1.351],
+                ['Binary protocol', 48.522,  0.800],
+                ['Rewrite', 6.377,  0.103]
+            ];
+            data.addRows(getOneBoxPlotValues(array, true));
+
+            var select1RowsOption = defaultMariaDBOptions;
+            select1RowsOption.title = "Time for inserting 1000 rows with DISTANT database";
+            select1RowsOption.hAxis.title= 'milliseconds';
+            select1RowsOption.height = 190;
+            var chart = new google.visualization.BarChart(document.getElementById('box_select1000MariaDistant'));
+            chart.draw(data, select1RowsOption);
+        }
+
+    </script>
+    <p>
+		This is where PREPARE has the more signification.
+        Using server PREPARE to insert 1000 rows take 24.4% less than without.
+    </p>
+	<p>
+		Rewrite has amazing good performances, but will not send autoincrement ids. 
+		Some ORM permit configuration : ORM handle sequence internally to provide increment ids, but those sequence aren't distributed, so won't work on clusters. 		
+    </p>
+	
     <br/><br/>
-    <h1>Comparaison with other drivers</h1>
+    <h1 id="otherDrivers">Comparaison with other drivers</h1>
     <h2>SELECT query with one row result</h2>
 <pre class="java">
-BenchmarkSelect1RowPrepareHit.mariadb               avgt  500      45.160&#177;   0.584  us/op
-BenchmarkSelect1RowPrepareHit.mysql                 avgt  500      63.283&#177;   0.934  us/op
-BenchmarkSelect1RowPrepareMiss.mariadb              avgt  500     102.548&#177;   1.216  us/op
-BenchmarkSelect1RowPrepareMiss.mysql                avgt  500     133.809&#177;   1.323  us/op
-BenchmarkSelect1RowPrepareText.drizzle              avgt  500      71.834&#177;   0.750  us/op
-BenchmarkSelect1RowPrepareText.mariadb              avgt  500      51.771&#177;   0.813  us/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  500      69.498&#177;   0.853  us/op
-BenchmarkSelect1RowPrepareTextHA.mariadb            avgt  500      53.430&#177;   0.681  us/op
-BenchmarkSelect1RowPrepareTextHA.mysql              avgt  500     122.346&#177;   1.135  us/op
-</pre>
+BenchmarkSelect1RowBatchMultiHit.mariadb            avgt  300    53.982 &#177;  1.853  us/op
+BenchmarkSelect1RowPrepareBatchMultiMiss.mariadb    avgt  300   108.378 &#177;  4.102  us/op
+BenchmarkSelect1RowPrepareHit.mariadb               avgt  300    48.805 &#177;  1.943  us/op
+BenchmarkSelect1RowPrepareHit.mysql                 avgt  300    70.531 &#177;  2.560  us/op
+BenchmarkSelect1RowPrepareMiss.mariadb              avgt  300   110.563 &#177;  5.681  us/op
+BenchmarkSelect1RowPrepareMiss.mysql                avgt  300   160.566 &#177;  6.302  us/op
+BenchmarkSelect1RowPrepareText.drizzle              avgt  300    98.780 &#177;  3.674  us/op
+BenchmarkSelect1RowPrepareText.mariadb              avgt  300    60.065 &#177;  2.074  us/op
+BenchmarkSelect1RowPrepareText.mysql                avgt  300    96.859 &#177;  3.337  us/op
+BenchmarkSelect1RowPrepareTextHA.mariadb            avgt  300    67.930 &#177;  2.176  us/op
+BenchmarkSelect1RowPrepareTextHA.mysql              avgt  300   181.147 &#177;  8.899  us/op</pre>
     <div id="box_select"></div>
 
     <script>
@@ -488,42 +677,51 @@ BenchmarkSelect1RowPrepareTextHA.mysql              avgt  500     122.346&#177; 
         function drawSelectPlot() {
             var data = defaultData();
             var array = [
-                ['Without PREPARE', 69.498,   0.853, 51.771,   0.813, 71.834,   0.750],
-                ['Without PREPARE HA', 122.346,   1.135, 53.430,   0.681, 0.0, 0.0],
-                ['With PREPARE with cache miss', 133.809,   1.323, 102.548,   1.216, 0.0, 0.0],
-                ['With PREPARE with cache hit', 63.283,   0.934, 45.160,   0.584, 0.0, 0.0]
+                ['Text protocol', 96.859, 3.337, 60.065,  2.074, 98.780,  3.674],
+                ['Text protocol HA', 181.147,  8.899, 67.930,  2.176,0,0],
+                ['Binary with cache miss', 160.566,  6.302, 110.563,  5.6810,0],
+                ['Binary with cache hit', 70.531,  2.560, 48.805,  1.9430,0]				
             ];
             data.addRows(getBoxPlotValues(array, true));
 
             var select1RowsOption = defaultOptions;
-            select1RowsOption.title = "Time for selecting 1 rows";
-            select1RowsOption.height = 700;
+			
+            select1RowsOption.title = "Time for selecting 1 rows using LOCAL database";
+            select1RowsOption.height = 590;
+			select1RowsOption.hAxis.maxValue=200;
             var chart = new google.visualization.BarChart(document.getElementById('box_select'));
             chart.draw(data, select1RowsOption);
         }
 
     </script>
-<p>
-    This correspond to the execution time of query <code>SELECT ?</code>.
-    <br/>
-    Base (100%) correspond to execution with mysql without using PREPARE.
-    </p>
-<p>
-    HA stand for "High Availability" using Master-Slave configuration (connection string is "jdbc:mysql:<strong>replication:</strong>//localhost:3306,localhost:3306/testj").<br/><br/>
+	<p>
+		HA stand for "High Availability" using Master-Slave configuration <br>(connection string is "jdbc:mysql:replication://localhost:3306,localhost:3306/testj").
+	</p>	
+	<p>
+    Using HA configuration will add a little execution time using mariadb driver : 51.771 become 53.430 microseconds.
+    those additional 2 microseconds are due to failover handling<br/>
+    HA in mysql jdbc driver is using a lot of mutex, slowing a lot each execution.
+    (Drizzle has no PREPARE, neither HA functionality)
+	</p>
+<br/><br/>
+    <h2 id="batches">"Select 1000 rows"</h2>
+<pre><code class="java">private String request = "select * from seq_1_to_1000"; //using the <a href="https://mariadb.com/kb/en/mariadb/sequence/">sequence storage engine</a>
 
-    You can notice that using HA configuration, will add a little execution time using mariadb driver : 51.771 become 53.430 microseconds.
-    This difference is due to failover handling.<br/>
-    HA in mysql is using a lot of mutex, slowing a lot each execution.
-    (Drizzle has no PREPARE, neither HA functionality)</p>
-
-    <h2>"Select 1000 rows"</h2>
+    private ResultSet select1000Row(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet rs = statement.executeQuery(request)) {
+                while (rs.next()) {
+                    rs.getString(1);
+                }
+                return rs;
+            }
+        }
+    }</code></pre>
+	
 <pre class="java">
-BenchmarkSelect1000BigRows.drizzle                  avgt  500   93563.723&#177; 676.147  us/op
-BenchmarkSelect1000BigRows.mariadb                  avgt  500   88298.679&#177; 656.603  us/op
-BenchmarkSelect1000BigRows.mysql                    avgt  500  105989.608&#177; 816.302  us/op
-BenchmarkSelect1000Rows.drizzle                     avgt  500     751.088&#177;   5.571  us/op
-BenchmarkSelect1000Rows.mariadb                     avgt  500     508.405&#177;   5.239  us/op
-BenchmarkSelect1000Rows.mysql                       avgt  500     558.983&#177;   5.678  us/op
+BenchmarkSelect1000Rows.drizzle                     avgt  300   792.160 &#177; 26.893  us/op
+BenchmarkSelect1000Rows.mariadb                     avgt  300   551.687 &#177; 22.201  us/op
+BenchmarkSelect1000Rows.mysql                       avgt  300   602.673 &#177; 23.264  us/op
 </pre>
 
     <div id="box_select1000"></div>
@@ -533,133 +731,62 @@ BenchmarkSelect1000Rows.mysql                       avgt  500     558.983&#177; 
         function drawSelectPlot() {
             var data = defaultData();
             var array = [
-                ['Select 1000 rows', 558.983,   5.678, 508.405,   5.239, 751.088,   5.571]
+                ['Select 1000 rows', 602.673, 23.264, 551.687, 22.201, 792.160, 26.893]
             ];
             data.addRows(getBoxPlotValues(array, true));
 
             var chart = new google.visualization.BarChart(document.getElementById('box_select1000'));
             var select1000RowsOption = defaultOptions;
-            select1000RowsOption.title = "Time to select 1000 rows (return an integer from 1 to 1000)";
+            select1000RowsOption.title = "Time to select 1000 rows (return an integer from 1 to 1000) using LOCAL database";
             select1000RowsOption.height = 230;
             chart.draw(data, select1000RowsOption);
         }
 
     </script>
-
-    <div id="box_select1000Bigs"></div>
-    <script>
-
-        google.charts.setOnLoadCallback(drawSelectPlot);
-        function drawSelectPlot() {
-            var data = defaultData();
-            var array = [
-                ['Select 1000 big rows', 105989.608, 816.302, 88298.679, 656.603, 93563.723, 676.147]
-            ];
-
-            data.addRows(getBoxPlotValues(array, true));
-
-            var chart = new google.visualization.BarChart(document.getElementById('box_select1000Bigs'));
-            var select1000BigRowsOption = defaultOptions;
-            select1000BigRowsOption.title = "Time to select 1000 big rows (10kb of data for each rows)";
-            select1000BigRowsOption.height = 230;
-            chart.draw(data, select1000BigRowsOption);
-        }
-
-    </script>
     <br/>
-    <p>
-        <ul>
-            <li>First graphic correspond a the query <code>select * from seq_1_to_1000</code>, using the <a href="https://mariadb.com/kb/en/mariadb/sequence/">sequence storage engine</a> that will create 1000 results containing integer from 1 to 1000</li>
-            <li>Second graphic correspond to the query <code>select repeat('a', 10000) from seq_1_to_1000</code>, using the <a href="https://mariadb.com/kb/en/mariadb/sequence/">sequence storage engine</a> that will create 1000 results containing 10kb 'a'.</li>
-        </ul>
-        This correspond to executing the result AND reading the results : <br/>
-        <pre><code class="java">
-            private String request = "select * from seq_1_to_1000";
-
-            private ResultSet select1000Row(Connection connection) throws SQLException {
-                try (Statement statement = connection.createStatement()) {
-                    try (ResultSet rs = statement.executeQuery(request)) {
-                        while (rs.next()) {
-                            rs.getString(1);
-                        }
-                        return rs;
-                    }
-                }
-            }
-        </code></pre>
-    </p>
 
     <p>
-        The drivers have different results. <br/>
-        In fact, for select, if not reading the results, if test was only executing the SELECT, execution time would be equivalent for mysql and mariadb, even 1% faster for mysql !<br/>
-        But since SELECT query goal are to have results, mariadb driver is optimized to read results (avoiding the creation of one buffer comparing to mysql driver).
+		When using a lot of data, time is mostly spent reading from socket, so results will tend to be closer.
+        If test was only executing the SELECT without reading results, execution time would be equivalent for mysql and mariadb (even 1% faster for mysql).
+        Since SELECT query goal is to have results, mariadb driver is optimized to read results (avoiding the creation of buffers comparing to mysql driver).
     </p>
-
-    <h2>Insert queries</h2>
-    <h3>"insert 1 rows"</h3>
-<pre class="java">
-BenchmarkOneInsertPrepareHit.mariadb                avgt  500      62.674&#177;   1.741  us/op
-BenchmarkOneInsertPrepareHit.mysql                  avgt  500      66.582&#177;   1.400  us/op
-BenchmarkOneInsertPrepareMiss.mariadb               avgt  500     135.067&#177;   3.274  us/op
-BenchmarkOneInsertPrepareMiss.mysql                 avgt  500     165.441&#177;   3.592  us/op
-BenchmarkOneInsertPrepareText.drizzle               avgt  500      90.572&#177;   1.687  us/op
-BenchmarkOneInsertPrepareText.mariadb               avgt  500      72.368&#177;   1.461  us/op
-BenchmarkOneInsertPrepareText.mysql                 avgt  500      93.846&#177;   1.567  us/op
-BenchmarkOneInsertPrepareTextHA.mariadb             avgt  500      76.859&#177;   1.636  us/op
-BenchmarkOneInsertPrepareTextHA.mysql               avgt  500     152.755&#177;   2.523  us/op
-</pre>
-    <p>
-        time to execute a query like "INSERT INTO PerfTextQuery (charValue) values ('abcdefghij0123456')";
-    </p>
-    <div id="box_insertOne"></div>
-    <script>
-
-        google.charts.setOnLoadCallback(drawSelectPlot);
-        function drawSelectPlot() {
-            var array = [
-                ['Without PREPARE', 93.846,   1.567, 72.368,   1.461, 90.572,   1.687],
-                ['Without PREPARE HA', 152.755,   2.523, 76.859,   1.636, 0.0, 0.0],
-                ['With PREPARE with cache miss', 165.441,   3.592, 135.067,   3.274, 0.0, 0.0],
-                ['With PREPARE with cache hit', 66.582,   1.400, 62.674,   1.741, 0.0, 0.0]
-            ];
-
-            var data = defaultData();
-            data.addRows(getBoxPlotValues(array, false));
-
-            var chart = new google.visualization.BarChart(document.getElementById('box_insertOne'));
-            var insertOneRowOption = defaultOptions;
-            insertOneRowOption.title = "Insert one row";
-            insertOneRowOption.height = 600;
-            chart.draw(data, insertOneRowOption);
-        }
-
-    </script>
-
-<pre class="java">
-BenchmarkBatch1000InsertPrepare.mariadb             avgt  500      59.020&#177;   2.375  ms/op
-BenchmarkBatch1000InsertPrepare.mysql               avgt  500      71.707&#177;   3.079  ms/op
-BenchmarkBatch1000InsertRewrite.mariadb             avgt  500       2.263&#177;   0.063  ms/op
-BenchmarkBatch1000InsertRewrite.mysql               avgt  500       1.897&#177;   0.045  ms/op
-BenchmarkBatch1000InsertText.drizzle                avgt  500      94.771&#177;   3.199  ms/op
-BenchmarkBatch1000InsertText.mariadb                avgt  500      78.093&#177;   2.745  ms/op
-BenchmarkBatch1000InsertText.mysql                  avgt  500      85.060&#177;   2.792  ms/op
-</pre>
-    <div id="box_insert1000"></div>
-
+<br/><br/>
+    <h2>"Insert 1000 rows"</h2>
+    <pre class="java">
+LOCAL DATABASE:		
+BenchmarkBatch1000InsertBatchMultiHit.mariadb       avgt  300    56.472 &#177;  1.790  ms/op
+BenchmarkBatch1000InsertPrepareHit.mysql            avgt  300    68.023 &#177;  2.513  ms/op
+BenchmarkBatch1000InsertRewrite.mariadb             avgt  300     4.149 &#177;  0.177  ms/op
+BenchmarkBatch1000InsertRewrite.mysql               avgt  300     6.796 &#177;  0.293  ms/op
+BenchmarkBatch1000InsertText.drizzle                avgt  300    97.896 &#177;  3.511  ms/op
+BenchmarkBatch1000InsertText.mariadb                avgt  300    64.951 &#177;  1.892  ms/op
+BenchmarkBatch1000InsertText.mysql                  avgt  300    77.721 &#177;  2.404  ms/op</pre>
+    <pre class="java">
+DISTANT DATABASE:		
+BenchmarkBatch1000InsertPrepareHit.mariadb                avgt  150    48.522 &#177;  0.800  ms/op
+BenchmarkBatch1000InsertPrepareHit.mysql                  avgt  150   354.025 &#177;  9.642  ms/op
+BenchmarkBatch1000InsertRewrite.mariadb                   avgt  150     6.377 &#177;  0.103  ms/op
+BenchmarkBatch1000InsertRewrite.mysql                     avgt  150     8.798 &#177;  0.156  ms/op
+BenchmarkBatch1000InsertText.drizzle                      avgt  150   384.970 &#177; 34.213  ms/op
+BenchmarkBatch1000InsertText.mariadb                      avgt  150    64.269 &#177;  1.351  ms/op
+BenchmarkBatch1000InsertText.mysql                        avgt  150   352.618 &#177;  6.916  ms/op</pre>
+    <div id="box_insert1000" ></div>
+	<div id="box_insert1000DISTANT" ></div>
     <script>
 
         google.charts.setOnLoadCallback(function () {
             var array = [
-                ['Without PREPARE', 85.060,   2.792, 78.093,   2.745, 94.771,   3.199],
-                ['With PREPARE', 71.707,   3.079, 59.020,   2.375, 0, 0]
+                ['Text protocol', 77.721,  2.404, 64.951, 1.892, 97.896,  3.511],
+                ['Binary protocol', 68.023,  2.513, 56.472,  1.790, 0, 0],
+				['Rewrite', 6.796,  0.293, 4.149,  0.177, 0, 0]
             ];
 
             var data = defaultData();
-            data.addRows(getBoxPlotValues(array, false));
+            data.addRows(getBoxPlotValues(array, true));
 
             var chart = new google.visualization.BarChart(document.getElementById('box_insert1000'));
             var select1000RowsOption = defaultOptions;
-            select1000RowsOption.title = "Insert 1000 rows";
+            select1000RowsOption.title = "Insert 1000 rows on LOCAL database";
             select1000RowsOption.height = 400;
             select1000RowsOption.hAxis.title= 'milliseconds';
             chart.draw(data, select1000RowsOption);
@@ -667,99 +794,47 @@ BenchmarkBatch1000InsertText.mysql                  avgt  500      85.060&#177; 
 
     </script>
 
-    <div id="box_insert1000Rewrite"></div>
-
-    <script>
-
-        google.charts.setOnLoadCallback(function () {
-            var array = [
-                ['With rewrite', 1.897,   0.045, 2.263,   0.063]
-            ];
-
-            var data = defaultDataWithoutDrizzle();
-            data.addRows(getBoxPlotValues(array, false));
-
-            var chart = new google.visualization.BarChart(document.getElementById('box_insert1000Rewrite'));
-            var select1000RowsOption = defaultOptions;
-            select1000RowsOption.title = "Insert 1000 rows using rewrite ";
-            select1000RowsOption.height = 180;
-            select1000RowsOption.hAxis.title= 'milliseconds';
-            chart.draw(data, select1000RowsOption);
-        });
-
-    </script>
-
-    <p>
-        Ouch, this time mysql driver behave better than Mariadb driver 1.4.4.
-        After analysing the time spend in driver, every write of parameters to the byte array buffer was checking that
-        buffer size was big enought.
-        An improvement will be released in version 1.5.0.
-        Running the test for this specific test "BenchmarkBatch1000InsertRewrite" :
-        nohup java -Xmx64m -Xms64m -Duser.country=US -Duser.language=en -jar benchmarks.jar ".BenchmarkBatch1000InsertRewrite"> result.txt &
-        with the 1.5.0-SNAPSHOT version giver better results (<a href="./result_mariadb_server_rewrite_1.5.0-SNAPSHOT.txt">results</a>) :
-    </p>
-<pre class="java">
-Benchmark                                Mode  Cnt  Score   Error  Units
-BenchmarkBatch1000InsertRewrite.mariadb  avgt  500  1.744 ± 0.029  ms/op
-BenchmarkBatch1000InsertRewrite.mysql    avgt  500  1.779 ± 0.032  ms/op
-</pre>
-    <div id="box_insert1000Rewrite2"></div>
-    <script>
+    
+	<script>
 
         google.charts.setOnLoadCallback(function () {
             var array = [
-                ['With rewrite', 1.779, 0.032, 1.744, 0.029]
+                ['Text protocol', 352.618, 6.916, 64.269,  1.351, 384.970, 34.213],
+                ['Binary protocol', 334.913,  4.947, 47.526,  0.693, 0, 0],
+				['Rewrite', 8.798, 0.156, 6.377, 0.103, 0, 0]
             ];
 
-            var data = defaultDataMaria15();
-            data.addRows(getBoxPlotValues(array, false));
-
-            var chart = new google.visualization.BarChart(document.getElementById('box_insert1000Rewrite2'));
-            var select1000RowsOption = defaultOptions;
-            select1000RowsOption.title = "Insert 1000 rows using rewrite with mariadb 1.5.0-SNAPSHOT version";
-            select1000RowsOption.height = 180;
-            select1000RowsOption.series[1].color= '#109618';
-            select1000RowsOption.hAxis.title= 'milliseconds';
-            chart.draw(data, select1000RowsOption);
-        });
-
-    </script>
-
-
-
-    <br/>
-    <h2>Store procedures</h2>
-    <h3>Function call</h3>
-
-    <pre class="java">
-BenchmarkCallableStatementFunction.mariadb          avgt  500     112.662&#177;   2.579  us/op
-BenchmarkCallableStatementFunction.mysql            avgt  500    1657.960&#177;  46.456  us/op</pre>
-    <div id="box_function"></div>
-    <script>
-        google.charts.setOnLoadCallback(function () {
-            var data = defaultDataWithoutDrizzle();
-            var array = [
-                ['Calling function', 1657.960,  46.456, 112.662,   2.579]
-            ];
+            var data = defaultData();
             data.addRows(getBoxPlotValues(array, true));
 
-            var chart = new google.visualization.BarChart(document.getElementById('box_function'));
-            var select1RowsOption = defaultOptions;
-            select1RowsOption.title = "Execution time for a function call";
-            select1RowsOption.hAxis.title= 'microseconds';
-            select1RowsOption.height = 220;
-            select1RowsOption.series[1].color= '#4285F4';
-            chart.draw(data, select1RowsOption);
+            var chart = new google.visualization.BarChart(document.getElementById('box_insert1000DISTANT'));
+            var select1000RowsOption = defaultOptions;
+            select1000RowsOption.title = "Insert 1000 rows on DISTANT database";
+            select1000RowsOption.height = 400;
+            select1000RowsOption.hAxis.title= 'milliseconds';
+            chart.draw(data, select1000RowsOption);
         });
-    </script>
-    <p>There is a big difference, because the implementation completely differ.</p>
-    <p>MariaDB driver makes a basic parsing to identify if query is a function or a procedure, and when format correspond to a function call <br/>
-        {?= call &lt;procedure-name&gt;[(&lt;arg1&gt;,&lt;arg2&gt;, ...)]} <br/>
-        will transform this to a standard query : SELECT &lt;procedure-name&gt;[(&lt;arg1&gt;,&lt;arg2&gt;, ...)]<br/>
-    </p>
-    <br/>
-    <h3>Procedure call</h3>
 
+    </script>
+	<p>
+		MariaDB will send all writes to socket and read result asynchrounously, permitting to have better results for text and binary protocol. 
+		In that benchmark, performance using distant database are even better than using local database, because database doesn't use the same CPU than driver.
+	</p>
+	
+    <br/>
+    <h2>Store procedures</h2>
+    <h3>Procedure call</h3>
+	<pre><code class="java">    private String request = "{call inOutParam(?)}"; //CREATE PROCEDURE inoutParam(INOUT p1 INT) begin set p1 = p1 + 1; end
+
+    private String callableStatementWithOutParameter(Connection connection, MyState state) throws SQLException {
+        try (CallableStatement storedProc = connection.prepareCall(request)) {
+            storedProc.setInt(1, state.functionVar1); //2
+            storedProc.registerOutParameter(1, Types.INTEGER);
+            storedProc.execute();
+            return storedProc.getString(1);
+        }
+    }</code></pre>
+    
     <pre class="java">
 BenchmarkCallableStatementWithOutParameter.mariadb  avgt  500      71.376&#177;   1.348  us/op
 BenchmarkCallableStatementWithOutParameter.mysql    avgt  500    1701.757&#177;  50.215  us/op</pre>
@@ -781,12 +856,32 @@ BenchmarkCallableStatementWithOutParameter.mysql    avgt  500    1701.757&#177; 
             chart.draw(data, select1RowsOption);
         });
     </script>
-    <p>Like function, implementation completely differ.</p>
-    <p>Mysql will use many hidden query to obtain output result.<br/>
-    <p>MariadDB implementation is straightForward using a capability to have OUT parameter in server response without any additional queries.<br/>
-        (That's the main reason why MariaDB 1.4 driver now require MariaDB/MySQL version 5.5.3 minimum).<br/>
+    <p>
+		MySQL and MariaDB implementation completely differ.
+		Mysql will use many hidden query to obtain output result.
+		MariadDB implementation is straightForward using a capability to have OUT parameter in server response without any additional queries.
+        (That's the main reason why MariaDB 1.4 driver require MariaDB/MySQL version 5.5.3 minimum).
     </p>
     <br/>
+	
+	<h1 id="conclusion">Conclusion</h1>
+	
+	<p>MariaDB driver rocks !</p>
+	<p>Binary protocol has different advantages but rely on having the PREPARE results already in cache. 
+	If applications have a lot of different kind of query and database is distant, that may not be the better solution. 
+	</p>
+	
+	<p>Rewrite has amazing results to write data in batch, and can permit to send a load a database for example</p>
+
+	<br/>
+	
+    Raw results : 
+    <ol>
+        <li><a href="./result_mariadb-10.1_server_local.txt">with a MariaDB 10.1.16 database</a></li>
+        <li><a href="./result_mariadb-10.2_server_local.txt">with a MariaDB 10.2.2 database</a> (<a href="./result_mariadb-10.2_server_local.txt">distant</a>)</li>
+        <li><a href="./result_mysql-5.7_server_local.txt">with a MySQL Community Server 5.7.13 database (build 5.7.13-0ubuntu0.16.04.2)</a></li>
+    </ol>
+	
     <script>
         hljs.initHighlightingOnLoad();
     </script>

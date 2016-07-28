@@ -9,16 +9,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class BenchmarkSelect1000Rows extends BenchmarkInit {
-    private String request = "select * from seq_1_to_1000";
+    private String request = "select * from seq_1_to_1000"; //using the <a href="https://mariadb.com/kb/en/mariadb/sequence/">sequence storage engine</a>
 
     @Benchmark
     public ResultSet mysql(MyState state) throws Throwable {
-        return select1000Row(state.mysqlConnection);
+        return select1000Row(state.mysqlConnectionText);
     }
 
     @Benchmark
     public ResultSet mariadb(MyState state) throws Throwable {
-        return select1000Row(state.mariadbConnection);
+        return select1000Row(state.mariadbConnectionText);
     }
 
     @Benchmark
