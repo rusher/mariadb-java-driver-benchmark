@@ -524,10 +524,10 @@ BenchmarkSelect1RowPrepareText.mysql                      avgt  150    79.760 &#
 </code></pre>
     <pre class="java">
 	LOCAL DATABASE:
-	BenchmarkOneInsertPrepareBatchMultiMiss.mariadb     avgt  300   129.383 &#177;  3.947  us/op
-	BenchmarkOneInsertPrepareHit.mariadb                avgt  300    59.663 &#177;  2.036  us/op
-	BenchmarkOneInsertPrepareMiss.mariadb               avgt  300   144.020 &#177;  6.492  us/op
-	BenchmarkOneInsertPrepareText.mariadb               avgt  300    81.297 &#177;  2.356  us/op</pre>
+	BenchmarkOneInsertPrepareHit.mariadb                      avgt  150    52.535 ±  1.650  us/op
+	BenchmarkOneInsertPrepareMiss.mariadb                     avgt  150   124.092 ±  4.453  us/op
+	BenchmarkOneInsertPrepareMiss.mariadbWithout102capacity   avgt  150   128.787 ±  7.090  us/op
+	BenchmarkOneInsertPrepareText.mariadb                     avgt  150    63.145 ±  2.217  us/op</pre>
 
     <pre class="java">
 	DISTANT DATABASE:
@@ -541,10 +541,10 @@ BenchmarkSelect1RowPrepareText.mysql                      avgt  150    79.760 &#
         google.charts.setOnLoadCallback(function () {
             var data = defaultMariaData();
             var array = [
-                ['Text protocol', 81.297,  2.356],
-                ['Binary with cache miss', 144.020,  6.492],
-				['Binary with cache miss with 10.2 server', 129.383,  3.947],
-                ['Binary with cache hit', 59.663,  2.036]
+                ['Text protocol', 63.145, 2.217],
+                ['Binary with cache miss', 128.787, 7.090],
+				['Binary with cache miss with 10.2 server', 124.092,  4.453],
+                ['Binary with cache hit', 52.535, 1.650]
             ];
             data.addRows(getOneBoxPlotValues(array, true));
 
@@ -592,9 +592,9 @@ BenchmarkSelect1RowPrepareText.mysql                      avgt  150    79.760 &#
     }</code></pre>
     <pre class="java">
 LOCAL DATABASE:		
-BenchmarkBatch1000InsertBatchMultiHit.mariadb       avgt  300    56.472 &#177;  1.790  ms/op
-BenchmarkBatch1000InsertRewrite.mariadb             avgt  300     4.149 &#177;  0.177  ms/op
-BenchmarkBatch1000InsertText.mariadb                avgt  300    64.951 &#177;  1.892  ms/op</pre>
+BenchmarkBatch1000InsertPrepareHit.mariadb                avgt  150    49.901 ±  2.531  ms/op
+BenchmarkBatch1000InsertRewrite.mariadb                   avgt  150     3.880 ±  0.238  ms/op
+BenchmarkBatch1000InsertText.mariadb                      avgt  150    56.638 ±  2.277  ms/op</pre>
     <pre class="java">
 DISTANT DATABASE:		
 BenchmarkBatch1000InsertPrepareHit.mariadb                avgt  150    48.522 &#177;  0.800  ms/op
@@ -608,9 +608,9 @@ BenchmarkBatch1000InsertText.mariadb                      avgt  150    64.269 &#
         function drawSelectOnePlot() {
             var data = defaultMariaData();
             var array = [
-                ['Text protocol', 64.951,  1.892],
-                ['Binary protocol', 56.472,  1.790],
-                ['Rewrite', 4.149,  0.177]
+                ['Text protocol', 56.638, 2.277],
+                ['Binary protocol', 49.901, 2.531],
+                ['Rewrite', 3.880, 0.238]
             ];
             data.addRows(getOneBoxPlotValues(array, true));
 
@@ -658,17 +658,18 @@ BenchmarkBatch1000InsertText.mariadb                      avgt  150    64.269 &#
     <h1 id="otherDrivers">Comparaison with other drivers</h1>
     <h2>SELECT query with one row result</h2>
 <pre class="java">
-BenchmarkSelect1RowBatchMultiHit.mariadb            avgt  300    53.982 &#177;  1.853  us/op
-BenchmarkSelect1RowPrepareBatchMultiMiss.mariadb    avgt  300   108.378 &#177;  4.102  us/op
-BenchmarkSelect1RowPrepareHit.mariadb               avgt  300    48.805 &#177;  1.943  us/op
-BenchmarkSelect1RowPrepareHit.mysql                 avgt  300    70.531 &#177;  2.560  us/op
-BenchmarkSelect1RowPrepareMiss.mariadb              avgt  300   110.563 &#177;  5.681  us/op
-BenchmarkSelect1RowPrepareMiss.mysql                avgt  300   160.566 &#177;  6.302  us/op
-BenchmarkSelect1RowPrepareText.drizzle              avgt  300    98.780 &#177;  3.674  us/op
-BenchmarkSelect1RowPrepareText.mariadb              avgt  300    60.065 &#177;  2.074  us/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  300    96.859 &#177;  3.337  us/op
-BenchmarkSelect1RowPrepareTextHA.mariadb            avgt  300    67.930 &#177;  2.176  us/op
-BenchmarkSelect1RowPrepareTextHA.mysql              avgt  300   181.147 &#177;  8.899  us/op</pre>
+BenchmarkSelect1RowPrepareHit.mariadb                     avgt  150    43.680 ±  1.860  us/op
+BenchmarkSelect1RowPrepareHit.mysql                       avgt  150    62.668 ±  2.356  us/op
+BenchmarkSelect1RowPrepareMiss.mariadb                    avgt  150    97.979 ±  4.272  us/op
+BenchmarkSelect1RowPrepareMiss.mariadbWithout102capacity  avgt  150   102.632 ±  5.701  us/op
+BenchmarkSelect1RowPrepareMiss.mysql                      avgt  150   142.446 ±  8.919  us/op
+BenchmarkSelect1RowPrepareRewrite.mariadb                 avgt  150    49.455 ±  2.084  us/op
+BenchmarkSelect1RowPrepareRewrite.mysql                   avgt  150    77.661 ±  2.842  us/op
+BenchmarkSelect1RowPrepareText.drizzle                    avgt  150    78.311 ±  2.631  us/op
+BenchmarkSelect1RowPrepareText.mariadb                    avgt  150    49.554 ±  1.815  us/op
+BenchmarkSelect1RowPrepareText.mysql                      avgt  150    79.760 ±  2.848  us/op
+BenchmarkSelect1RowPrepareTextHA.mariadb                  avgt  150    53.579 ±  2.439  us/op
+BenchmarkSelect1RowPrepareTextHA.mysql                    avgt  150   131.405 ±  8.395  us/op</pre>
     <div id="box_select"></div>
 
     <script>
@@ -677,10 +678,10 @@ BenchmarkSelect1RowPrepareTextHA.mysql              avgt  300   181.147 &#177;  
         function drawSelectPlot() {
             var data = defaultData();
             var array = [
-                ['Text protocol', 96.859, 3.337, 60.065,  2.074, 98.780,  3.674],
-                ['Text protocol HA', 181.147,  8.899, 67.930,  2.176,0,0],
-                ['Binary with cache miss', 160.566,  6.302, 110.563,  5.6810,0],
-                ['Binary with cache hit', 70.531,  2.560, 48.805,  1.9430,0]				
+                ['Text protocol', 79.760 ,  2.848, 49.554 ,  1.815, 78.311 ,  2.631],
+                ['Text protocol HA', 131.405 ,  8.395, 53.579 ,  2.439,0,0],
+                ['Binary with cache miss', 142.446,  8.919, 97.979 ,  4.272,0,0],
+                ['Binary with cache hit', 62.668, 2.356, 43.680 ,  1.860 ,0,0]				
             ];
             data.addRows(getBoxPlotValues(array, true));
 
@@ -719,10 +720,9 @@ BenchmarkSelect1RowPrepareTextHA.mysql              avgt  300   181.147 &#177;  
     }</code></pre>
 	
 <pre class="java">
-BenchmarkSelect1000Rows.drizzle                     avgt  300   792.160 &#177; 26.893  us/op
-BenchmarkSelect1000Rows.mariadb                     avgt  300   551.687 &#177; 22.201  us/op
-BenchmarkSelect1000Rows.mysql                       avgt  300   602.673 &#177; 23.264  us/op
-</pre>
+BenchmarkSelect1000Rows.drizzle                           avgt  150   709.819 ± 19.759  us/op
+BenchmarkSelect1000Rows.mariadb                           avgt  150   479.684 ± 18.657  us/op
+BenchmarkSelect1000Rows.mysql                             avgt  150   551.705 ± 20.227  us/op</pre>
 
     <div id="box_select1000"></div>
     <script>
@@ -731,7 +731,7 @@ BenchmarkSelect1000Rows.mysql                       avgt  300   602.673 &#177; 2
         function drawSelectPlot() {
             var data = defaultData();
             var array = [
-                ['Select 1000 rows', 602.673, 23.264, 551.687, 22.201, 792.160, 26.893]
+                ['Select 1000 rows', 551.705, 20.227, 479.684, 18.657, 709.819, 19.759]
             ];
             data.addRows(getBoxPlotValues(array, true));
 
@@ -754,13 +754,13 @@ BenchmarkSelect1000Rows.mysql                       avgt  300   602.673 &#177; 2
     <h2>"Insert 1000 rows"</h2>
     <pre class="java">
 LOCAL DATABASE:		
-BenchmarkBatch1000InsertBatchMultiHit.mariadb       avgt  300    56.472 &#177;  1.790  ms/op
-BenchmarkBatch1000InsertPrepareHit.mysql            avgt  300    68.023 &#177;  2.513  ms/op
-BenchmarkBatch1000InsertRewrite.mariadb             avgt  300     4.149 &#177;  0.177  ms/op
-BenchmarkBatch1000InsertRewrite.mysql               avgt  300     6.796 &#177;  0.293  ms/op
-BenchmarkBatch1000InsertText.drizzle                avgt  300    97.896 &#177;  3.511  ms/op
-BenchmarkBatch1000InsertText.mariadb                avgt  300    64.951 &#177;  1.892  ms/op
-BenchmarkBatch1000InsertText.mysql                  avgt  300    77.721 &#177;  2.404  ms/op</pre>
+BenchmarkBatch1000InsertPrepareHit.mariadb                avgt  150    49.901 ±  2.531  ms/op
+BenchmarkBatch1000InsertPrepareHit.mysql                  avgt  150    65.853 ±  2.941  ms/op
+BenchmarkBatch1000InsertRewrite.mariadb                   avgt  150     3.880 ±  0.238  ms/op
+BenchmarkBatch1000InsertRewrite.mysql                     avgt  150     6.325 ±  0.382  ms/op
+BenchmarkBatch1000InsertText.drizzle                      avgt  150    88.671 ±  4.243  ms/op
+BenchmarkBatch1000InsertText.mariadb                      avgt  150    56.638 ±  2.277  ms/op
+BenchmarkBatch1000InsertText.mysql                        avgt  150    74.661 ±  2.625  ms/op</pre>
     <pre class="java">
 DISTANT DATABASE:		
 BenchmarkBatch1000InsertPrepareHit.mariadb                avgt  150    48.522 &#177;  0.800  ms/op
@@ -776,9 +776,9 @@ BenchmarkBatch1000InsertText.mysql                        avgt  150   352.618 &#
 
         google.charts.setOnLoadCallback(function () {
             var array = [
-                ['Text protocol', 77.721,  2.404, 64.951, 1.892, 97.896,  3.511],
-                ['Binary protocol', 68.023,  2.513, 56.472,  1.790, 0, 0],
-				['Rewrite', 6.796,  0.293, 4.149,  0.177, 0, 0]
+                ['Text protocol', 74.661 ,  2.625, 56.638 ,  2.277, 88.671 ,  4.243],
+                ['Binary protocol', 65.853 ,  2.941, 49.901 ,  2.531, 0, 0],
+				['Rewrite', 6.325 ,  0.382, 3.880 ,  0.238, 0, 0]
             ];
 
             var data = defaultData();
@@ -836,15 +836,16 @@ BenchmarkBatch1000InsertText.mysql                        avgt  150   352.618 &#
     }</code></pre>
     
     <pre class="java">
-BenchmarkCallableStatementWithOutParameter.mariadb  avgt  500      71.376&#177;   1.348  us/op
-BenchmarkCallableStatementWithOutParameter.mysql    avgt  500    1701.757&#177;  50.215  us/op</pre>
+
+BenchmarkCallableStatementWithOutParameter.mariadb        avgt  150    90.599 ±  5.683  us/op
+BenchmarkCallableStatementWithOutParameter.mysql          avgt  150   887.335 ± 50.604  us/op</pre>
 
     <div id="box_procedure"></div>
     <script>
         google.charts.setOnLoadCallback(function () {
             var data = defaultDataWithoutDrizzle();
             var array = [
-                ['Calling function', 1701.757,  50.215 , 71.376,   1.348]
+                ['Calling function', 887.335,50.604 , 90.599,  5.683]
             ];
             data.addRows(getBoxPlotValues(array, true));
 
