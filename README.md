@@ -82,7 +82,7 @@ List of tests and their signification :
 
 ## How run the tests
 * install a MySQL / MariaDB database
-trying 
+Add the following configuration : 
 ```
 max_allowed_packet      = 40M //exchange packet can be up to 40mb
 character-set-server    = utf8
@@ -102,16 +102,15 @@ collation-server        = utf8_unicode_ci
 git clone https://github.com/rusher/mariadb-mysql-driver.git
 mvn clean install
     java -Xmx128m -Xms128m -Duser.country=US -Duser.language=en -jar target/benchmarks.jar > result.txt &
-```mvn 
+```
+ 
 -Duser.country=US -Duser.language=en permit to avoid confusion with comma used as decimal separator / thousand separator according to countries
--Xmx64m -Xms64m is to permit to have quick garbage and have more stable results. 
+-Xmx128m -Xms128m is to permit to have quick garbage and have more stable results. 
 
 JMH has a lot of options, 2 interesting ones : add a regex to launch only one specific benchmark, and add a garbage profiler to see consume time in GC.
 ```script
 java -Xmx128m -Xms128m -Duser.country=US -Duser.language=en -jar target/benchmarks.jar  ".BenchmarkSelect1000Rows*" -prof gc > result.txt &
 ```
-·gc.alloc.rate.norm
-
 
 ## Read results 
 
@@ -123,11 +122,11 @@ Execution on a droplet on digitalocean.com using this parameters:
 - 1GB memory
 - 1 CPU
 
-using MariaDb 10.1.16 (<a href='results/result_mariadb_server.txt'>complete results</a>)
-using mysql 5.7.13 (<a href='results/result_mysql_server.txt'>complete results</a>)
+using MariaDb 10.1.16 (<a href='results/result_mariadb-10.1_server_local.txt'>local results</a>)
+using MariaDb 10.2.2 (<a href='results/result_mariadb-10.2_server_local.txt'>local</a> and <a href='results/result_mariadb-10.2_server_distant.txt'>local</a> results)
+using mysql 5.7.13 (<a href='results/result_mysql-5.7_server_local.txt'>complete results</a>)
 
-Extract of mariadb server results :
-
+Extract of mariadb server results with mariadb-10.2 local server :
 ```
 # Run complete. Total time: 03:35:34
 
