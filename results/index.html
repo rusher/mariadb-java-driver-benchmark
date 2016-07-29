@@ -862,10 +862,10 @@ BenchmarkCallableStatementWithOutParameter.mysql          avgt  150   887.335 ±
 		MySQL and MariaDB implementations completely differ.
 		Mysql driver will use many hidden queries to obtain output result : 
 		<ul>
-		<li>"SHOW CREATE PROCEDURE testj.inoutParam;" to identify IN and OUT parameter</li>
-		<li>"SET @com_mysql_jdbc_outparam_p1 = 1" to send data according to IN / OUT parameter<li>
-		<li>"CALL testj.inoutParam(@com_mysql_jdbc_outparam_p1)" call procedure</li>
-		<li>"SELECT @com_mysql_jdbc_outparam_p1;" to read output result</li>
+		<li><code>SHOW CREATE PROCEDURE testj.inoutParam</code> to identify IN and OUT parameters</li>
+		<li><code>SET @com_mysql_jdbc_outparam_p1 = 1</code> to send data according to IN / OUT parameters</li>
+		<li><code>CALL testj.inoutParam(@com_mysql_jdbc_outparam_p1)</code> call procedure</li>
+		<li><code>SELECT @com_mysql_jdbc_outparam_p1</code> to read output result</li>
 		</ul>
 		MariadDB implementation is straightforward using a capability to have OUT parameter in the server response without any additional queries.
         (That's the main reason why MariaDB 1.4 driver require MariaDB/MySQL version 5.5.3 or later).
