@@ -248,25 +248,25 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
 <div class="container">
     <h1>MariaDB java connector performance </h1>
 
-    <p>We always talk about performance, but the thing is always "Measure, don't guess!".</p>
-    <p>A lot of performance improvement has been done lately on the MariaDB java connector. So, what the current driver
-        perf?</p>
-    <p>Here is benchmark result of 3 jdbc drivers permitting access to a MySQL/MariaDB database: <a
+    <p>We always talk about performance. But the thing is always "Measure, don't guess!".</p>
+    <p>A lot of performance improvement has been done lately on the MariaDB Java Connector. So, what the current driver
+        performance?</p>
+    <p>Let me share a benchmark result of 3 jdbc drivers permitting access to a MySQL/MariaDB database: <a
             href="https://github.com/krummas/DrizzleJDBC" target="_blank">DrizzleJDBC</a>, <a
-            href="https://github.com/mysql/mysql-connector-j" target="_blank">MySQL connector/J</a> and <a
+            href="https://github.com/mysql/mysql-connector-j" target="_blank">MySQL Connector/J</a> and <a
             href="https://github.com/MariaDB/mariadb-connector-j" target="_blank">MariaDB java connector</a>.</p>
 
     Driver's versions are the latest GA available version at the time of writing this blog:
     <ul>
-        <li>Mariadb 1.5.0-RC1</li>
-        <li>Mysql5.1.39</li>
+        <li>MariaDB 1.5.0-RC1</li>
+        <li>MySQL 5.1.39</li>
         <li>Drizzle 1.2</li>
     </ul>
 
     <br/>
     <h1>The benchmark</h1>
     <p>
-        <a href="http://openjdk.java.net/projects/code-tools/jmh/">JMH</a> is an oracle micro-benchmarking framework tool developed by oracle, delivered as openJDK tools.
+        <a href="http://openjdk.java.net/projects/code-tools/jmh/">JMH</a> is an Oracle micro-benchmarking framework tool developed by Oracle, delivered as openJDK tools.
         Its distinctive advantage over other frameworks is that it is developed by the same guys in Oracle who implement JIT (Just In Time compilation).
         JMH is in sync with the latest Oracle JRE changes, which make its results very reliable, and permit to avoid most of micro-benchmark pitfalls.
     </p>
@@ -274,7 +274,7 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
     <p> Benchmark source: <a href="https://github.com/rusher/mariadb-java-driver-benchmark">https://github.com/rusher/mariadb-java-driver-benchmark</a>.</p>
 
     Tests are pretty straightforward.<br/>
-    Example :
+    Example:
 	<pre><code class="java">
         public class BenchmarkSelect1RowPrepareText extends BenchmarkSelect1RowPrepareAbstract {
 
@@ -310,25 +310,25 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
         }
     </code></pre>
 
-    <p>Tests using INSERT's queries are send to a <a href="https://mariadb.com/kb/en/mariadb/blackhole/">BLACKHOLE</a> engine (data are not stored).
+    <p>Tests using INSERT's queries are sent to a <a href="https://mariadb.com/kb/en/mariadb/blackhole/">BLACKHOLE</a> engine (Data would only be stored in the binary log, that is also disabled for the Benchmark), permitting to avoid IO and dependency on the storage performance.
         This permit to have more stable results.<br>
-        (99.9% of queries execution time have 1-3% time difference, without using the blackhole engine, these execution times would vary up to 10%).
+        (Without using the blackhole engine and disabling binary log, execution times would vary up to 10%).
     </p>
 
 	<p>
-	Benchmark results have been executed on MariaDB 10.1.16 and 10.2.2 and MySQL Community Server 5.7.13 databases. 
-	Results are similar (see raw results at document bottom), so the folowing document show results of MariaDB 10.2.2.
+	Benchmark results have been executed on MariaDB Server 10.1.16, MariaDB Server 10.2.2 and MySQL Community Server 5.7.13 databases. 
+	Results are similar (see raw results at document bottom), so the following document show results of MariaDB Server 10.2.2.
     </p>
 	<br/>
 	
 	<h3>Environment</h3>
-    Execution (client and server ) is done on a single server droplet on digitalocean.com using the folowing parameters:
+    Execution (client and server) is done on a single server droplet on digitalocean.com using the following parameters:
     <ul>
-        <li>Java(TM) SE Runtime Environment (build 1.8.0_101-b13) 64bits (actual last version in time of this benchmark)</li>
+        <li>Java(TM) SE Runtime Environment (build 1.8.0_101-b13) 64bits (actual last version when running this benchmark)</li>
         <li>Ubuntu 16.04 64bits</li>
         <li>1GB memory</li>
         <li>1 CPU</li>
-        <li>database MariaDB "10.1.16-MariaDB"/"10.2.2-MariaDB", Mysql Community Server build "5.7.13-0ubuntu0.16.04.2"<br/>
+        <li>database MariaDB "10.1.16-MariaDB"/"10.2.2-MariaDB", MySQL Community Server build "5.7.13-0ubuntu0.16.04.2"<br/>
 			using default configuration files and these additional options :
             <ul>
                 <li>max_allowed_packet      = 40M //exchange packet can be up to 40mb</li>
@@ -365,35 +365,35 @@ BenchmarkSelect1RowPrepareText.mysql                      avgt  150    79.760 &#
     </script>
 
     <p>
-        This mean that query <code>SELECT ?</code> will take an average time of 49.554
-        microseconds using mariadb driver with a variation of &#177; 1.815 microseconds for 99.9% of queries.<br/>
-		Same execution using drizzle driver will take average time of 79.760 microseconds, and 78.311 microseconds using mysql connector.(smaller execution time the better).
+        This means that query <code>SELECT ?</code> will take an average time of 49.554
+        microseconds using the MariaDB driver with a variation of &#177; 1.815 microseconds for 99.9% of queries.<br/>
+		Same execution using drizzle driver will take an average time of 79.760 microseconds, and 78.311 microseconds using MySQL connector(smaller execution time the better).
     </p>
     <p>
         
     </p>
     <p>
-		Displayed percentage are set according to the first result as reference (100%),  permiting to compare easyly other results.
+		Displayed percentages are set according to the first result as reference (100%), permitting to compare easily other results.
     </p>
 
 
 	
-    <h3>Performance comparaisons</h3>
+    <h3>Performance comparisons</h3>
 	
-	Benchmark will tests performances of the 3 main differents behaviour using a local database (same server), and a distant database (another identical server) on same datacenter with an average ping of 0.324ms</p>
+	The benchmark will test the performances of the 3 main different behaviour using a local database (same server), and a distant database (another identical server) on same datacenter with an average ping of 0.324ms</p>
 	
-	different behaviours:
+	Different behaviours:
 	<h4>Text protocol</h4>
-	This correspond to option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#useServerPrepStmts">useServerPrepStmts</a> disabled.<br/>
-	Query are send directly to server with parameters replacement done client side.<br>
-	Data are send like text : example a timestamp will be send like text "1970-01-01 00:00:00.000500" using 26 bytes
+	This corresponds to option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#useServerPrepStmts">useServerPrepStmts</a> disabled.<br/>
+	Queries are sent directly to the server with parameters replacement done on client side.<br>
+	Data is sent like text. Example: A timestamp will be sent like text "1970-01-01 00:00:00.000500" using 26 bytes
 	
 	<h4>Binary protocol</h4>
 	<p>
-	This correspond to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#useServerPrepStmts">useServerPrepStmts</a> enabled (default implementation on MariaDB driver).<br/>
-	Data are send in binary : example timestamp "1970-01-01 00:00:00.000500" will be send using 11 bytes.</p>
+	This corresponds to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#useServerPrepStmts">useServerPrepStmts</a> enabled (default implementation on MariaDB driver).<br/>
+	Data is sent in binary. Example timestamp "1970-01-01 00:00:00.000500" will be sent using 11 bytes.</p>
     
-	<p>There is up to 3 exchanges with server for one query :
+	<p>There are up to 3 exchanges with the server for one query :
         <ol>
             <li>PREPARE - Prepares statement for execution.</li>
             <li>EXECUTE - Send parameters</li>
@@ -402,34 +402,34 @@ BenchmarkSelect1RowPrepareText.mysql                      avgt  150    79.760 &#
         See <a href="https://mariadb.com/kb/en/mariadb/prepare-statement/">Server prepare documentation</a> for more information.
     </p>
 	<p>
-		PREPARE result are stored in cache (default size 250). If Prepare is already in cache, PREPARE will not be executed, DEALLOCATE will be executed only when PREPARE is not used anymore and not in cache. 
-		That mean some query execution will have 3 round trips, but some will just have one round trip, sending a PREPARE identifier and parameters.
+		PREPARE results are stored in cache (default size 250). If Prepare is already in cache, PREPARE will not be executed, DEALLOCATE will be executed only when PREPARE is not used anymore and not in cache. 
+		That means that some query execution will have 3 round trips, but some will just have one round trip, sending a PREPARE identifier and parameters.
 	</p>
 
 	<h4>Rewrite</h4>
-	This correspond to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#rewriteBatchedStatements">rewriteBatchedStatements</a> enabled.<br/>
-	Rewrite use the text protocol and concern only batches. 
-	Driver will rewrite query for faster results. 
+	This corresponds to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#rewriteBatchedStatements">rewriteBatchedStatements</a> enabled.<br/>
+	Rewrite uses the text protocol and concern only batches. 
+	The driver will rewrite the query for faster results. 
 	<p>
-		example:<br/>
-		Insert into ab (i) values (?) with first batch values [1] and [2] will be rewritten<br/>
+		Example:<br/>
+		Insert into ab (i) values (?) with first batch values [1] and [2] will be rewritten to<br/>
 		Insert into ab (i) values (1), (2).<br/> 
 		<br/> 
-		If query cannot be rewriten in "multi-values", rewrite will use multi-queries : <br/>
-		Insert into table(col1) values (?) on duplicate key update col2=? with values [1,2] and [2,3] will be rewritten<br/>
+		If query cannot be rewritten in "multi-values", rewrite will use multi-queries : <br/>
+		Insert into table(col1) values (?) on duplicate key update col2=? with values [1,2] and [2,3] will be rewritten to<br/>
 		Insert into table(col1) values (1) on duplicate key update col2=2;Insert into table(col1) values (3) on duplicate key update col2=4
 	</p>
 
 	<p>
-		Downsides of this options are :
+		Downsides of this option are:
 		<ul>
-			<li>Auto increment ids cannot be retrieved using Statement.html#getGeneratedKeys().</li>
-			<li>Multi-queries in one execution are enable. That's not a problem for PreparedStatement, but if application use Statement that can be a security degradation (sql injection).</li>
+			<li>Auto increment ids cannot be retrieved using <a href="https://docs.oracle.com/javase/7/docs/api/java/sql/Statement.html#getGeneratedKeys()">Statement.html#getGeneratedKeys()</a>.</li>
+			<li>Multi-queries in one execution are enabled. That's not a problem for <a href="https://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html">PreparedStatement</a>, but if the application uses <a href="https://docs.oracle.com/javase/7/docs/api/java/sql/Statement.html">Statement</a> that can be a security degradation (SQL injection).</li>
 		</ul>
 	</p>
 
 	
-	* MariaDB and MySQL have those 3 beheviour implemented, Drizzle only the Text protocol.
+	* MariaDB and MySQL have those 3 behaviours implemented, Drizzle only the Text protocol.
 	
 	<br/>
     <h1 id="bencmark_results">BENCHMARK RESULTS</h1>
@@ -476,7 +476,7 @@ BenchmarkSelect1RowPrepareText.mysql                      avgt  150    79.760 &#
 
             var chart = new google.visualization.BarChart(document.getElementById('box_selectOne'));
             var select1RowsOption = defaultMariaDBOptions;
-            select1RowsOption.title = "Time for a SELECT query of 1 rows with LOCAL database";
+            select1RowsOption.title = "Time for a SELECT query of 1 row with LOCAL database";
             select1RowsOption.height = 220;
             chart.draw(data, select1RowsOption);
         });
@@ -496,19 +496,19 @@ BenchmarkSelect1RowPrepareText.mysql                      avgt  150    79.760 &#
 
             var chart = new google.visualization.BarChart(document.getElementById('box_selectOneDistant'));
             var select1RowsOption = defaultMariaDBOptions;
-            select1RowsOption.title = "Time for a SELECT query of 1 rows with DISTANT database";
+            select1RowsOption.title = "Time for a SELECT query of 1 row with DISTANT database";
             select1RowsOption.height = 220;
             chart.draw(data, select1RowsOption);
         });
     </script>
 	<p>
-		When PREPARE results for this exact query is already in cache (cache hit), query will be faster (18.7% for the SELECT) than using text protocol.
+		When the PREPARE result for this exact query is already in cache (cache hit), query will be faster (18.7% for the SELECT) than using text protocol.
         Due to the additional request PREPARE and DEALLOCATE exchanges, cache miss is 84.1% slower.<br/>
-		This emphasis the advantage and inconvienient of using a binary protocol. Cache HIT is important.
+		This emphasis the advantages and inconvenients of using a binary protocol. Cache HIT is important.
 	</p>
 	<p>
-		Using Mariadb 10.2.2 server, PREPARE + EXECUTE commands are send without waiting for PREPARE result, permitting client to avoid some network latency exchange. 
-		That make big difference using distant database, permitting to avoid most of the cache miss additional time. 
+		Using MariaDB Server 10.2.2, PREPARE + EXECUTE commands are sent without waiting for PREPARE result, permitting to avoid some network latency exchange. 
+		That makes a big difference when using a distant database, permitting to avoid most of the additional cache miss time. 
 	</p>
 <br/><br/>
 	
@@ -575,7 +575,7 @@ BenchmarkSelect1RowPrepareText.mysql                      avgt  150    79.760 &#
         });
     </script>	
     <p>
-		Result for INSERT are similar to SELECT queries.
+		Results for INSERTs are similar to SELECTs results.
     </p>
 	<br><br>
     <h3>Batch : 1000 INSERT query</h3>
@@ -646,16 +646,16 @@ BenchmarkBatch1000InsertText.mariadb                      avgt  150    64.269 &#
 
     </script>
     <p>
-		This is where PREPARE has the more signification.
-        Using server PREPARE to insert 1000 rows take 24.4% less than without.
+		This is where using binary protocol is more significant.
+        Using binary protocol to insert 1000 rows takes up to 24.5% less time than without.
     </p>
 	<p>
-		Rewrite has amazing good performances, but will not send autoincrement ids. 
-		Some ORM permit configuration : ORM handle sequence internally to provide increment ids, but those sequence aren't distributed, so won't work on clusters. 		
+		Rewrite has amazing good performance, but will not send auto-increment ids. 
+		Some ORM permit configuration: ORM handle sequence internally to provide increment ids, but those sequences aren't distributed, so won't work on clusters.
     </p>
 	
     <br/><br/>
-    <h1 id="otherDrivers">Comparaison with other drivers</h1>
+    <h1 id="otherDrivers">Comparison with other drivers</h1>
     <h2>SELECT query with one row result</h2>
 <pre class="java">
 BenchmarkSelect1RowPrepareHit.mariadb                     avgt  150    43.680 ±  1.860  us/op
@@ -696,12 +696,12 @@ BenchmarkSelect1RowPrepareTextHA.mysql                    avgt  150   131.405 ±
 
     </script>
 	<p>
-		HA stand for "High Availability" using Master-Slave configuration <br>(connection string is "jdbc:mysql:replication://localhost:3306,localhost:3306/testj").
+		HA stands for "High Availability" using the Master-Slave configuration <br>(connection string is "jdbc:mysql:replication://localhost:3306,localhost:3306/testj").
 	</p>	
 	<p>
-    Using HA configuration will add a little execution time using mariadb driver : 51.771 become 53.430 microseconds.
-    those additional 2 microseconds are due to failover handling<br/>
-    HA in mysql jdbc driver is using a lot of mutex, slowing a lot each execution.
+    Using the HA configuration will add a little execution time using MariaDB driver: 51.771 become 53.430 microseconds.
+    Those additional 4 microseconds are due to failover handling<br/>
+    HA in MySQL jdbc driver is using a lot of mutexes, slowing down a lot on each execution.
     (Drizzle has no PREPARE, neither HA functionality)
 	</p>
 <br/><br/>
@@ -746,9 +746,10 @@ BenchmarkSelect1000Rows.mysql                             avgt  150   551.705 ±
     <br/>
 
     <p>
-		When using a lot of data, time is mostly spent reading from socket, so results will tend to be closer.
-        If test was only executing the SELECT without reading results, execution time would be equivalent for mysql and mariadb (even 1% faster for mysql).
-        Since SELECT query goal is to have results, mariadb driver is optimized to read results (avoiding the creation of buffers comparing to mysql driver).
+
+		When using a lot of data, time is mostly spent on reading from socket, so results will tend to be closer.
+        If the test was only executing the SELECT without reading the results, execution time would be equivalent for MySQL and MariaDB driver (even 1% faster for MySQL).
+        Since the goal of a SELECT query is to have results, the MariaDB driver is optimized to read results (avoiding the creation of buffers compared to MySQL driver).
     </p>
 <br/><br/>
     <h2>"Insert 1000 rows"</h2>
@@ -817,8 +818,8 @@ BenchmarkBatch1000InsertText.mysql                        avgt  150   352.618 &#
 
     </script>
 	<p>
-		MariaDB will send all writes to socket and read result asynchrounously, permitting to have better results for text and binary protocol. 
-		In that benchmark, performance using distant database are even better than using local database, because database doesn't use the same CPU than driver.
+		MariaDB will send all writes to the socket and will read results asynchronously, permitting to have better results for text and binary protocol. 
+		In that benchmark, the performances using a distant database are even better than using a local database, because the database doesn't use the same CPU than the driver.
 	</p>
 	
     <br/>
@@ -858,25 +859,31 @@ BenchmarkCallableStatementWithOutParameter.mysql          avgt  150   887.335 ±
         });
     </script>
     <p>
-		MySQL and MariaDB implementation completely differ.
-		Mysql will use many hidden query to obtain output result.
-		MariadDB implementation is straightForward using a capability to have OUT parameter in server response without any additional queries.
-        (That's the main reason why MariaDB 1.4 driver require MariaDB/MySQL version 5.5.3 minimum).
+		MySQL and MariaDB implementations completely differ.
+		Mysql driver will use many hidden queries to obtain output result : 
+		<ul>
+		<li>"SHOW CREATE PROCEDURE testj.inoutParam;" to identify IN and OUT parameter</li>
+		<li>"SET @com_mysql_jdbc_outparam_p1 = 1" to send data according to IN / OUT parameter<li>
+		<li>"CALL testj.inoutParam(@com_mysql_jdbc_outparam_p1)" call procedure</li>
+		<li>"SELECT @com_mysql_jdbc_outparam_p1;" to read output result</li>
+		</ul>
+		MariadDB implementation is straightforward using a capability to have OUT parameter in the server response without any additional queries.
+        (That's the main reason why MariaDB 1.4 driver require MariaDB/MySQL version 5.5.3 or later).
     </p>
     <br/>
 	
 	<h1 id="conclusion">Conclusion</h1>
 	
-	<p>MariaDB driver rocks !</p>
-	<p>Binary protocol has different advantages but rely on having the PREPARE results already in cache. 
-	If applications have a lot of different kind of query and database is distant, that may not be the better solution. 
+	<p>MariaDB driver rocks!</p>
+	<p>The binary protocol has different advantages but relies on having the PREPARE results already in cache. 
+	If applications have a lot of different kind of queries and database is distant, that may not be the better solution. 
 	</p>
 	
 	<p>Rewrite has amazing results to write data in batch, and can permit to send a load a database for example</p>
 
 	<br/>
 	
-    Raw results : 
+    Raw results: 
     <ol>
         <li><a href="./result_mariadb-10.1_server_local.txt">with a MariaDB 10.1.16 database</a></li>
         <li><a href="./result_mariadb-10.2_server_local.txt">with a MariaDB 10.2.2 database</a> (<a href="./result_mariadb-10.2_server_local.txt">distant</a>)</li>
