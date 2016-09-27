@@ -7,6 +7,10 @@ MariaDB and MySQL databases are using the same exchange protocol, and driver off
 This is a Driver benchmark using [JMH microbenchmark](http://openjdk.java.net/projects/code-tools/jmh/)
 developed by the same guys in Oracle who implement the JIT, and is delivered as openJDK tools.
 
+This will permit to compare execution time of q query using different driver :
+<div style="text-align:center"><img src ="results/select_one_data.png" /></div>
+
+
 ## The tests
 Class BenchmarkInit initialize connections using MySQL and MariaDB drivers before tests.
 
@@ -130,39 +134,39 @@ Extract of mariadb server results with mariadb-10.1 local server :
 # Run complete. Total time: 03:57:41
 
 Benchmark                                           Mode  Cnt     Score    Error  Units
-BenchmarkCallableStatementFunction.mariadb          avgt  200   101.183 ±  4.594  &micro;s/op
-BenchmarkCallableStatementFunction.mysql            avgt  200   787.688 ± 62.222  &micro;s/op
-BenchmarkCallableStatementWithInParameter.mariadb   avgt  200   101.787 ±  5.378  &micro;s/op
-BenchmarkCallableStatementWithInParameter.mysql     avgt  200   553.861 ± 28.410  &micro;s/op
-BenchmarkCallableStatementWithOutParameter.mariadb  avgt  200    88.572 ±  4.263  &micro;s/op
-BenchmarkCallableStatementWithOutParameter.mysql    avgt  200   714.108 ± 44.390  &micro;s/op
-BenchmarkOneInsertPrepareHit.mariadb                avgt  200    61.298 ±  1.940  &micro;s/op
-BenchmarkOneInsertPrepareHit.mysql                  avgt  200    92.173 ±  4.887  &micro;s/op
-BenchmarkOneInsertPrepareMiss.mariadb               avgt  200   130.896 ±  6.362  &micro;s/op
-BenchmarkOneInsertPrepareMiss.mysql                 avgt  200   162.488 ±  5.931  &micro;s/op
-BenchmarkOneInsertPrepareText.drizzle               avgt  200    80.882 ±  3.384  &micro;s/op
-BenchmarkOneInsertPrepareText.mariadb               avgt  200    68.363 ±  2.686  &micro;s/op
-BenchmarkOneInsertPrepareText.mysql                 avgt  200   102.195 ±  5.691  &micro;s/op
-BenchmarkOneInsertPrepareTextHA.mariadb             avgt  200    69.581 ±  2.245  &micro;s/op
-BenchmarkOneInsertPrepareTextHA.mysql               avgt  200   157.478 ±  7.242  &micro;s/op
+BenchmarkCallableStatementFunction.mariadb          avgt  200   101.183 ±  4.594  µs/op
+BenchmarkCallableStatementFunction.mysql            avgt  200   787.688 ± 62.222  µs/op
+BenchmarkCallableStatementWithInParameter.mariadb   avgt  200   101.787 ±  5.378  µs/op
+BenchmarkCallableStatementWithInParameter.mysql     avgt  200   553.861 ± 28.410  µs/op
+BenchmarkCallableStatementWithOutParameter.mariadb  avgt  200    88.572 ±  4.263  µs/op
+BenchmarkCallableStatementWithOutParameter.mysql    avgt  200   714.108 ± 44.390  µs/op
+BenchmarkOneInsertPrepareHit.mariadb                avgt  200    61.298 ±  1.940  µs/op
+BenchmarkOneInsertPrepareHit.mysql                  avgt  200    92.173 ±  4.887  µs/op
+BenchmarkOneInsertPrepareMiss.mariadb               avgt  200   130.896 ±  6.362  µs/op
+BenchmarkOneInsertPrepareMiss.mysql                 avgt  200   162.488 ±  5.931  µs/op
+BenchmarkOneInsertPrepareText.drizzle               avgt  200    80.882 ±  3.384  µs/op
+BenchmarkOneInsertPrepareText.mariadb               avgt  200    68.363 ±  2.686  µs/op
+BenchmarkOneInsertPrepareText.mysql                 avgt  200   102.195 ±  5.691  µs/op
+BenchmarkOneInsertPrepareTextHA.mariadb             avgt  200    69.581 ±  2.245  µs/op
+BenchmarkOneInsertPrepareTextHA.mysql               avgt  200   157.478 ±  7.242  µs/op
 BenchmarkSelect1000BigRows.drizzle                  avgt  200   126.169 ±  8.278  ms/op
 BenchmarkSelect1000BigRows.mariadb                  avgt  200   100.056 ±  4.825  ms/op
 BenchmarkSelect1000BigRows.mysql                    avgt  200   120.132 ±  6.597  ms/op
 BenchmarkSelect1000BigRowsFetch.drizzle             avgt  200  1130.280 ± 51.862  ms/op
 BenchmarkSelect1000BigRowsFetch.mariadb             avgt  200   854.730 ± 23.850  ms/op
 BenchmarkSelect1000BigRowsFetch.mysql               avgt  200  1426.919 ± 75.047  ms/op
-BenchmarkSelect1000Rows.drizzle                     avgt  200   406.877 ± 16.585  &micro;s/op
-BenchmarkSelect1000Rows.mariadb                     avgt  200   244.228 ±  7.686  &micro;s/op
-BenchmarkSelect1000Rows.mysql                       avgt  200   298.814 ± 12.143  &micro;s/op
-BenchmarkSelect1RowPrepareHit.mariadb               avgt  200    58.267 ±  2.270  &micro;s/op
-BenchmarkSelect1RowPrepareHit.mysql                 avgt  200    73.789 ±  1.863  &micro;s/op
-BenchmarkSelect1RowPrepareMiss.mariadb              avgt  200   118.896 ±  5.500  &micro;s/op
-BenchmarkSelect1RowPrepareMiss.mysql                avgt  200   150.679 ±  4.791  &micro;s/op
-BenchmarkSelect1RowPrepareText.drizzle              avgt  200    78.672 ±  2.971  &micro;s/op
-BenchmarkSelect1RowPrepareText.mariadb              avgt  200    62.715 ±  2.402  &micro;s/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  200    88.670 ±  3.505  &micro;s/op
-BenchmarkSelect1RowPrepareTextHA.mariadb            avgt  200    64.676 ±  2.192  &micro;s/op
-BenchmarkSelect1RowPrepareTextHA.mysql              avgt  200   137.289 ±  4.872  &micro;s/op
+BenchmarkSelect1000Rows.drizzle                     avgt  200   406.877 ± 16.585  µs/op
+BenchmarkSelect1000Rows.mariadb                     avgt  200   244.228 ±  7.686  µs/op
+BenchmarkSelect1000Rows.mysql                       avgt  200   298.814 ± 12.143  µs/op
+BenchmarkSelect1RowPrepareHit.mariadb               avgt  200    58.267 ±  2.270  µs/op
+BenchmarkSelect1RowPrepareHit.mysql                 avgt  200    73.789 ±  1.863  µs/op
+BenchmarkSelect1RowPrepareMiss.mariadb              avgt  200   118.896 ±  5.500  µs/op
+BenchmarkSelect1RowPrepareMiss.mysql                avgt  200   150.679 ±  4.791  µs/op
+BenchmarkSelect1RowPrepareText.drizzle              avgt  200    78.672 ±  2.971  µs/op
+BenchmarkSelect1RowPrepareText.mariadb              avgt  200    62.715 ±  2.402  µs/op
+BenchmarkSelect1RowPrepareText.mysql                avgt  200    88.670 ±  3.505  µs/op
+BenchmarkSelect1RowPrepareTextHA.mariadb            avgt  200    64.676 ±  2.192  µs/op
+BenchmarkSelect1RowPrepareTextHA.mysql              avgt  200   137.289 ±  4.872  µs/op
 PrepareStatementBatch100InsertPrepareHit.mariadb    avgt  200     5.290 ±  0.232  ms/op
 PrepareStatementBatch100InsertPrepareHit.mysql      avgt  200     9.015 ±  0.440  ms/op
 PrepareStatementBatch100InsertRewrite.mariadb       avgt  200     0.404 ±  0.014  ms/op
@@ -177,13 +181,13 @@ StatementBatch100Insert.mysql                       avgt  200     9.309 ±  0.31
 
 ##### How to read it :
 
-ms/op means millisecond per operation, &micro;s/op microsecond per operation.
+ms/op means millisecond per operation, µs/op microsecond per operation.
 
 ```
 Benchmark                                           Mode  Cnt     Score    Error  Units
-BenchmarkSelect1RowPrepareText.drizzle              avgt  200    78.672 ±  2.971  &micro;s/op
-BenchmarkSelect1RowPrepareText.mariadb              avgt  200    62.715 ±  2.402  &micro;s/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  200    88.670 ±  3.505  &micro;s/op
+BenchmarkSelect1RowPrepareText.drizzle              avgt  200    78.672 ±  2.971  µs/op
+BenchmarkSelect1RowPrepareText.mariadb              avgt  200    62.715 ±  2.402  µs/op
+BenchmarkSelect1RowPrepareText.mysql                avgt  200    88.670 ±  3.505  µs/op
 ```
 
 
