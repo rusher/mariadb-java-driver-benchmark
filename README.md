@@ -7,8 +7,8 @@ MariaDB and MySQL databases are using the same exchange protocol, and driver off
 This is a Driver benchmark using [JMH microbenchmark](http://openjdk.java.net/projects/code-tools/jmh/)
 developed by the same guys in Oracle who implement the JIT, and is delivered as openJDK tools.
 
-This will permit to compare execution time of q query using different driver :
-<div style="text-align:center"><img src ="results/select_one_data.png" /></div>
+This will permit to compare execution time of a query using different driver :
+<center><img src ="results/select_one_data.png" /></center>
 
 
 ## The tests
