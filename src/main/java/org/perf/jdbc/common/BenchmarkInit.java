@@ -11,9 +11,9 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
-@Warmup(iterations = 5, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 5, timeUnit = TimeUnit.MILLISECONDS)
-@Fork(value = 1)
+@Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
+@Fork(value = 10)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class BenchmarkInit {
@@ -29,7 +29,6 @@ public class BenchmarkInit {
         public Connection mysqlFailoverConnection;
 
         public Connection mariadbConnectionRewrite;
-        public Connection mariadbConnectionBulkNoCache;
         public Connection mariadbConnection;
         public Connection mariadbConnectionNoCache;
         public Connection mariadbConnectionText;
@@ -82,17 +81,6 @@ public class BenchmarkInit {
             prepareProperties.setProperty("useSSL", "false");
             prepareProperties.setProperty("characterEncoding", "UTF-8");
 
-            Properties prepareBulkNoCacheProperties = new Properties();
-            prepareBulkNoCacheProperties.setProperty("user", "perf");
-            prepareBulkNoCacheProperties.setProperty("password", "!Password0");
-            prepareBulkNoCacheProperties.setProperty("useServerPrepStmts", "true");
-            prepareBulkNoCacheProperties.setProperty("cachePrepStmts", "false");
-            prepareBulkNoCacheProperties.setProperty("useSSL", "false");
-            prepareBulkNoCacheProperties.setProperty("useBatchMultiSend", "false");
-            prepareBulkNoCacheProperties.setProperty("characterEncoding", "UTF-8");
-
-
-
             Properties prepareNoCacheProperties = new Properties();
             prepareNoCacheProperties.setProperty("user", "perf");
             prepareNoCacheProperties.setProperty("password", "!Password0");
@@ -122,8 +110,6 @@ public class BenchmarkInit {
             mysqlConnection = createConnection(mysqlDriverClass, baseUrl, prepareProperties);
             mariadbConnection = createConnection(mariaDriverClass, baseUrl, prepareProperties);
 
-            mariadbConnectionBulkNoCache = createConnection(mariaDriverClass, baseUrl, prepareBulkNoCacheProperties);
-
             mysqlConnectionNoCache = createConnection(mysqlDriverClass, baseUrl, prepareNoCacheProperties);
             mariadbConnectionNoCache = createConnection(mariaDriverClass, baseUrl, prepareNoCacheProperties);
 
@@ -149,7 +135,6 @@ public class BenchmarkInit {
                     mariadbConnectionRewrite,
                     mariadbConnectionText,
                     mariadbFailoverConnection,
-                    mariadbConnectionBulkNoCache,
 
                     drizzleConnectionText
             });
@@ -218,7 +203,6 @@ public class BenchmarkInit {
             mariadbConnectionRewrite.close();
             mariadbConnectionText.close();
             mariadbFailoverConnection.close();
-            mariadbConnectionBulkNoCache.close();
 
             drizzleConnectionText.close();
 

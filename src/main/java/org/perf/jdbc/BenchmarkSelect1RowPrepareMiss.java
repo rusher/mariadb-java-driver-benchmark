@@ -14,9 +14,4 @@ public class BenchmarkSelect1RowPrepareMiss extends BenchmarkSelect1RowPrepareAb
         return select1RowPrepare(state.mariadbConnectionNoCache, state);
     }
 
-    @Benchmark
-    public String mariadbWithout102capacity(MyState state) throws Throwable {
-        return select1RowPrepare(state.mariadbConnectionBulkNoCache, state);
-    }
-
 }

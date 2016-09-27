@@ -15,8 +15,4 @@ public class BenchmarkOneInsertPrepareMiss extends BenchmarkOneInsertPrepareAbst
         return executeOneInsertPrepare(state.mariadbConnectionNoCache, state.insertData);
     }
 
-    @Benchmark
-    public boolean mariadbWithout102capacity(MyState state) throws Throwable {
-        return executeOneInsertPrepare(state.mariadbConnectionBulkNoCache, state.insertData);
-    }
 }

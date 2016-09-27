@@ -10,12 +10,12 @@ import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-public class BenchmarkBatch1000InsertAbstract extends BenchmarkInit {
+public class PrepareStatementBatch100InsertAbstract extends BenchmarkInit {
     private String request = "INSERT INTO blackholeTable (charValue) values (?)";
 
     public int[] executeBatch(Connection connection, String[] data) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 100; i++) {
                 preparedStatement.setString(1, data[i]); //a random 100 byte data
                 preparedStatement.addBatch();
             }

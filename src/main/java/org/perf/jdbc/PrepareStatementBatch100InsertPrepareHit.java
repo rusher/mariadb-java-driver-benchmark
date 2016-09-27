@@ -3,7 +3,7 @@ package org.perf.jdbc;
 
 import org.openjdk.jmh.annotations.Benchmark;
 
-public class BenchmarkBatch1000InsertPrepareHit extends BenchmarkBatch1000InsertAbstract {
+public class PrepareStatementBatch100InsertPrepareHit extends PrepareStatementBatch100InsertAbstract {
 
     @Benchmark
     public int[] mysql(MyState state) throws Throwable {

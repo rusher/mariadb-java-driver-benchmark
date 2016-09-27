@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
-    private String request = "SELECT ?";
+    private String request = "SELECT CAST(? as char character set utf8)";
 
     public String select1RowPrepare(Connection connection, MyState state) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
