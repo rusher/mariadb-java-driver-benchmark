@@ -7,8 +7,8 @@ MariaDB and MySQL databases are using the same exchange protocol, and driver off
 This is a Driver benchmark using [JMH microbenchmark](http://openjdk.java.net/projects/code-tools/jmh/)
 developed by the same guys in Oracle who implement the JIT, and is delivered as openJDK tools.
 
-This will permit to compare execution time of q query using different driver :
-<div style="text-align:center"><img src ="results/select_one_data.png" /></div>
+This will permit to compare execution time of a query using different driver :
+<center><img src ="results/select_one_data.png" /></center>
 
 
 ## The tests
@@ -194,8 +194,8 @@ BenchmarkSelect1RowPrepareText.mysql                avgt  200    88.670 ±  3.50
 <div style="text-align:center"><img src ="results/select_one_data.png" /></div>
 
 BenchmarkOneInsert = Using same local database, time for query \n\"SELECT CAST(? as char character set utf8)\"
-Using mariadb driver, the average time to insert one data is 62.715 microsecond, and 99.9% of queries executes time are comprised between 47.739 (62.715 - 2.402) and 51.369 microseconds (62.715 + 2.402).
-Using MySQL java driver, average execution time is 79.760 millisecond, using Drizzle driver 78.311 milliseconds   
+Using mariadb driver, the average time to insert one data is 62.715 microsecond, and 99.9% of queries executes time are comprised between 59.773 (62.715 - 2.402) and 65.117 microseconds (62.715 + 2.402).
+Using MySQL java driver, average execution time is 88.670 millisecond, using Drizzle driver 78.672 milliseconds   
 
 
 
