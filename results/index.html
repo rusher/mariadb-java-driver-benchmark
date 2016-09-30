@@ -86,11 +86,11 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
 
             var defaultData = new google.visualization.DataTable();
             defaultData.addColumn('string', 'x');
-            defaultData.addColumn('number', 'MySQL-5.1.39');
+            defaultData.addColumn('number', 'MariaDB-1.5.3');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
-            defaultData.addColumn('number', 'MariaDB-1.5.3');
+            defaultData.addColumn('number', 'MySQL-5.1.39');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -106,11 +106,11 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
 
             var defaultData = new google.visualization.DataTable();
             defaultData.addColumn('string', 'x');
-            defaultData.addColumn('number', 'MySQL-5.1.39');
+            defaultData.addColumn('number', 'MariaDB-1.5.3');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
-            defaultData.addColumn('number', 'MariaDB-1.5.3');
+            defaultData.addColumn('number', 'MySQL-5.1.39');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -121,11 +121,11 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
         function defaultDataMaria15() {
             var defaultData = new google.visualization.DataTable();
             defaultData.addColumn('string', 'x');
-            defaultData.addColumn('number', 'MySQL-5.1.39');
+            defaultData.addColumn('number', 'MariaDB-1.5.3');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
-            defaultData.addColumn('number', 'MariaDB-1.5.3-SNAPSHOT');
+            defaultData.addColumn('number', 'MySQL-5.1.39');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -372,7 +372,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
     <p> Benchmark source: <a href="https://github.com/rusher/mariadb-java-driver-benchmark">https://github.com/rusher/mariadb-java-driver-benchmark</a>.</p>
 
-    Tests are pretty straightforward.<br/>
+    Tests are pretty straightforward if you are familiar with java.<br/>
     Example:
     <pre><code class="java">
 public class BenchmarkSelect1RowPrepareText extends BenchmarkSelect1RowPrepareAbstract {
@@ -415,8 +415,8 @@ public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
     </p>
 
     <p>
-    Benchmark results have been executed on MariaDB Server 10.1.16 and MySQL Community Server 5.7.13 databases. 
-    Results are similar (see raw results at document bottom), so the following document show results using MariaDB Server 10.1.16.
+		Benchmark results have been executed on MariaDB Server 10.1.17 and MySQL Community Server 5.7.13 databases. 
+		Differences between drivers are simular (see raw results at the bottom of the document), so the following document show results using MariaDB Server 10.1.17.
     </p>
     <br/>
     
@@ -427,7 +427,7 @@ public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
         <li>Ubuntu 16.04 64bits</li>
         <li>512Mb memory</li>
         <li>1 CPU</li>
-        <li>database MariaDB "10.1.16-MariaDB", MySQL Community Server build "5.7.15-0ubuntu0.16.04.1"<br/>
+        <li>database MariaDB "10.1.17-MariaDB", MySQL Community Server build "5.7.15-0ubuntu0.16.04.1"<br/>
             using default configuration files and these additional options :
             <ul>
                 <li>max_allowed_packet      = 40M #exchange packet can be up to 40mb</li>
@@ -443,9 +443,9 @@ public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
 
     <pre class="java">
 Benchmark                                           Score     Error  Units
-BenchmarkSelect1RowPrepareText.drizzle              78.672 &#177;  2.971  &micro;s/op
 BenchmarkSelect1RowPrepareText.mariadb              62.715 &#177;  2.402  &micro;s/op
 BenchmarkSelect1RowPrepareText.mysql                88.670 &#177;  3.505  &micro;s/op
+BenchmarkSelect1RowPrepareText.drizzle              78.672 &#177;  2.971  &micro;s/op
 </pre>
 
     <div id="box_select1Text"></div>
@@ -453,7 +453,7 @@ BenchmarkSelect1RowPrepareText.mysql                88.670 &#177;  3.505  &micro
         google.charts.setOnLoadCallback(function () {
             var data = defaultData();
             var array = [
-                ['Using text protocol', 88.670,  3.505, 62.715,  2.402, 78.672,  2.971]
+                ['Using text protocol', 62.715,  2.402, 88.670,  3.505, 78.672,  2.971]
             ];
             data.addRows(getBoxPlotValues(array, true));
 
@@ -474,7 +474,7 @@ BenchmarkSelect1RowPrepareText.mysql                88.670 &#177;  3.505  &micro
         
     </p>
     <p>
-        Displayed percentages are set according to the first result as reference (100%), permitting to compare easily other results.
+        Displayed percentages are set according to the mariadb first result as reference (100%), permitting to easily compare other results.
     </p>
 
 
@@ -485,13 +485,13 @@ BenchmarkSelect1RowPrepareText.mysql                88.670 &#177;  3.505  &micro
     
     Different behaviours:
     <h4>Text protocol</h4>
-    This corresponds to option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#useServerPrepStmts">useServerPrepStmts</a> disabled.<br/>
+    This corresponds to option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/use-mariadb-connector-j-driver.creole#essential-options">useServerPrepStmts</a> disabled.<br/>
     Queries are sent directly to the server with sanitized parameters replacement done on client side.<br>
     Data is sent like text. Example: A timestamp will be sent like text "1970-01-01 00:00:00.000500" using 26 bytes
     
     <h4>Binary protocol</h4>
     <p>
-    This corresponds to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#useServerPrepStmts">useServerPrepStmts</a> enabled (default implementation on MariaDB driver).<br/>
+    This corresponds to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/use-mariadb-connector-j-driver.creole#essential-options">useServerPrepStmts</a> enabled (default implementation on MariaDB driver).<br/>
     Data is sent in binary. Example timestamp "1970-01-01 00:00:00.000500" will be sent using 11 bytes.</p>
     
     <p>There are up to 3 exchanges with the server for one query :
@@ -508,7 +508,7 @@ BenchmarkSelect1RowPrepareText.mysql                88.670 &#177;  3.505  &micro
     </p>
 
     <h4>Rewrite</h4>
-    This corresponds to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/Use-MariaDB-Connector-j-driver.md#rewriteBatchedStatements">rewriteBatchedStatements</a> enabled.<br/>
+    This corresponds to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/use-mariadb-connector-j-driver.creole#essential-options">rewriteBatchedStatements</a> enabled.<br/>
     Rewrite uses the text protocol and concern only batches. 
     The driver will rewrite the query for faster results. 
     <p>
@@ -536,7 +536,8 @@ BenchmarkSelect1RowPrepareText.mysql                88.670 &#177;  3.505  &micro
     <h1 id="bencmark_results">BENCHMARK RESULTS</h1>
     <h2>MariaDB driver results</h2>
     <h3>Single SELECT query</h3>
-<pre><code class="java">private String request = "SELECT CAST(? as char character set utf8)";
+<pre><code class="java">	
+private String request = "SELECT CAST(? as char character set utf8)";
 
 public String select1RowPrepare(Connection connection, MyState state) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
@@ -597,8 +598,10 @@ BenchmarkSelect1RowPrepareText.mariadb              422.215 &#177;  15.858  &mic
         });
     </script>
     <p>
-        When the PREPARE result for this exact query is already in cache (cache hit), query will be faster (18.7% for the SELECT) than using text protocol.
-        Due to the additional request PREPARE and DEALLOCATE exchanges, cache miss is 84.1% slower.<br/>
+        When the PREPARE result for this exact query is already in cache (cache hit), query will be faster (7.1% in this example) than using text protocol.
+        Due to the additional request PREPARE and DEALLOCATE exchanges, cache miss is 68.1% slower.
+	</p>
+	<p>
         This emphasis the advantages and inconvenients of using a binary protocol. Cache HIT is important.
     </p>
 <br/><br/>
@@ -716,7 +719,7 @@ PrepareStatementBatch100InsertText.mariadb          8.148 &#177;   0.563  ms/op<
     </p>
     <p>
 		Insert's are send by bulk and results read asynchronously (that corresponds to option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/use-mariadb-connector-j-driver.creole#user-content-essential-options">useBatchMultiSend</a>).
-		This permit to have distant results not with performance not far from those local. 
+		This permit to have distant results with performance not far from those local. 
     </p>
     <p>
         Rewrite has amazing good performance, but will not have auto-increment ids. 
@@ -732,9 +735,9 @@ BenchmarkSelect1RowPrepareHit.mariadb                58.267 &#177;  2.270  &micr
 BenchmarkSelect1RowPrepareHit.mysql                  73.789 &#177;  1.863  &micro;s/op
 BenchmarkSelect1RowPrepareMiss.mariadb              118.896 &#177;  5.500  &micro;s/op
 BenchmarkSelect1RowPrepareMiss.mysql                150.679 &#177;  4.791  &micro;s/op
-BenchmarkSelect1RowPrepareText.drizzle               78.672 &#177;  2.971  &micro;s/op
 BenchmarkSelect1RowPrepareText.mariadb               62.715 &#177;  2.402  &micro;s/op
 BenchmarkSelect1RowPrepareText.mysql                 88.670 &#177;  3.505  &micro;s/op
+BenchmarkSelect1RowPrepareText.drizzle               78.672 &#177;  2.971  &micro;s/op
 BenchmarkSelect1RowPrepareTextHA.mariadb             64.676 &#177;  2.192  &micro;s/op
 BenchmarkSelect1RowPrepareTextHA.mysql              137.289 &#177;  4.872  &micro;s/op</pre>
     <div id="box_select"></div>
@@ -745,10 +748,10 @@ BenchmarkSelect1RowPrepareTextHA.mysql              137.289 &#177;  4.872  &micr
         function drawSelectPlot() {
             var data = defaultData();
             var array = [
-                ['Text protocol', 88.670 ,  3.505, 62.715,  2.402, 78.672,  2.971],
-                ['Text protocol HA', 137.289,  4.872, 64.676,  2.192,0,0],
-                ['Binary with cache miss', 150.679, 4.791, 118.896,  5.500,0,0],
-                ['Binary with cache hit', 73.789, 1.863, 58.267,  2.270 ,0,0]                
+                ['Text protocol', 62.715,  2.402, 88.670 ,  3.505, 78.672,  2.971],
+                ['Text protocol HA', 64.676,  2.192, 137.289,  4.872,0,0],
+                ['Binary with cache miss', 118.896,  5.500, 150.679, 4.791,0,0],
+                ['Binary with cache hit', 58.267,  2.270, 73.789, 1.863 ,0,0]                
             ];
             data.addRows(getBoxPlotValues(array, true));
 
@@ -766,15 +769,17 @@ BenchmarkSelect1RowPrepareTextHA.mysql              137.289 &#177;  4.872  &micr
         HA stands for "High Availability" using the Master-Slave configuration <br>(connection URL is "jdbc:mysql:replication://localhost:3306,localhost:3306/testj").
     </p>    
     <p>
-    Using the HA configuration will add a little execution time using MariaDB driver: 62.715 without become 64.676 microseconds.
-    
-    MariaDB and MySQL Driver use the Design Patterns java dynamic <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Proxy.html" target="_blank">Proxy</a> class permitting to filter call and handle failover.
-    This proxy permit to handle failover in a transparent way, but that will add an overhead a few microseconds execution.<br/>
+        These results are due to a lot of different implementation choice. 
+		Here is some reasons that explain time differences: 
+    </p>    
+	<ul>
+		<li>MariaDB driver is optimized for UTF-8, allowing less creation of bytes array, avoiding array copy, and memory consumption.</li>
+		<li>HA implementation : MariaDB and MySQL drivers  
+		use a java dynamic <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Proxy.html" target="_blank">Proxy</a> class 
+		sitting between Statement objects and sockets, permitting to add failover behaviour. Those addition will cost an overhead of 2 microseconds per query (62.715 without become 64.676 microseconds).<br/>In MySQL implementation, nearly all internal methods are proxied, adding an overhead for lots of methods that have nothing to do with failover, adding a total overhead of 50 microseconds to every query.</li>
+	</ul>	
     <p>
-    <p>
-    In MySQL implementation, nearly all internal methods are proxied, adding an overhead to a plain method invocation to methods that have nothing to do with failover. 
-    For example all access to internal variables getMaxRows() will be catched by the proxy implementation, adding a total overhead of 50 microseconds to every query.
-    <br/>(Drizzle has no PREPARE, neither HA functionality)
+		(Drizzle has no PREPARE, neither HA functionality)
     </p>
 <br/><br/>
     <h2 id="batches">"Select 1000 rows"</h2>
@@ -792,9 +797,9 @@ private ResultSet select1000Row(Connection connection) throws SQLException {
 }</code></pre>
     
 <pre class="java">
-BenchmarkSelect1000Rows.drizzle                     406.877 &#177; 16.585  &micro;s/op
 BenchmarkSelect1000Rows.mariadb                     244.228 &#177;  7.686  &micro;s/op
-BenchmarkSelect1000Rows.mysql                       298.814 &#177; 12.143  &micro;s/op</pre>
+BenchmarkSelect1000Rows.mysql                       298.814 &#177; 12.143  &micro;s/op
+BenchmarkSelect1000Rows.drizzle                     406.877 &#177; 16.585  &micro;s/op</pre>
 
     <div id="box_select1000"></div>
     <script>
@@ -803,7 +808,7 @@ BenchmarkSelect1000Rows.mysql                       298.814 &#177; 12.143  &micr
         function drawSelectPlot() {
             var data = defaultData();
             var array = [
-                ['Select 1000 rows', 298.814,12.143, 244.228,  7.686, 406.877, 16.585]
+                ['Select 1000 rows', 244.228,  7.686, 298.814,12.143, 406.877, 16.585]
             ];
             data.addRows(getBoxPlotValues(array, true));
 
@@ -819,10 +824,11 @@ BenchmarkSelect1000Rows.mysql                       298.814 &#177; 12.143  &micr
     <br/>
 
     <p>
-		If the test was only executing the SELECT without reading the results, execution time would be equivalent for MySQL and MariaDB driver (even 1% faster for MySQL).
-        Since the goal of a SELECT query is to have results, the MariaDB driver is optimized to read results (avoiding the creation of bytes arrays).
+		When using a lot of data, time is mostly spent on reading from socket, and storing result in memory for sending it back to client. 
+		If the benchmark was only executing the SELECT without reading the results, MySQL and MariaDB execution time would be equivalent. 
+		Since the goal of a SELECT query is to have results, the MariaDB driver is optimized to give back results (avoiding the creation of bytes arrays).
     </p>
-<br/><br/>
+	<br/><br/>
     <h2>"Insert 1000 rows"</h2>
     <pre class="java">
 LOCAL DATABASE:        
@@ -830,18 +836,18 @@ PrepareStatementBatch100InsertPrepareHit.mariadb    5.290 &#177;  0.232  ms/op
 PrepareStatementBatch100InsertPrepareHit.mysql      9.015 &#177;  0.440  ms/op
 PrepareStatementBatch100InsertRewrite.mariadb       0.404 &#177;  0.014  ms/op
 PrepareStatementBatch100InsertRewrite.mysql         0.592 &#177;  0.016  ms/op
-PrepareStatementBatch100InsertText.drizzle          7.314 &#177;  0.205  ms/op
 PrepareStatementBatch100InsertText.mariadb          6.081 &#177;  0.254  ms/op
-PrepareStatementBatch100InsertText.mysql            7.932 &#177;  0.293  ms/op</pre>
+PrepareStatementBatch100InsertText.mysql            7.932 &#177;  0.293  ms/op
+PrepareStatementBatch100InsertText.drizzle          7.314 &#177;  0.205  ms/op</pre>
     <pre class="java">
 DISTANT DATABASE:        
 PrepareStatementBatch100InsertPrepareHit.mariadb     7.639 &#177;   0.476  ms/op
 PrepareStatementBatch100InsertPrepareHit.mysql      43.636 &#177;   1.408  ms/op
 PrepareStatementBatch100InsertRewrite.mariadb        1.164 &#177;   0.037  ms/op
 PrepareStatementBatch100InsertRewrite.mysql          1.432 &#177;   0.050  ms/op
-PrepareStatementBatch100InsertText.drizzle          38.735 &#177;   1.731  ms/op
 PrepareStatementBatch100InsertText.mariadb           8.148 &#177;   0.563  ms/op
-PrepareStatementBatch100InsertText.mysql            43.804 &#177;   1.417  ms/op</pre>
+PrepareStatementBatch100InsertText.mysql            43.804 &#177;   1.417  ms/op
+PrepareStatementBatch100InsertText.drizzle          38.735 &#177;   1.731  ms/op</pre>
 
     <div id="box_insert1000" ></div>
     <div id="box_insert1000DISTANT" ></div>
@@ -850,9 +856,9 @@ PrepareStatementBatch100InsertText.mysql            43.804 &#177;   1.417  ms/op
 
         google.charts.setOnLoadCallback(function () {
             var array = [
-                ['Text protocol', 7.932 , 0.293, 6.081 ,  0.254, 7.314,  0.205],
-                ['Binary protocol', 9.015,  0.440, 5.290,  0.232, 0, 0],
-                ['Rewrite', 0.592, 0.016, 0.404, 0.014, 0, 0]
+                ['Text protocol', 6.081 ,  0.254, 7.932 , 0.293, 7.314,  0.205],
+                ['Binary protocol', 5.290,  0.232, 9.015,  0.440, 0, 0],
+                ['Rewrite', 0.404, 0.014, 0.592, 0.016, 0, 0]
             ];
 
             var data = defaultData();
@@ -873,9 +879,9 @@ PrepareStatementBatch100InsertText.mysql            43.804 &#177;   1.417  ms/op
 
         google.charts.setOnLoadCallback(function () {
             var array = [
-                ['Text protocol', 43.804, 1.417, 8.148,   0.563, 38.735 , 1.731],
-                ['Binary protocol', 43.636,  1.408, 7.639,  0.476, 0, 0],
-                ['Rewrite', 1.432 , 0.050, 1.164,   0.037, 0, 0]
+                ['Text protocol', 8.148,   0.563, 43.804, 1.417, 38.735 , 1.731],
+                ['Binary protocol', 7.639,  0.476, 43.636,  1.408, 0, 0],
+                ['Rewrite', 1.164,   0.037, 1.432 , 0.050, 0, 0]
             ];
 
             var data = defaultData();
@@ -890,7 +896,7 @@ PrepareStatementBatch100InsertText.mysql            43.804 &#177;   1.417  ms/op
         });
     </script>
     <p>
-		MySQL and Drizzle bulk insert are like X INSERT's : Driver send 1 INSERT, wait for insert result, and send next insert.
+		MySQL and Drizzle bulk insert are like X INSERT's: Driver send 1 INSERT, wait for insert result, and send next insert.
 		The network latency between each insert will slow down insertions. 
     </p>
     
@@ -920,7 +926,7 @@ BenchmarkCallableStatementWithOutParameter.mysql    714.108 &#177; 44.390  &micr
         google.charts.setOnLoadCallback(function () {
             var data = defaultDataWithoutDrizzle();
             var array = [
-                ['Calling function', 714.108, 44.390 , 88.572,  4.263]
+                ['Calling function', 88.572,  4.263, 714.108, 44.390]
             ];
             data.addRows(getBoxPlotValues(array, true));
 
@@ -948,20 +954,19 @@ BenchmarkCallableStatementWithOutParameter.mysql    714.108 &#177; 44.390  &micr
     
     <h1 id="conclusion">Conclusion</h1>
     
-    <p>MariaDB driver rocks!</p>
-    <p>The binary protocol has different advantages but relies on having the PREPARE results already in cache. 
+    <p>MariaDB driver rocks ! </p>
+  	
+	<p>The binary protocol has different advantages but relies on having the PREPARE results already in cache. 
     If applications have a lot of different kind of queries and database is distant, that may not be the better solution. 
-    </p>
-    
+    </p>  
     <p>Rewrite has amazing results to write data in batch</p>
-
-    <br/>
-    
+	<p>Driver holds well versus other drivers. And there is much to come, but that's another story.</p>
+	<br/><br/>
+    <hr/>    
     Raw results: 
     <ol>
-        <li><a href="./result_mariadb-10.1_server_local.txt">with a MariaDB 10.1.16 database</a></li>
-        <li><a href="./result_mariadb-10.2_server_local.txt">with a MariaDB 10.2.2 database</a> (<a href="./result_mariadb-10.2_server_local.txt">distant</a>)</li>
-        <li><a href="./result_mysql-5.7_server_local.txt">with a MySQL Community Server 5.7.15 database (build 5.7.15-0ubuntu0.16.04.1)</a></li>
+        <li>with a MariaDB 10.1.17 database <a href="https://raw.githubusercontent.com/rusher/mariadb-java-driver-benchmark/master/results/result_mariadb-10.1_server_local.txt">local</a>, <a href="https://raw.githubusercontent.com/rusher/mariadb-java-driver-benchmark/master/results/result_mariadb-10.1_server_distant.txt">distant</a></li>
+        <li>with a MySQL Community Server 5.7.15 database (build 5.7.15-0ubuntu0.16.04.1) <a href="https://raw.githubusercontent.com/rusher/mariadb-java-driver-benchmark/master/results/result_mysql-5.7_server_local.txt">local</a></li>
     </ol>
     
     <script>

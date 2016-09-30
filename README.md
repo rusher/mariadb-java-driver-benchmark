@@ -36,11 +36,11 @@ public class BenchmarkSelect1RowPrepareText extends BenchmarkSelect1RowPrepareAb
 }
 
 public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
-    private String request = "SELECT ?";
+    private String request = "SELECT CAST(? as char character set utf8)";
 
     public String select1RowPrepare(Connection connection, MyState state) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(request)) {
-            preparedStatement.setString(1, state.insertData[state.counter++]);
+            preparedStatement.setString(1, state.insertData[state.counter++]); //a random 100 byte data
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 rs.next();
                 return rs.getString(1);
@@ -185,9 +185,9 @@ ms/op means millisecond per operation, µs/op microsecond per operation.
 
 ```
 Benchmark                                           Mode  Cnt     Score    Error  Units
-BenchmarkSelect1RowPrepareText.drizzle              avgt  200    78.672 ±  2.971  µs/op
 BenchmarkSelect1RowPrepareText.mariadb              avgt  200    62.715 ±  2.402  µs/op
 BenchmarkSelect1RowPrepareText.mysql                avgt  200    88.670 ±  3.505  µs/op
+BenchmarkSelect1RowPrepareText.drizzle              avgt  200    78.672 ±  2.971  µs/op
 ```
 
 
