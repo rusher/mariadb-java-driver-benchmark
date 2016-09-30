@@ -415,8 +415,8 @@ public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
     </p>
 
     <p>
-		Benchmark results have been executed on MariaDB Server 10.1.17 and MySQL Community Server 5.7.13 databases. 
-		Differences between drivers are simular (see raw results at the bottom of the document), so the following document show results using MariaDB Server 10.1.17.
+		Benchmark have been executed on MariaDB Server 10.1.17 and MySQL Community Server 5.7.13 databases. 
+		Differences between drivers are simular (see raw results at the bottom of the document), so the following document show results using the 3 drivers with MariaDB Server 10.1.17.
     </p>
     <br/>
     
@@ -436,7 +436,7 @@ public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
             </ul>
         </li>
     </ul>
-	When indicated "distant", benchmarks are runs with separate client and server on 2 identical host on same datacenter with an average ping of 0.350ms.	
+	When indicated "distant", benchmarks are runs with separate client and server on 2 identical hosts on same datacenter with an average ping of 0.350ms.	
     
     <br/>
     <h3>Results sample explanations</h3>
@@ -947,8 +947,8 @@ BenchmarkCallableStatementWithOutParameter.mysql    714.108 &#177; 44.390  &micr
         <li><code>CALL testj.inoutParam(@com_mysql_jdbc_outparam_p1)</code> call procedure</li>
         <li><code>SELECT @com_mysql_jdbc_outparam_p1</code> to read output result</li>
         </ul>
-        MariadDB implementation is straightforward using a capability to have OUT parameter in the server response without any additional queries.
-        (That's the main reason why MariaDB driver since version 1.4 driver require MariaDB/MySQL server version 5.5.3 or later).
+        MariaDB implementation is straightforward using a capability to have OUT parameter in the server response without any additional queries.
+        (That's the main reason why MariaDB driver require MariaDB/MySQL server version 5.5.3 or later).
     </p>
     <br/>
     

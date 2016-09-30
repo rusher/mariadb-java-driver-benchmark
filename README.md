@@ -126,7 +126,7 @@ Execution on a droplet on digitalocean.com using this parameters:
 - 512Mb memory
 - 1 CPU
 
-using MariaDb 10.1.16 (<a href='results/result_mariadb-10.1_server_local.txt'>local results</a> and <a href='results/result_mariadb-10.1_server_distant.txt'>distant results</a>)
+using MariaDb 10.1.17 (<a href='results/result_mariadb-10.1_server_local.txt'>local results</a> and <a href='results/result_mariadb-10.1_server_distant.txt'>distant results</a>)
 using mysql 5.7.13 (<a href='results/result_mysql-5.7_server_local.txt'>local results</a>)
 
 Extract of mariadb server results with mariadb-10.1 local server :
@@ -193,9 +193,12 @@ BenchmarkSelect1RowPrepareText.drizzle              avgt  200    78.672 ±  2.97
 
 <div style="text-align:center"><img src ="results/select_one_data.png" /></div>
 
-BenchmarkOneInsert = Using same local database, time for query \n\"SELECT CAST(? as char character set utf8)\"
-Using mariadb driver, the average time to insert one data is 62.715 microsecond, and 99.9% of queries executes time are comprised between 59.773 (62.715 - 2.402) and 65.117 microseconds (62.715 + 2.402).
-Using MySQL java driver, average execution time is 88.670 millisecond, using Drizzle driver 78.672 milliseconds   
+<p>BenchmarkSelect1RowPrepareText : Using same local database, time for query "SELECT CAST(? as char character set utf8)" <br/>
+("SELECT ?" would be the same, but this query can be PREPAREd, and so permitting comparison with PREPARE)</p>
+<p>
+Using mariadb driver, the average time to insert one data is 62.715 microsecond, and 99.9% of queries executes time are comprised between 59.773 (62.715 - 2.402) and 65.117 microseconds (62.715 + 2.402).<br/>
+Using MySQL java driver, average execution time is 88.670 millisecond, using Drizzle driver 78.672 milliseconds
+   </p>
 
 
 
