@@ -29,7 +29,7 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
                 minValue: 0
             },
             series: {
-                0: {color: '#3366CC'},
+                0: {color: '#4285f4'},
             },
             bars: 'horizontal',
             intervals: {
@@ -58,12 +58,12 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
                 title: 'microseconds',
                 minValue: 0
             },
-            series: {
-                0: {color: '#DB4437'},
-                1: {color: '#4285F4'}
-            },
             lineWidth: 0,
-            //series: [{'color': '#D3362D'}],
+            series: {
+                0: {color: '#4285f4'},
+                1: {color: '#db4437'},
+                2: {color: '#ff9900'}
+            },
             intervals: {
                 barWidth: 0.7,
                 shortBarWidth: 5,
@@ -416,7 +416,8 @@ public abstract class BenchmarkSelect1RowPrepareAbstract extends BenchmarkInit {
 
     <p>
 		Benchmark have been executed on MariaDB Server 10.1.17 and MySQL Community Server 5.7.13 databases. 
-		Differences between drivers are simular (see raw results at the bottom of the document), so the following document show results using the 3 drivers with MariaDB Server 10.1.17.
+		The following document show results using the 3 drivers with MariaDB Server 10.1.17. 
+		For the complete results including the ones with MySQL Server 5.7.13, please see the link at the bottom of the document.
     </p>
     <br/>
     
@@ -481,15 +482,18 @@ BenchmarkSelect1RowPrepareText.drizzle              78.672 &#177;  2.971  &micro
     
     <h3>Performance comparisons</h3>
     
-    The benchmark will test the performances of the 3 main different behaviour using a local database (same server), and a distant database (another identical server) on same datacenter with an average ping of 0.450ms</p>
+    The benchmark will test the performances of the 3 main different behaviour using a same local database (same server), and a distant database (another identical server) on same datacenter with an average ping of 0.450ms</p>
     
     Different behaviours:
+	<br/>
     <h4>Text protocol</h4>
-    This corresponds to option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/use-mariadb-connector-j-driver.creole#essential-options">useServerPrepStmts</a> disabled.<br/>
+    <p>This corresponds to option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/use-mariadb-connector-j-driver.creole#essential-options">useServerPrepStmts</a> disabled.<br/>
     Queries are sent directly to the server with sanitized parameters replacement done on client side.<br>
     Data is sent like text. Example: A timestamp will be sent like text "1970-01-01 00:00:00.000500" using 26 bytes
+    </p>
+	<br/>
     
-    <h4>Binary protocol</h4>
+	<h4>Binary protocol</h4>
     <p>
     This corresponds to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/use-mariadb-connector-j-driver.creole#essential-options">useServerPrepStmts</a> enabled (default implementation on MariaDB driver).<br/>
     Data is sent in binary. Example timestamp "1970-01-01 00:00:00.000500" will be sent using 11 bytes.</p>
@@ -506,7 +510,7 @@ BenchmarkSelect1RowPrepareText.drizzle              78.672 &#177;  2.971  &micro
         PREPARE results are stored in cache on driver side (default size 250). If Prepare is already in cache, PREPARE will not be executed, DEALLOCATE will be executed only when PREPARE is not used anymore and not in cache. 
         That means that some query execution will have 3 round trips, but some will just have one round trip, sending a PREPARE identifier and parameters.
     </p>
-
+	<br/>
     <h4>Rewrite</h4>
     This corresponds to the option <a href="https://github.com/MariaDB/mariadb-connector-j/blob/master/documentation/use-mariadb-connector-j-driver.creole#essential-options">rewriteBatchedStatements</a> enabled.<br/>
     Rewrite uses the text protocol and concern only batches. 
@@ -531,7 +535,7 @@ BenchmarkSelect1RowPrepareText.drizzle              78.672 &#177;  2.971  &micro
 
     
     * MariaDB and MySQL have those 3 behaviours implemented, Drizzle only the Text protocol.
-    
+    <br/>   
     <br/>
     <h1 id="bencmark_results">BENCHMARK RESULTS</h1>
     <h2>MariaDB driver results</h2>
@@ -638,7 +642,7 @@ BenchmarkOneInsertPrepareText.mariadb               415.125 &#177;  14.547  &mic
             data.addRows(getOneBoxPlotValues(array, true));
 
             var select1RowsOption = defaultMariaDBOptions;
-            select1RowsOption.title = "Execution time for one INSERT with LOCAL database";
+            select1RowsOption.title = "Execution time for one INSERT with same LOCAL database";
             select1RowsOption.height = 220;
             var chart = new google.visualization.BarChart(document.getElementById('box_insertOneMaria'));
             chart.draw(data, select1RowsOption);
@@ -656,7 +660,7 @@ BenchmarkOneInsertPrepareText.mariadb               415.125 &#177;  14.547  &mic
             data.addRows(getOneBoxPlotValues(array, true));
 
             var select1RowsOption = defaultMariaDBOptions;
-            select1RowsOption.title = "Execution time for one INSERT with DISTANT database";
+            select1RowsOption.title = "Execution time for one INSERT with same DISTANT database";
             select1RowsOption.height = 220;
             var chart = new google.visualization.BarChart(document.getElementById('box_insertOneMariaD'));
             chart.draw(data, select1RowsOption);
@@ -757,7 +761,7 @@ BenchmarkSelect1RowPrepareTextHA.mysql              137.289 &#177;  4.872  &micr
 
             var select1RowsOption = defaultOptions;
             
-            select1RowsOption.title = "Time for selecting 1 rows using LOCAL database";
+            select1RowsOption.title = "Time for selecting 1 rows using same LOCAL database";
             select1RowsOption.height = 590;
             select1RowsOption.hAxis.maxValue=200;
             var chart = new google.visualization.BarChart(document.getElementById('box_select'));
@@ -814,7 +818,7 @@ BenchmarkSelect1000Rows.drizzle                     406.877 &#177; 16.585  &micr
 
             var chart = new google.visualization.BarChart(document.getElementById('box_select1000'));
             var select1000RowsOption = defaultOptions;
-            select1000RowsOption.title = "Time to select 1000 rows (return an integer from 1 to 1000) using LOCAL database";
+            select1000RowsOption.title = "Time to select 1000 rows (return an integer from 1 to 1000) using same LOCAL database";
             select1000RowsOption.height = 230;
 			select1000RowsOption.hAxis.maxValue=NaN;
             chart.draw(data, select1000RowsOption);
@@ -866,7 +870,7 @@ PrepareStatementBatch100InsertText.drizzle          38.735 &#177;   1.731  ms/op
 
             var chart = new google.visualization.BarChart(document.getElementById('box_insert1000'));
             var select1000RowsOption = defaultOptions;
-            select1000RowsOption.title = "Insert 1000 rows on LOCAL database";
+            select1000RowsOption.title = "Insert 1000 rows on same LOCAL database";
             select1000RowsOption.height = 400;
             select1000RowsOption.hAxis.title= 'milliseconds';
             chart.draw(data, select1000RowsOption);
@@ -889,7 +893,7 @@ PrepareStatementBatch100InsertText.drizzle          38.735 &#177;   1.731  ms/op
 
             var chart = new google.visualization.BarChart(document.getElementById('box_insert1000DISTANT'));
             var select1000RowsOption = defaultOptions;
-            select1000RowsOption.title = "Insert 1000 rows on DISTANT database";
+            select1000RowsOption.title = "Insert 1000 rows on same DISTANT database";
             select1000RowsOption.height = 400;
             select1000RowsOption.hAxis.title= 'milliseconds';
             chart.draw(data, select1000RowsOption);

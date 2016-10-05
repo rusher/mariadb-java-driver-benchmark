@@ -144,7 +144,16 @@
         <profile >
             <id>mariadb_1.5.3</id>
             <properties>
-                <mariadb.version>1.5.3-SNAPSHOT</mariadb.version>
+                <mariadb.version>1.5.4-SNAPSHOT</mariadb.version>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile >
+            <id>mariadb_1.5.3</id>
+            <properties>
+                <mariadb.version>1.5.3</mariadb.version>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
