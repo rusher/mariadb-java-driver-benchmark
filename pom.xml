@@ -141,27 +141,22 @@
         </pluginManagement>
     </build>
     <profiles>
-        <profile >
-            <id>mariadb_1.5.4</id>
+        <profile>
+            <id>mariadb_1.6.0</id>
             <properties>
-                <mariadb.version>1.5.4-SNAPSHOT</mariadb.version>
-            </properties>
-        </profile>
-        <profile >
-            <id>mariadb_1.5.3</id>
-            <properties>
-                <mariadb.version>1.5.3</mariadb.version>
+                <mariadb.version>1.6.0-SNAPSHOT</mariadb.version>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
         <profile>
-            <id>mariadb_1.5.2</id>
+            <id>mariadb_1.5.5</id>
             <properties>
-                <mariadb.version>1.5.2</mariadb.version>
+                <mariadb.version>1.5.5</mariadb.version>
             </properties>
-        </profile>        <profile>
+        </profile>
+        <profile>
             <id>mariadb_1.4.6</id>
             <properties>
                 <mariadb.version>1.4.6</mariadb.version>

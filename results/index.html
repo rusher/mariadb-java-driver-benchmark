@@ -14,7 +14,7 @@ http://htmlpreview.github.io/?https://github.com/rusher/mariadb-java-driver-benc
 
             var defaultData = new google.visualization.DataTable();
             defaultData.addColumn('string', 'Select one row');
-            defaultData.addColumn('number', 'MariaDB-1.5.3');
+            defaultData.addColumn('number', 'MariaDB driver');
             defaultData.addColumn({role: 'annotation', type: 'string'});
             defaultData.addColumn({id: 'min', type: 'number', role: 'interval'});
             defaultData.addColumn({id: 'max', type: 'number', role: 'interval'});
@@ -882,22 +882,21 @@ PrepareStatementBatch100InsertText.drizzle          38.735 &#177;   1.731  ms/op
     <script>
 
         google.charts.setOnLoadCallback(function () {
+            var data = defaultMariaData();
             var array = [
-                ['Text protocol', 8.148,   0.563, 43.804, 1.417, 38.735 , 1.731],
-                ['Binary protocol', 7.639,  0.476, 43.636,  1.408, 0, 0],
-                ['Rewrite', 1.164,   0.037, 1.432 , 0.050, 0, 0]
+                ['useBatchMultiSend disabled', 41.504, 1.387],
+                ['useBatchMultiSend enable', 8.148,   0.563]
             ];
+            data.addRows(getOneBoxPlotValues(array, true));
 
-            var data = defaultData();
-            data.addRows(getBoxPlotValues(array, true));
-
+            var select1RowsOption = defaultMariaDBOptions;
+            select1RowsOption.title = "Execution time for one INSERT with same DISTANT database";
+            select1RowsOption.title = "Insert 1000 rows on same DISTANT database";
+            select1RowsOption.height = 200;
+            select1RowsOption.hAxis.title= 'milliseconds';
             var chart = new google.visualization.BarChart(document.getElementById('box_insert1000DISTANT'));
-            var select1000RowsOption = defaultOptions;
-            select1000RowsOption.title = "Insert 1000 rows on same DISTANT database";
-            select1000RowsOption.height = 400;
-            select1000RowsOption.hAxis.title= 'milliseconds';
-            chart.draw(data, select1000RowsOption);
-        });
+            chart.draw(data, select1RowsOption);
+});
     </script>
     <p>
 		MySQL and Drizzle bulk insert are like X INSERT's: Driver send 1 INSERT, wait for insert result, and send next insert.
