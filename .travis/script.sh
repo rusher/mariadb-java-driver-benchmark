@@ -43,4 +43,4 @@ fi
 echo "Running coveralls for JDK version: $TRAVIS_JDK_VERSION"
 
 mvn clean install
-java -jar target/benchmarks.jar -Dport=3305 -Dhost=mariadb.example.com
+java -Dport=3305 -Dhost=mariadb.example.com -jar target/benchmarks.jar
