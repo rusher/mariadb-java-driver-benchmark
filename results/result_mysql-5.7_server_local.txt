@@ -4531,7 +4531,7 @@ Result "mysql":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkOneInsertPrepareTextHA.mariadb
+# Benchmark: org.perf.jdbc.BenchmarkOneInsertPrepareHaText.mariadb
 
 # Run progress: 30.23% complete, ETA 02:40:24
 # Fork: 1 of 10
@@ -4879,7 +4879,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.BenchmarkOneInsertPrepareTextHA.mysql
+# Benchmark: org.perf.jdbc.BenchmarkOneInsertPrepareHaText.mysql
 
 # Run progress: 32.56% complete, ETA 02:35:06
 # Fork: 1 of 10
@@ -11467,7 +11467,7 @@ Result "mysql":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.PrepareStatementBatch100InsertPrepareHit.mariadb
+# Benchmark: org.perf.jdbc.PrepareStatementBatch1000InsertPrepareHit.mariadb
 
 # Run progress: 76.74% complete, ETA 00:40:19
 # Fork: 1 of 10
@@ -11815,7 +11815,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.PrepareStatementBatch100InsertPrepareHit.mysql
+# Benchmark: org.perf.jdbc.PrepareStatementBatch1000InsertPrepareHit.mysql
 
 # Run progress: 79.07% complete, ETA 00:36:38
 # Fork: 1 of 10
@@ -12163,7 +12163,7 @@ Result "mysql":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.PrepareStatementBatch100InsertRewrite.mariadb
+# Benchmark: org.perf.jdbc.PrepareStatementBatch1000InsertRewrite.mariadb
 
 # Run progress: 81.40% complete, ETA 00:32:52
 # Fork: 1 of 10
@@ -12511,7 +12511,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.PrepareStatementBatch100InsertRewrite.mysql
+# Benchmark: org.perf.jdbc.PrepareStatementBatch1000InsertRewrite.mysql
 
 # Run progress: 83.72% complete, ETA 00:28:59
 # Fork: 1 of 10
@@ -12859,7 +12859,7 @@ Result "mysql":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.PrepareStatementBatch100InsertText.drizzle
+# Benchmark: org.perf.jdbc.PrepareStatementBatch1000InsertText.drizzle
 
 # Run progress: 86.05% complete, ETA 00:25:03
 # Fork: 1 of 10
@@ -13207,7 +13207,7 @@ Result "drizzle":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.PrepareStatementBatch100InsertText.mariadb
+# Benchmark: org.perf.jdbc.PrepareStatementBatch1000InsertText.mariadb
 
 # Run progress: 88.37% complete, ETA 00:21:01
 # Fork: 1 of 10
@@ -13555,7 +13555,7 @@ Result "mariadb":
 # Timeout: 10 min per iteration
 # Threads: 1 thread, will synchronize iterations
 # Benchmark mode: Average time, time/op
-# Benchmark: org.perf.jdbc.PrepareStatementBatch100InsertText.mysql
+# Benchmark: org.perf.jdbc.PrepareStatementBatch1000InsertText.mysql
 
 # Run progress: 90.70% complete, ETA 00:16:56
 # Fork: 1 of 10

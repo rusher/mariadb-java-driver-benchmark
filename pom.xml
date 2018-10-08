@@ -9,18 +9,18 @@
 
     <name>JMH mariadb benchmark</name>
 
-    <prerequisites>
-        <maven>3.0</maven>
-    </prerequisites>
-
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jmh.version>1.14</jmh.version>
-        <javac.target>1.8</javac.target>
+        <jmh.version>1.21</jmh.version>
+
+        <mariadb.version>2.4.0-SNAPSHOT</mariadb.version>
+        <mysql.version>8.0.12</mysql.version>
+        <drizzle.version>1.4</drizzle.version>
+
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <uberjar.name>benchmarks</uberjar.name>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
@@ -41,28 +41,17 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.39</version>
+            <version>${mysql.version}</version>
         </dependency>
         <dependency>
             <groupId>org.drizzle.jdbc</groupId>
             <artifactId>drizzle-jdbc</artifactId>
-            <version>1.4</version>
+            <version>${drizzle.version}</version>
         </dependency>
     </dependencies>
 
-
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <compilerVersion>${javac.target}</compilerVersion>
-                    <source>${javac.target}</source>
-                    <target>${javac.target}</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -99,68 +88,5 @@
                 </executions>
             </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.5</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.6</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.3</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.2.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.17</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
-    <profiles>
-        <profile>
-            <id>mariadb_1.6.0</id>
-            <properties>
-                <mariadb.version>1.6.0-SNAPSHOT</mariadb.version>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>mariadb_1.5.5</id>
-            <properties>
-                <mariadb.version>1.5.5</mariadb.version>
-            </properties>
-        </profile>
-        <profile>
-            <id>mariadb_1.4.6</id>
-            <properties>
-                <mariadb.version>1.4.6</mariadb.version>
-            </properties>
-        </profile>
-    </profiles>
 </project>
