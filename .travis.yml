@@ -16,11 +16,11 @@ install:
 
 matrix:
   include:
-    - bench: Do_1
-    - bench: Create_and_close_Connection
-    - bench: Select_1
-    - bench: Select_1_mysql_user
-    - bench: Select_10_cols_from_seq_1_to_100000
+    - env: bench=Do_1
+    - env: bench=Create_and_close_Connection
+    - env: bench=Select_1
+    - env: bench=Select_1_mysql_user
+    - env: bench=Select_10_cols_from_seq_1_to_100000
 
 script:
   - .travis/script.sh
