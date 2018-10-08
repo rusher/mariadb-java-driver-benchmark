@@ -24,8 +24,8 @@ public class Create_and_close_Connection extends Common {
 
   @Benchmark
   @Fork(jvmArgsAppend = {"-Xmx128m", "-Xms128m", "-Duser.country=US", "-Duser.language=en"})
-  @Warmup(iterations = 500, timeUnit = TimeUnit.MICROSECONDS, time = 20)
-  @Measurement(iterations = 500, timeUnit = TimeUnit.MICROSECONDS, time = 20)
+  @Warmup(iterations = 20, timeUnit = TimeUnit.MICROSECONDS, time = 20)
+  @Measurement(iterations = 100, timeUnit = TimeUnit.MICROSECONDS, time = 20)
   public String test(MyState state) throws Throwable {
     java.sql.Connection connection = getConnection(state.driver, state.server, state.port);
     String schema = connection.getSchema();

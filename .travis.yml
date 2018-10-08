@@ -1,0 +1,25 @@
+#dist: trusty
+sudo: false
+language: java
+services: docker
+addons:
+  hosts:
+    - mariadb.example.com
+
+before_install:
+  - chmod +x .travis/build/build.sh
+  - chmod +x .travis/build/docker-entrypoint.sh
+  - chmod 777 .travis/build/
+
+
+cache:
+  directories:
+    - $HOME/.m2
+
+matrix:
+  include:
+    - env: DB=mariadb:10.2
+      jdk: oraclejdk10
+
+script:
+  - .travis/script.sh
