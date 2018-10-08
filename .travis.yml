@@ -8,14 +8,13 @@ addons:
 
 before_install:
   - chmod +x .travis/script.sh
-
-cache:
-  directories:
-    - $HOME/.m2
+install:
+  - export PROJ_PATH=`pwd`
+  - export ENTRYPOINT=$PROJ_PATH/.travis/sql
 
 matrix:
   include:
-    - env: DB=mariadb:10.2
+    - env: DB=mariadb:10.3
       jdk: oraclejdk10
 
 script:
