@@ -32,8 +32,8 @@ public class Common {
 
   @State(Scope.Benchmark)
   public static class MyState {
-    private String server = System.getProperty("host", "localhost");
-    private String port = System.getProperty("port", "3306");
+    public String server = System.getProperty("host", "localhost");
+    public String port = System.getProperty("port", "3306");
 
     @Param({"mysql", "mariadb", "drizzle"})
     //when using multiple threads, drizzle is lost
