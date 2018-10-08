@@ -6,12 +6,6 @@ addons:
   hosts:
     - mariadb.example.com
 
-before_install:
-  - chmod +x .travis/build/build.sh
-  - chmod +x .travis/build/docker-entrypoint.sh
-  - chmod 777 .travis/build/
-
-
 cache:
   directories:
     - $HOME/.m2

@@ -7,7 +7,7 @@ set -e
 # launch docker server
 ###################################################################################################################
 
-mysql=( mysql --protocol=tcp -uperf -h127.0.0.1 --port=3305 --pasword=!Password0)
+mysql=( mysql --protocol=tcp -uperf -h127.0.0.1 --port=3305 --password=!Password0)
 export COMPOSE_FILE=.travis/docker-compose.yml
 docker-compose -f ${COMPOSE_FILE} up -d
 
