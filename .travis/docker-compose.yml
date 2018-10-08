@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   db:
-    image: $DB
+    image: mariadb:10.3
     command: --max-connections=5000 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --bind-address=0.0.0.0
     ports:
       - 3305:3306

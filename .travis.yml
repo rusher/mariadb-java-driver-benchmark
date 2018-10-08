@@ -2,6 +2,8 @@
 sudo: false
 language: java
 services: docker
+jdk: oraclejdk10
+
 addons:
   hosts:
     - mariadb.example.com
@@ -14,8 +16,11 @@ install:
 
 matrix:
   include:
-    - env: DB=mariadb:10.3
-      jdk: oraclejdk10
+    - bench: Do_1
+    - bench: Create_and_close_Connection
+    - bench: Select_1
+    - bench: Select_1_mysql_user
+    - bench: Select_10_cols_from_seq_1_to_100000
 
 script:
   - .travis/script.sh
