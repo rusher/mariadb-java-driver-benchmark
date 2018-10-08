@@ -23,7 +23,7 @@ import org.openjdk.jmh.annotations.Warmup;
 @State(Scope.Benchmark)
 @Warmup(iterations = 7, timeUnit = TimeUnit.SECONDS, time = 1)
 @Measurement(iterations = 10, timeUnit = TimeUnit.SECONDS, time = 1)
-@Fork(value = 1)
+@Fork(value = 10)
 //not setting thread = number of processor
 //@Threads(value = 1)
 @BenchmarkMode(Mode.AverageTime)
