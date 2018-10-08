@@ -35,8 +35,11 @@ public class Select_10_cols_from_seq_1_to_100000 extends Common {
   }
 
   @Benchmark()
+  @Warmup(time = 5)
+  @Measurement(time = 5)
   @OutputTimeUnit(TimeUnit.SECONDS)
-  @Fork(jvmArgsAppend = {"-Xmx1024m", "-Xms1024m"})
+  //use 256m, since drizzle and mysql will throw java heap space
+  @Fork(jvmArgsAppend = {"-Xmx256m", "-Xms256m"})
   public String test(MyState state) throws Throwable {
     return executeQuery(state.statement);
   }

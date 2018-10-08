@@ -13,7 +13,7 @@ public class Do_1 extends Common {
   }
 
   @Benchmark
-  @Fork(jvmArgsAppend = {"-Xmx128m", "-Xms128m"})
+  @Fork(jvmArgsAppend = {"-Xmx32m", "-Xms32m"})
   public int test(MyState state) throws Throwable {
     return executeQuery(state.statement);
   }

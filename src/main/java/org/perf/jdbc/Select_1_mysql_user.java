@@ -20,7 +20,7 @@ public class Select_1_mysql_user extends Common {
   }
 
   @Benchmark
-  @Fork(jvmArgsAppend = {"-Xmx128m", "-Xms128m"})
+  @Fork(jvmArgsAppend = {"-Xmx32m", "-Xms32m"})
   public String test(MyState state) throws Throwable {
     return executeQuery(state.statement);
   }

@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Warmup;
 
 public class Create_and_close_Connection extends Common {
@@ -23,7 +24,8 @@ public class Create_and_close_Connection extends Common {
   }
 
   @Benchmark
-  @Fork(jvmArgsAppend = {"-Xmx128m", "-Xms128m"})
+  @Fork(jvmArgsAppend = {"-Xmx32m", "-Xms32m"})
+  @OutputTimeUnit(TimeUnit.MILLISECONDS)
   @Warmup(iterations = 20, timeUnit = TimeUnit.MICROSECONDS, time = 20)
   @Measurement(iterations = 100, timeUnit = TimeUnit.MICROSECONDS, time = 20)
   public String test(MyState state) throws Throwable {
