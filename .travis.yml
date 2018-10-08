@@ -6,6 +6,9 @@ addons:
   hosts:
     - mariadb.example.com
 
+before_install:
+  - chmod +x .travis/script.sh
+
 cache:
   directories:
     - $HOME/.m2
