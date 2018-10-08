@@ -13,7 +13,7 @@ import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Threads;
 import org.openjdk.jmh.annotations.Warmup;
 
-public class SelectBigRows extends Common {
+public class Select_10_cols_from_seq_1_to_100000 extends Common {
 
   private static String request = "SELECT ";
   static {
@@ -34,7 +34,7 @@ public class SelectBigRows extends Common {
 
   }
 
-  @Benchmark
+  @Benchmark()
   @OutputTimeUnit(TimeUnit.MINUTES)
   @Fork(jvmArgsAppend = {"-Xmx1024m", "-Xms1024m", "-Duser.country=US", "-Duser.language=en"})
   public String test(MyState state) throws Throwable {

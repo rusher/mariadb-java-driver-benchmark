@@ -8,7 +8,7 @@ import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Warmup;
 
-public class Connection extends Common {
+public class Create_and_close_Connection extends Common {
   static Properties properties = new Properties();
   static {
     properties.setProperty("user", "perf");
@@ -24,8 +24,8 @@ public class Connection extends Common {
 
   @Benchmark
   @Fork(jvmArgsAppend = {"-Xmx128m", "-Xms128m", "-Duser.country=US", "-Duser.language=en"})
-  @Warmup(iterations = 1000, timeUnit = TimeUnit.MICROSECONDS, time = 50)
-  @Measurement(iterations = 1000, timeUnit = TimeUnit.MICROSECONDS, time = 50)
+  @Warmup(iterations = 500, timeUnit = TimeUnit.MICROSECONDS, time = 20)
+  @Measurement(iterations = 500, timeUnit = TimeUnit.MICROSECONDS, time = 20)
   public String test(MyState state) throws Throwable {
     java.sql.Connection connection = getConnection(state.driver, state.server, state.port);
     String schema = connection.getSchema();

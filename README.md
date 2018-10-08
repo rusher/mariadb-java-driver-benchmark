@@ -52,12 +52,6 @@ List of tests and their signification :
 
 ## How run the tests
 * install a MySQL / MariaDB database
-Add the following configuration : 
-```
-max_allowed_packet      = 40M //exchange packet can be up to 40mb
-character-set-server    = utf8
-collation-server        = utf8_unicode_ci
-```
 * create database "testj" : create database testj;
 * create user : CREATE USER 'perf'@'%' IDENTIFIED BY '!Password0';
 * create user perf : GRANT ALL ON *.* TO 'perf'@'%' IDENTIFIED BY '!Password0';
@@ -85,15 +79,13 @@ java -jar target/benchmarks.jar  ".BenchmarkSelect1RowPrepareHit*" -prof gc > re
 Results are in file "result.txt".
 Complete results are the end of the file. 
 
-Execution on a droplet on digitalocean.com using this parameters:
-- Ubuntu 16.04 64bits
-- 512Mb memory
+Execution on a basic droplet on digitalocean.com using this parameters:
+- Ubuntu 18.04 64bits
 - 1 CPU
 
-using MariaDb 10.3.7 (<a href='results/result_mariadb-10.1_server_local.txt'>local results</a> and <a href='results/result_mariadb-10.1_server_distant.txt'>distant results</a>)
-using mysql 5.7.13 (<a href='results/result_mysql-5.7_server_local.txt'>local results</a>)
+using MariaDb 10.3.10 <a href='results/result_mariadb-10.3_server_local.txt'>local results</a>
 
-Extract of mariadb server results with mariadb-10.1 local server :
+Extract of mariadb server results with mariadb-10.3 local server :
 ```
 # Run complete. Total time: 03:57:41
 

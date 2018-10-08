@@ -6,7 +6,7 @@ import java.sql.Statement;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Fork;
 
-public class SelectUser extends Common {
+public class Select_1_mysql_user extends Common {
   private String request = "select * from mysql.user LIMIT 1";
 
   public String executeQuery(Statement stmt) throws SQLException {
