@@ -23,7 +23,7 @@ public class Create_and_close_Connection extends Common {
   }
 
   @Benchmark
-  @Fork(jvmArgsAppend = {"-Xmx128m", "-Xms128m", "-Duser.country=US", "-Duser.language=en"})
+  @Fork(jvmArgsAppend = {"-Xmx128m", "-Xms128m"})
   @Warmup(iterations = 20, timeUnit = TimeUnit.MICROSECONDS, time = 20)
   @Measurement(iterations = 100, timeUnit = TimeUnit.MICROSECONDS, time = 20)
   public String test(MyState state) throws Throwable {

@@ -35,8 +35,8 @@ public class Select_10_cols_from_seq_1_to_100000 extends Common {
   }
 
   @Benchmark()
-  @OutputTimeUnit(TimeUnit.MINUTES)
-  @Fork(jvmArgsAppend = {"-Xmx1024m", "-Xms1024m", "-Duser.country=US", "-Duser.language=en"})
+  @OutputTimeUnit(TimeUnit.SECONDS)
+  @Fork(jvmArgsAppend = {"-Xmx1024m", "-Xms1024m"})
   public String test(MyState state) throws Throwable {
     return executeQuery(state.statement);
   }

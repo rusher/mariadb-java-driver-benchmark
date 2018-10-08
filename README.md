@@ -66,12 +66,12 @@ List of tests and their signification :
 ```script
 git clone https://github.com/rusher/mariadb-mysql-driver.git
 mvn clean install
-java -jar target/benchmarks.jar > result.txt &
+java -Duser.country=US -Duser.language=en -jar target/benchmarks.jar > result.txt &
 ```
  
 JMH has a lot of options, 2 interesting ones : add a regex to launch only one specific benchmark, and add a garbage profiler to see consume time in GC.
 ```script
-java -jar target/benchmarks.jar  ".BenchmarkSelect1RowPrepareHit*" -prof gc > result.txt &
+java -Duser.country=US -Duser.language=en -jar target/benchmarks.jar  ".Do_1*" -prof gc > result.txt &
 ```
 
 ## Read results 
