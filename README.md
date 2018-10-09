@@ -89,42 +89,40 @@ using MariaDb 10.3.10 <a href='results/result_mariadb-10.3_server_local.txt'>loc
 
 Extract of mariadb server results with mariadb-10.3 local server :
 ```
-
-Benchmark  (driver)  Mode  Cnt   Score   Error  Units
-
-
-Benchmark                         (driver)  Mode   Cnt    Score     Error  Units
-Do_1.test                            mysql  avgt  200    66.752   ± 0.405  µs/op
-Do_1.test                          mariadb  avgt  200    61.039   ± 0.188  µs/op
-Do_1.test                          drizzle  avgt  200    64.618   ± 0.478  µs/op
-Create_and_close_Connection.test     mysql  avgt  4000    4.082   ± 0.130  ms/op
-Create_and_close_Connection.test   mariadb  avgt  4000    2.129   ± 0.060  ms/op
-Create_and_close_Connection.test   drizzle  avgt  4000    1.677   ± 0.069  ms/op
-Select_1.test                        mysql  avgt  200    83.817   ± 1.106  µs/op
-Select_1.test                      mariadb  avgt  200    75.663   ± 0.929  µs/op
-Select_1.test                      drizzle  avgt  200    80.440   ± 0.932  µs/op
-Select_1_mysql_user.test             mysql  avgt  200   213.567   ± 1.222  µs/op
-Select_1_mysql_user.test           mariadb  avgt  200   178.353   ± 0.721  µs/op
-Select_1_mysql_user.test           drizzle  avgt  200   258.120   ± 1.556  µs/op
-
-
+Benchmark                                 (driver)  Mode   Cnt     Score    Error  Units
+Create_and_close_Connection.test             mysql  avgt  4000     4.807 ±  0.147  ms/op
+Create_and_close_Connection.test           mariadb  avgt  4000     2.592 ±  0.108  ms/op
+Create_and_close_Connection.test           drizzle  avgt  4000     1.767 ±  0.079  ms/op
+Do_1.test                                    mysql  avgt   200    45.949 ±  4.382  us/op
+Do_1.test                                  mariadb  avgt   200    39.141 ±  0.843  us/op
+Do_1.test                                  drizzle  avgt   200    41.775 ±  0.788  us/op
+Select_1.test                                mysql  avgt   200    74.722 ±  1.524  us/op
+Select_1.test                              mariadb  avgt   200    57.100 ±  1.208  us/op
+Select_1.test                              drizzle  avgt   200    61.473 ±  1.696  us/op
+Select_10_cols_from_seq_1_to_100000.test     mysql  avgt   100  1396.190 ± 26.494  ms/op
+Select_10_cols_from_seq_1_to_100000.test   mariadb  avgt   100  1030.726 ± 14.910  ms/op
+Select_10_cols_from_seq_1_to_100000.test   drizzle  avgt   100  1711.404 ± 33.255  ms/op
+Select_1_mysql_user.test                     mysql  avgt   200   201.173 ±  2.973  us/op
+Select_1_mysql_user.test                   mariadb  avgt   200   167.166 ±  2.429  us/op
+Select_1_mysql_user.test                   drizzle  avgt   200   224.052 ±  3.030  us/op
 ```
+or see travis results on https://travis-ci.org/rusher/mariadb-java-driver-benchmark
 
 ##### How to read it :
 
 ms/op means millisecond per operation, µs/op microsecond per operation.
 
 ```
-Benchmark                         (driver)  Mode   Cnt    Score     Error  Units
-Select_1_mysql_user.test             mysql  avgt  200   213.567   ± 1.222  µs/op
-Select_1_mysql_user.test           mariadb  avgt  200   178.353   ± 0.721  µs/op
-Select_1_mysql_user.test           drizzle  avgt  200   258.120   ± 1.556  µs/op
+Benchmark                                 (driver)  Mode   Cnt     Score    Error  Units
+Select_1_mysql_user.test                     mysql  avgt   200   201.173 ±  2.973  us/op
+Select_1_mysql_user.test                   mariadb  avgt   200   167.166 ±  2.429  us/op
+Select_1_mysql_user.test                   drizzle  avgt   200   224.052 ±  3.030  us/op
 ```
 
 
 <p>Select_1_mysql_user.test : Using same local database, time for query "SELECT * FROM mysql.user LIMIT 1" <br/>
-Using mariadb driver, the average time to insert one data is 178 microsecond, and 99.9% of queries executes time are comprised between 177,632 (178.353 - 0.721) and 179,074 microseconds (178.353 + 0.721).<br/>
-Using MySQL java driver, average execution time is 213 millisecond, using Drizzle driver 258 milliseconds
+Using mariadb driver, the average time to insert one data is 167 microsecond, and 99.9% of queries executes time are comprised between (167.166 - 2.429) and (167.166 + 2.429) microseconds.<br/>
+Using MySQL java driver, average execution time is 201 millisecond, using Drizzle driver 224 milliseconds
    </p>
 
 
