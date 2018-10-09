@@ -61,8 +61,6 @@ List of tests and their signification :
 (* install git)
 
 
-
-*
 ```script
 git clone https://github.com/rusher/mariadb-java-driver-benchmark.git
 cd mariadb-java-driver-benchmark
