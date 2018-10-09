@@ -12,12 +12,11 @@ This will permit to compare execution time of a query using different driver :
 
 
 ## The tests
-Class BenchmarkInit initialize connections using MySQL and MariaDB drivers before tests.
+Class Common initialize connections using MySQL, MariaDB and Drizzle drivers before tests.
 
-test example org.perf.jdbc.BenchmarkSelect1RowPrepareText : 
+test example org.perf.jdbc.Select_1 : 
 ```java
-
-public class Select1 extends Common {
+public class Select_1 extends Common {
   private String request = "select 1";
 
   public int executeQuery(Statement stmt) throws SQLException {
@@ -27,7 +26,7 @@ public class Select1 extends Common {
   }
 
   @Benchmark
-  @Fork(jvmArgsAppend = {"-Xmx128m", "-Xms128m", "-Duser.country=US", "-Duser.language=en"})
+  @Fork(jvmArgsAppend = {"-Xmx32m", "-Xms32m"})
   public int test(MyState state) throws Throwable {
     return executeQuery(state.statement);
   }
@@ -36,18 +35,18 @@ public class Select1 extends Common {
 
 The test will execute the statement "select 1" using a connection issued from java driver MySQL 8.0.12, Drizzle 1.4 or MariaDB 2.4.0.
 
-Tests are launched multiple times using 10 forks , 10 warmup iterations of one second followed by 15 measurement iterations of one second. (one test duration is approximately 4h)
+Tests are launched multiple times using 20 forks , 10 warmup iterations of one second followed by 10 measurement iterations of one second. (benchmark duration is approximately 2h)
 
 
 List of tests and their signification :
 
 |Benchmark       | Description |
 |-----------|:----------|
-| Do_1 | execute query "do 1" (smallest query without resultset)|
-| Create_and_close_Connection | create and close a connection|
-|Select_1| execute query "select 1" (smallest query with resultset)|
-|Select_1_mysql_user| execute query "select * from mysql.user limit 1" (resultset with 46 field)|
-|Select_10_cols_from_seq_1_to_100000| execute query with 100 000 rows of 10 columns of 100 chars|
+| Do_1                               | execute query "do 1" (smallest query without resultset)|
+| Create_and_close_Connection        | create and close a connection|
+| Select_1                           | execute query "select 1" (smallest query with resultset)|
+| Select_1_mysql_user                | execute query "select * from mysql.user limit 1" (resultset with 46 field)|
+| Select_10_cols_from_seq_1_to_100000| execute query with 100 000 rows of 10 columns of 100 chars|
 
 '* The goal is here to test the driver performance, not database **
 
@@ -93,18 +92,18 @@ Benchmark                                 (driver)  Mode   Cnt     Score    Erro
 Create_and_close_Connection.test             mysql  avgt  4000     4.807 ±  0.147  ms/op
 Create_and_close_Connection.test           mariadb  avgt  4000     2.592 ±  0.108  ms/op
 Create_and_close_Connection.test           drizzle  avgt  4000     1.767 ±  0.079  ms/op
-Do_1.test                                    mysql  avgt   200    45.949 ±  4.382  us/op
-Do_1.test                                  mariadb  avgt   200    39.141 ±  0.843  us/op
-Do_1.test                                  drizzle  avgt   200    41.775 ±  0.788  us/op
-Select_1.test                                mysql  avgt   200    74.722 ±  1.524  us/op
-Select_1.test                              mariadb  avgt   200    57.100 ±  1.208  us/op
-Select_1.test                              drizzle  avgt   200    61.473 ±  1.696  us/op
+Do_1.test                                    mysql  avgt   200    45.949 ±  4.382  µs/op
+Do_1.test                                  mariadb  avgt   200    39.141 ±  0.843  µs/op
+Do_1.test                                  drizzle  avgt   200    41.775 ±  0.788  µs/op
+Select_1.test                                mysql  avgt   200    74.722 ±  1.524  µs/op
+Select_1.test                              mariadb  avgt   200    57.100 ±  1.208  µs/op
+Select_1.test                              drizzle  avgt   200    61.473 ±  1.696  µs/op
 Select_10_cols_from_seq_1_to_100000.test     mysql  avgt   100  1396.190 ± 26.494  ms/op
 Select_10_cols_from_seq_1_to_100000.test   mariadb  avgt   100  1030.726 ± 14.910  ms/op
 Select_10_cols_from_seq_1_to_100000.test   drizzle  avgt   100  1711.404 ± 33.255  ms/op
-Select_1_mysql_user.test                     mysql  avgt   200   201.173 ±  2.973  us/op
-Select_1_mysql_user.test                   mariadb  avgt   200   167.166 ±  2.429  us/op
-Select_1_mysql_user.test                   drizzle  avgt   200   224.052 ±  3.030  us/op
+Select_1_mysql_user.test                     mysql  avgt   200   201.173 ±  2.973  µs/op
+Select_1_mysql_user.test                   mariadb  avgt   200   167.166 ±  2.429  µs/op
+Select_1_mysql_user.test                   drizzle  avgt   200   224.052 ±  3.030  µs/op
 ```
 or see travis results on https://travis-ci.org/rusher/mariadb-java-driver-benchmark
 
@@ -114,9 +113,9 @@ ms/op means millisecond per operation, µs/op microsecond per operation.
 
 ```
 Benchmark                                 (driver)  Mode   Cnt     Score    Error  Units
-Select_1_mysql_user.test                     mysql  avgt   200   201.173 ±  2.973  us/op
-Select_1_mysql_user.test                   mariadb  avgt   200   167.166 ±  2.429  us/op
-Select_1_mysql_user.test                   drizzle  avgt   200   224.052 ±  3.030  us/op
+Select_1_mysql_user.test                     mysql  avgt   200   201.173 ±  2.973  µs/op
+Select_1_mysql_user.test                   mariadb  avgt   200   167.166 ±  2.429  µs/op
+Select_1_mysql_user.test                   drizzle  avgt   200   224.052 ±  3.030  µs/op
 ```
 
 
