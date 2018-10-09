@@ -87,52 +87,25 @@ using MariaDb 10.3.10 <a href='results/result_mariadb-10.3_server_local.txt'>loc
 
 Extract of mariadb server results with mariadb-10.3 local server :
 ```
-# Run complete. Total time: 03:57:41
 
-Benchmark                                           Mode  Cnt     Score    Error  Units
-BenchmarkCallableStatementFunction.mariadb          avgt  200   101.183 ±  4.594  µs/op
-BenchmarkCallableStatementFunction.mysql            avgt  200   787.688 ± 62.222  µs/op
-BenchmarkCallableStatementWithInParameter.mariadb   avgt  200   101.787 ±  5.378  µs/op
-BenchmarkCallableStatementWithInParameter.mysql     avgt  200   553.861 ± 28.410  µs/op
-BenchmarkCallableStatementWithOutParameter.mariadb  avgt  200    88.572 ±  4.263  µs/op
-BenchmarkCallableStatementWithOutParameter.mysql    avgt  200   714.108 ± 44.390  µs/op
-BenchmarkOneInsertPrepareHit.mariadb                avgt  200    61.298 ±  1.940  µs/op
-BenchmarkOneInsertPrepareHit.mysql                  avgt  200    92.173 ±  4.887  µs/op
-BenchmarkOneInsertPrepareMiss.mariadb               avgt  200   130.896 ±  6.362  µs/op
-BenchmarkOneInsertPrepareMiss.mysql                 avgt  200   162.488 ±  5.931  µs/op
-BenchmarkOneInsertPrepareText.drizzle               avgt  200    80.882 ±  3.384  µs/op
-BenchmarkOneInsertPrepareText.mariadb               avgt  200    68.363 ±  2.686  µs/op
-BenchmarkOneInsertPrepareText.mysql                 avgt  200   102.195 ±  5.691  µs/op
-BenchmarkOneInsertPrepareTextHA.mariadb             avgt  200    69.581 ±  2.245  µs/op
-BenchmarkOneInsertPrepareTextHA.mysql               avgt  200   157.478 ±  7.242  µs/op
-BenchmarkSelect1000BigRows.drizzle                  avgt  200   126.169 ±  8.278  ms/op
-BenchmarkSelect1000BigRows.mariadb                  avgt  200   100.056 ±  4.825  ms/op
-BenchmarkSelect1000BigRows.mysql                    avgt  200   120.132 ±  6.597  ms/op
-BenchmarkSelect1000BigRowsFetch.drizzle             avgt  200  1130.280 ± 51.862  ms/op
-BenchmarkSelect1000BigRowsFetch.mariadb             avgt  200   854.730 ± 23.850  ms/op
-BenchmarkSelect1000BigRowsFetch.mysql               avgt  200  1426.919 ± 75.047  ms/op
-BenchmarkSelect1000Rows.drizzle                     avgt  200   406.877 ± 16.585  µs/op
-BenchmarkSelect1000Rows.mariadb                     avgt  200   244.228 ±  7.686  µs/op
-BenchmarkSelect1000Rows.mysql                       avgt  200   298.814 ± 12.143  µs/op
-BenchmarkSelect1RowPrepareHit.mariadb               avgt  200    58.267 ±  2.270  µs/op
-BenchmarkSelect1RowPrepareHit.mysql                 avgt  200    73.789 ±  1.863  µs/op
-BenchmarkSelect1RowPrepareMiss.mariadb              avgt  200   118.896 ±  5.500  µs/op
-BenchmarkSelect1RowPrepareMiss.mysql                avgt  200   150.679 ±  4.791  µs/op
-BenchmarkSelect1RowPrepareText.drizzle              avgt  200    78.672 ±  2.971  µs/op
-BenchmarkSelect1RowPrepareText.mariadb              avgt  200    62.715 ±  2.402  µs/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  200    88.670 ±  3.505  µs/op
-BenchmarkSelect1RowPrepareTextHA.mariadb            avgt  200    64.676 ±  2.192  µs/op
-BenchmarkSelect1RowPrepareTextHA.mysql              avgt  200   137.289 ±  4.872  µs/op
-PrepareStatementBatch100InsertPrepareHit.mariadb    avgt  200     5.290 ±  0.232  ms/op
-PrepareStatementBatch100InsertPrepareHit.mysql      avgt  200     9.015 ±  0.440  ms/op
-PrepareStatementBatch100InsertRewrite.mariadb       avgt  200     0.404 ±  0.014  ms/op
-PrepareStatementBatch100InsertRewrite.mysql         avgt  200     0.592 ±  0.016  ms/op
-PrepareStatementBatch100InsertText.drizzle          avgt  200     7.314 ±  0.205  ms/op
-PrepareStatementBatch100InsertText.mariadb          avgt  200     6.081 ±  0.254  ms/op
-PrepareStatementBatch100InsertText.mysql            avgt  200     7.932 ±  0.293  ms/op
-StatementBatch100Insert.drizzle                     avgt  200     7.666 ±  0.284  ms/op
-StatementBatch100Insert.mariadb                     avgt  200     6.319 ±  0.239  ms/op
-StatementBatch100Insert.mysql                       avgt  200     9.309 ±  0.312  ms/op
+Benchmark  (driver)  Mode  Cnt   Score   Error  Units
+
+
+Benchmark                         (driver)  Mode   Cnt    Score     Error  Units
+Do_1.test                            mysql  avgt  200    66.752   ± 0.405  µs/op
+Do_1.test                          mariadb  avgt  200    61.039   ± 0.188  µs/op
+Do_1.test                          drizzle  avgt  200    64.618   ± 0.478  µs/op
+Create_and_close_Connection.test     mysql  avgt  4000    4.082   ± 0.130  ms/op
+Create_and_close_Connection.test   mariadb  avgt  4000    2.129   ± 0.060  ms/op
+Create_and_close_Connection.test   drizzle  avgt  4000    1.677   ± 0.069  ms/op
+Select_1.test                        mysql  avgt  200    83.817   ± 1.106  µs/op
+Select_1.test                      mariadb  avgt  200    75.663   ± 0.929  µs/op
+Select_1.test                      drizzle  avgt  200    80.440   ± 0.932  µs/op
+Select_1_mysql_user.test             mysql  avgt  200   213.567   ± 1.222  µs/op
+Select_1_mysql_user.test           mariadb  avgt  200   178.353   ± 0.721  µs/op
+Select_1_mysql_user.test           drizzle  avgt  200   258.120   ± 1.556  µs/op
+
+
 ```
 
 ##### How to read it :
@@ -140,20 +113,16 @@ StatementBatch100Insert.mysql                       avgt  200     9.309 ±  0.31
 ms/op means millisecond per operation, µs/op microsecond per operation.
 
 ```
-Benchmark                                           Mode  Cnt     Score    Error  Units
-BenchmarkSelect1RowPrepareText.mariadb              avgt  200    62.715 ±  2.402  µs/op
-BenchmarkSelect1RowPrepareText.mysql                avgt  200    88.670 ±  3.505  µs/op
-BenchmarkSelect1RowPrepareText.drizzle              avgt  200    78.672 ±  2.971  µs/op
+Benchmark                         (driver)  Mode   Cnt    Score     Error  Units
+Select_1_mysql_user.test             mysql  avgt  200   213.567   ± 1.222  µs/op
+Select_1_mysql_user.test           mariadb  avgt  200   178.353   ± 0.721  µs/op
+Select_1_mysql_user.test           drizzle  avgt  200   258.120   ± 1.556  µs/op
 ```
 
 
-<div style="text-align:center"><img src ="results/select_one_data.png" /></div>
-
-<p>BenchmarkSelect1RowPrepareText : Using same local database, time for query "SELECT CAST(? as char character set utf8)" <br/>
-("SELECT ?" would be the same, but this query can be PREPAREd, and so permitting comparison with PREPARE)</p>
-<p>
-Using mariadb driver, the average time to insert one data is 62.715 microsecond, and 99.9% of queries executes time are comprised between 59.773 (62.715 - 2.402) and 65.117 microseconds (62.715 + 2.402).<br/>
-Using MySQL java driver, average execution time is 88.670 millisecond, using Drizzle driver 78.672 milliseconds
+<p>Select_1_mysql_user.test : Using same local database, time for query "SELECT * FROM mysql.user LIMIT 1" <br/>
+Using mariadb driver, the average time to insert one data is 178 microsecond, and 99.9% of queries executes time are comprised between 177,632 (178.353 - 0.721) and 179,074 microseconds (178.353 + 0.721).<br/>
+Using MySQL java driver, average execution time is 213 millisecond, using Drizzle driver 258 milliseconds
    </p>
 
 
