@@ -43,19 +43,20 @@ List of tests and their signification :
 
 |Benchmark       | Description |
 |-----------|:----------|
-| do1 | execute query "do 1" (smallest query without resultset)|
-|select1| execute query "select 1" (smallest query with resultset)|
-|selectUser| execute query "select * from mysql.user limit 1" (resultset with 46 field)|
-|selectBigRows| execute query with 100 000 rows of 10 columns of 100 chars|
+| Do_1 | execute query "do 1" (smallest query without resultset)|
+| Create_and_close_Connection | create and close a connection|
+|Select_1| execute query "select 1" (smallest query with resultset)|
+|Select_1_mysql_user| execute query "select * from mysql.user limit 1" (resultset with 46 field)|
+|Select_10_cols_from_seq_1_to_100000| execute query with 100 000 rows of 10 columns of 100 chars|
 
 '* The goal is here to test the driver performance, not database **
 
 ## How run the tests
 * install a MySQL / MariaDB database
-* create database "testj" : create database testj;
-* create user : CREATE USER 'perf'@'%' IDENTIFIED BY '!Password0';
-* create user perf : GRANT ALL ON *.* TO 'perf'@'%' IDENTIFIED BY '!Password0';
-* grant super access : GRANT SUPER ON *.* TO 'perf'@'%';
+* create database "testj" : `create database testj;`
+* create user : `CREATE USER 'perf'@'%' IDENTIFIED BY '!Password0';`
+* create user perf : `GRANT ALL ON *.* TO 'perf'@'%' IDENTIFIED BY '!Password0';`
+* grant super access : `GRANT SUPER ON *.* TO 'perf'@'%';`
 * install a JRE
 (* install maven)
 (* install git)
@@ -64,9 +65,10 @@ List of tests and their signification :
 
 *
 ```script
-git clone https://github.com/rusher/mariadb-mysql-driver.git
+git clone https://github.com/rusher/mariadb-java-driver-benchmark.git
+cd mariadb-java-driver-benchmark
 mvn clean install
-java -Duser.country=US -Duser.language=en -jar target/benchmarks.jar > result.txt &
+nohup java -Duser.country=US -Duser.language=en -jar target/benchmarks.jar > result.txt &
 ```
  
 JMH has a lot of options, 2 interesting ones : add a regex to launch only one specific benchmark, and add a garbage profiler to see consume time in GC.
