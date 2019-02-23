@@ -35,9 +35,10 @@ public class Common {
     public String server = System.getProperty("host", "localhost");
     public String port = System.getProperty("port", "3306");
 
-    @Param({"mysql", "mariadb", "drizzle"})
-    //when using multiple threads, drizzle is lost
-//    @Param({"mysql", "mariadb"})
+    //@Param({"mysql", "mariadb", "drizzle"})
+    //But if using multiple threads, drizzle is lost
+
+    @Param({"mysql", "mariadb"})
     String driver;
 
     public Connection connection;
@@ -67,6 +68,7 @@ public class Common {
     textProperties.setProperty("useBulkStmts", "false");
     textProperties.setProperty("useBatchMultiSend", "false");
     textProperties.setProperty("serverTimezone", "UTC");
+    //textProperties.setProperty("localSocket", "/var/run/mysqld/mysqld.sock");
     Connection connection;
     switch (driver) {
       case "mysql":
