@@ -2,7 +2,7 @@
 sudo: false
 language: java
 services: docker
-jdk: oraclejdk10
+jdk: openjdk11
 
 addons:
   hosts:
