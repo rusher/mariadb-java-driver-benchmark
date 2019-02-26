@@ -26,8 +26,8 @@ import org.openjdk.jmh.annotations.Warmup;
 @Fork(value = 20)
 //not setting thread = number of processor
 //@Threads(value = 1)
-@BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.MICROSECONDS)
+@BenchmarkMode(Mode.Throughput)
+@OutputTimeUnit(TimeUnit.SECONDS)
 public class Common {
 
   @State(Scope.Benchmark)
