@@ -17,23 +17,23 @@ Class Common initialize connections using MySQL, MariaDB and Drizzle drivers bef
 test example org.perf.jdbc.Select_1 : 
 ```java
 public class Select_1 extends Common {
-  private String request = "select 1";
-
-  public int executeQuery(Statement stmt) throws SQLException {
-    ResultSet rs = stmt.executeQuery(request);
-    rs.next();
-    return rs.getInt(1);
-  }
 
   @Benchmark
   @Fork(jvmArgsAppend = {"-Xmx32m", "-Xms32m"})
   public int test(MyState state) throws Throwable {
-    return executeQuery(state.statement);
+    try (PreparedStatement preparedStatement =
+             state.connection.prepareStatement("select ?")) {
+      preparedStatement.setString(1, "1");
+      ResultSet rs = preparedStatement.executeQuery();
+      rs.next();
+      return rs.getInt(1);
+    }
   }
 }
 ```
 
-The test will execute the statement "select 1" using a connection issued from java driver MySQL 8.0.12, Drizzle 1.4 or MariaDB 2.4.0.
+The test will execute the statement "select 1" using a connection issued from java driver MySQL 8.0.21, Drizzle 1.4 or
+ MariaDB 2.7.0.
 
 Tests are launched multiple times using 20 forks , 10 warmup iterations of one second followed by 10 measurement iterations of one second. (benchmark duration is approximately 2h)
 
