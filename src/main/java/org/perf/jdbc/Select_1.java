@@ -1,5 +1,6 @@
 package org.perf.jdbc;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,8 +12,12 @@ public class Select_1 extends Common {
   @Benchmark
   @Fork(jvmArgsAppend = {"-Xmx32m", "-Xms32m"})
   public int test(MyState state) throws Throwable {
-    ResultSet rs = state.statement.executeQuery("select 1");
-    rs.next();
-    return rs.getInt(1);
+    try (PreparedStatement preparedStatement =
+             state.connection.prepareStatement("select ?")) {
+      preparedStatement.setString(1, "1");
+      ResultSet rs = preparedStatement.executeQuery();
+      rs.next();
+      return rs.getInt(1);
+    }
   }
 }

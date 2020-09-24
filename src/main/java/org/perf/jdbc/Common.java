@@ -23,7 +23,7 @@ import org.openjdk.jmh.annotations.Warmup;
 @State(Scope.Benchmark)
 @Warmup(iterations = 10, timeUnit = TimeUnit.SECONDS, time = 1)
 @Measurement(iterations = 10, timeUnit = TimeUnit.SECONDS, time = 1)
-@Fork(value = 20)
+@Fork(value = 1)
 //not setting thread = number of processor
 //@Threads(value = 1)
 @BenchmarkMode(Mode.Throughput)
@@ -38,7 +38,7 @@ public class Common {
     //@Param({"mysql", "mariadb", "drizzle"})
     //But if using multiple threads, drizzle is lost
 
-    @Param({"mysql", "mariadb"})
+    @Param({"mysql", "mysql_binary", "mariadb", "mariadb_binary"})
     String driver;
 
     public Connection connection;
@@ -62,13 +62,15 @@ public class Common {
     Properties textProperties = new Properties();
     textProperties.setProperty("user", "perf");
     textProperties.setProperty("password", "!Password0");
-    textProperties.setProperty("useServerPrepStmts", "false");
     textProperties.setProperty("useSSL", "false");
     textProperties.setProperty("characterEncoding", "UTF-8");
     textProperties.setProperty("useBulkStmts", "false");
     textProperties.setProperty("useBatchMultiSend", "false");
     textProperties.setProperty("serverTimezone", "UTC");
-    //textProperties.setProperty("localSocket", "/var/run/mysqld/mysqld.sock");
+
+    Properties binaryProperties = new Properties(textProperties);
+    binaryProperties.setProperty("useServerPrepStmts", "false");
+
     Connection connection;
     switch (driver) {
       case "mysql":
@@ -76,11 +78,25 @@ public class Common {
             "jdbc:mysql://" + server + ":" + port + "/testj",
             textProperties);
         break;
+
       case "mariadb":
         connection = createConnection("org.mariadb.jdbc.Driver",
-            "jdbc:mysql://" + server + ":" + port + "/testj",
+            "jdbc:mariadb://" + server + ":" + port + "/testj",
             textProperties);
         break;
+
+      case "mysql_binary":
+        connection = createConnection("com.mysql.cj.jdbc.Driver",
+            "jdbc:mysql://" + server + ":" + port + "/testj",
+            binaryProperties);
+        break;
+
+      case "mariadb_binary":
+        connection = createConnection("org.mariadb.jdbc.Driver",
+            "jdbc:mariadb://" + server + ":" + port + "/testj",
+            binaryProperties);
+        break;
+
       case "drizzle":
         Properties textPropertiesDrizzle = new Properties();
         textPropertiesDrizzle.setProperty("user", "perf");
@@ -89,9 +105,11 @@ public class Common {
             "jdbc:drizzle://" + server + ":" + port + "/testj",
             textPropertiesDrizzle);
         break;
-        default:
-          throw new Exception("NO driver ");
+
+      default:
+          throw new Exception("NO driver " + driver);
     }
+
     connection.createStatement().executeQuery("SET sql_log_bin = 0;");
     return connection;
   }

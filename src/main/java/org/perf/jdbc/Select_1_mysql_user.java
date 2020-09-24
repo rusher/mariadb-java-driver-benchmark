@@ -1,5 +1,6 @@
 package org.perf.jdbc;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,11 +13,15 @@ public class Select_1_mysql_user extends Common {
   @Benchmark
   @Fork(jvmArgsAppend = {"-Xmx32m", "-Xms32m"})
   public String[] test(MyState state) throws Throwable {
-    ResultSet rs = state.statement.executeQuery("select * from mysql.user LIMIT 1");
-    rs.next();
-    for (int i = 1; i < 46; i++) {
-      res[i-1] = rs.getString(i);
+    try (PreparedStatement preparedStatement =
+             state.connection.prepareStatement("select * from mysql.user WHERE 1 = ? LIMIT 1")) {
+      preparedStatement.setInt(1, 1);
+      ResultSet rs = preparedStatement.executeQuery();
+      rs.next();
+      for (int i = 1; i < 46; i++) {
+        res[i - 1] = rs.getString(i);
+      }
+      return res;
     }
-    return res;
   }
 }

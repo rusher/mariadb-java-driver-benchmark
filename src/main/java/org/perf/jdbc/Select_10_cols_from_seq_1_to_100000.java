@@ -1,5 +1,6 @@
 package org.perf.jdbc;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,29 +19,22 @@ public class Select_10_cols_from_seq_1_to_100000 extends Common {
   private static String request = "SELECT ";
   static {
     for (int i = 0; i < 10; i++) {
-      request += (i==0 ? "":",") +" REPEAT('a', 100)";
+      request += (i==0 ? "":",") +" REPEAT('a', 10)";
     }
-    request += " from seq_1_to_100000";
-  }
-
-
-  public String executeQuery(Statement stmt) throws SQLException {
-    ResultSet rs = stmt.executeQuery(request);
-    rs.next();
-    for (int i = 1; i < 10; i++) {
-      rs.getString(i);
-    }
-    return rs.getString(10);
-
+    request += " from seq_1_to_2 WHERE 1 = ?";
   }
 
   @Benchmark()
-  @Warmup(time = 5)
-  @Measurement(time = 5)
-  @OutputTimeUnit(TimeUnit.MILLISECONDS)
-  //use 256m, since drizzle and mysql will throw java heap space
-  @Fork(value = 7, jvmArgsAppend = {"-Xmx256m", "-Xms256m"})
+//use 256m, since drizzle and mysql will throw java heap space
   public String test(MyState state) throws Throwable {
-    return executeQuery(state.statement);
+    try (PreparedStatement preparedStatement = state.connection.prepareStatement(request)) {
+      preparedStatement.setInt(1, 1);
+      ResultSet rs = preparedStatement.executeQuery();
+      rs.next();
+      for (int i = 1; i < 10; i++) {
+        rs.getString(i);
+      }
+      return rs.getString(10);
+    }
   }
 }

@@ -11,6 +11,7 @@ import org.openjdk.jmh.annotations.Warmup;
 
 public class Create_and_close_Connection extends Common {
   static Properties properties = new Properties();
+  static Properties binary_properties;
   static {
     properties.setProperty("user", "perf");
     properties.setProperty("password", "!Password0");
@@ -21,6 +22,8 @@ public class Create_and_close_Connection extends Common {
     properties.setProperty("useBatchMultiSend", "false");
     properties.setProperty("serverTimezone", "UTC");
     properties.setProperty("tcpAbortiveClose", "true");
+    binary_properties = new Properties(properties);
+    binary_properties.setProperty("useServerPrepStmts", "true");
   }
 
   @Benchmark
@@ -45,10 +48,20 @@ public class Create_and_close_Connection extends Common {
             "jdbc:mysql://" + server + ":" + port + "/testj",
             properties);
         break;
+      case "mysql_binary":
+        connection = createConnection("com.mysql.cj.jdbc.Driver",
+            "jdbc:mysql://" + server + ":" + port + "/testj",
+            binary_properties);
+        break;
       case "mariadb":
         connection = createConnection("org.mariadb.jdbc.Driver",
             "jdbc:mysql://" + server + ":" + port + "/testj",
             properties);
+        break;
+      case "mariadb_binary":
+        connection = createConnection("org.mariadb.jdbc.Driver",
+            "jdbc:mysql://" + server + ":" + port + "/testj",
+            binary_properties);
         break;
       case "drizzle":
         Properties textPropertiesDrizzle = new Properties();

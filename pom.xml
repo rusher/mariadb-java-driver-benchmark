@@ -13,8 +13,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jmh.version>1.21</jmh.version>
 
-        <mariadb.version>2.4.0</mariadb.version>
-        <mysql.version>8.0.15</mysql.version>
+        <mariadb.version>2.7.0</mariadb.version>
+        <mysql.version>8.0.21</mysql.version>
         <drizzle.version>1.4</drizzle.version>
 
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -96,6 +96,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 </project>
