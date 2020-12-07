@@ -23,7 +23,7 @@ import org.openjdk.jmh.annotations.Warmup;
 @State(Scope.Benchmark)
 @Warmup(iterations = 10, timeUnit = TimeUnit.SECONDS, time = 1)
 @Measurement(iterations = 10, timeUnit = TimeUnit.SECONDS, time = 1)
-@Fork(value = 1)
+@Fork(value = 5)
 //not setting thread = number of processor
 //@Threads(value = 1)
 @BenchmarkMode(Mode.Throughput)
@@ -69,7 +69,7 @@ public class Common {
     textProperties.setProperty("serverTimezone", "UTC");
 
     Properties binaryProperties = new Properties(textProperties);
-    binaryProperties.setProperty("useServerPrepStmts", "false");
+    binaryProperties.setProperty("useServerPrepStmts", "true");
 
     Connection connection;
     switch (driver) {

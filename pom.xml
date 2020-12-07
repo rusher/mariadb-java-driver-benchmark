@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jmh.version>1.21</jmh.version>
 
-        <mariadb.version>2.7.0</mariadb.version>
+        <mariadb.version>2.7.1</mariadb.version>
         <mysql.version>8.0.21</mysql.version>
         <drizzle.version>1.4</drizzle.version>
 
