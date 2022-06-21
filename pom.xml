@@ -14,7 +14,7 @@
         <jmh.version>1.21</jmh.version>
 
         <mariadb.version>2.7.1</mariadb.version>
-        <mysql.version>8.0.21</mysql.version>
+        <mysql.version>8.0.28</mysql.version>
         <drizzle.version>1.4</drizzle.version>
 
         <maven.compiler.target>1.8</maven.compiler.target>
